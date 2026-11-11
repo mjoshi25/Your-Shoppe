@@ -371,3 +371,7 @@ Slot format in vendor fulfilment settings: `MONDAY|09:00|11:00|5` (weekday, star
 Important: Render/Maven compilation, automated tests, MongoDB integration, browser testing and live end-to-end checks must be run by the project owner before production. Slot capacity enforcement is application-level and should be upgraded to an atomic reservation operation before high-concurrency traffic.
 
 For Render HTTPS session cookies, ensure `SESSION_COOKIE_SECURE=true` is configured (included in the supplied `render.yaml`). Commission eligible value currently follows the existing ledger rule: merchandise subtotal before coupon discount and excluding delivery charges; confirm this policy before high-volume trading.
+
+
+## Phase 20 — ASMJ Shoppe branding
+See `PHASE20-CHANGELOG.md` for logo, favicon, theme and template updates.

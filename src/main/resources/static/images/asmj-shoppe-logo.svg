@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 150" role="img" aria-labelledby="title desc">
+<title id="title">ASMJ Shoppe</title><desc id="desc">ASMJ Shoppe shopping bag and cart logo, Shop Sell Grow Together</desc>
+<defs><linearGradient id="bag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7b1fa2"/><stop offset="1" stop-color="#42106c"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc928"/><stop offset="1" stop-color="#f28b16"/></linearGradient></defs>
+<g transform="translate(12 10)"><path d="M26 48 Q26 18 58 18 Q90 18 90 48" fill="none" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/><path d="M16 48 Q16 39 27 39 H91 Q103 39 103 51 V117 Q103 129 91 129 H27 Q16 129 16 117Z" fill="url(#bag)"/><path d="M29 105 L51 61 L73 105 M39 86 H64" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M73 78 H99 L106 98 H80" fill="none" stroke="url(#gold)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84" cy="111" r="5" fill="#ffc928"/><circle cx="103" cy="111" r="5" fill="#ffc928"/></g>
+<text x="142" y="72" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="800" letter-spacing="-2" fill="#42106c">ASMJ</text>
+<text x="142" y="119" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="800" letter-spacing="-1.5" fill="#ef9418">Shoppe</text>
+<text x="365" y="119" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#5a3a70">SHOP · SELL · GROW TOGETHER</text>
+</svg>
