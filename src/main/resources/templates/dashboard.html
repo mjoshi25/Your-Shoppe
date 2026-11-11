@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${pageTitle} + ' | ASMJ Marketplace'">Dashboard</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="dashboard-wrap">
+  <div class="eyebrow">ASMJ Marketplace</div><h1 th:text="${pageTitle}">Dashboard</h1><p class="welcome-line" th:if="${signedInUser != null}" th:text="${'Welcome, ' + signedInUser.fullName + '!'}">Welcome!</p><p class="muted" th:if="${signedInUser != null}" th:text="${'You are signed in as ' + signedInUser.email}">Account</p>
+  <div th:if="${pageTitle == 'Admin dashboard'}">
+    <p class="muted">Marketplace administration and vendor onboarding overview.</p>
+    <div class="metric-grid">
+      <a class="metric-card" th:href="@{/admin/vendors}"><span>Total vendors</span><strong th:text="${totalVendors}">0</strong></a>
+      <a class="metric-card" th:href="@{/admin/vendors(status='PENDING')}"><span>Pending applications</span><strong th:text="${pendingVendors}">0</strong></a>
+      <a class="metric-card" th:href="@{/admin/vendors(status='APPROVED')}"><span>Approved</span><strong th:text="${approvedVendors}">0</strong></a>
+      <a class="metric-card" th:href="@{/admin/vendors(status='REJECTED')}"><span>Rejected</span><strong th:text="${rejectedVendors}">0</strong></a>
+      <a class="metric-card" th:href="@{/admin/vendors(status='SUSPENDED')}"><span>Suspended</span><strong th:text="${suspendedVendors}">0</strong></a>
+    </div>
+    <div class="dashboard-shortcuts"><div class="panel"><h2>Vendor management</h2><p>Review applications, approve eligible shops, reject incomplete applications, and suspend or reactivate approved vendors.</p><a class="btn primary" th:href="@{/admin/vendors}">Manage vendors</a></div><div class="panel"><h2>Product moderation</h2><p>Review vendor listings and publish approved products to the public catalogue.</p><a class="btn primary" th:href="@{/admin/products}">Review products</a></div></div>
+  </div>
+  <div th:if="${pageTitle == 'Vendor dashboard'}"><p class="muted">Your vendor account is approved. Start managing your product catalogue.</p><div class="panel"><h2>Product catalogue</h2><p>Add product details and upload images directly to Cloudinary.</p><a class="btn primary" th:href="@{/vendor/products}">Manage my products</a></div></div>
+  <div th:if="${pageTitle == 'Customer dashboard'}"><p class="muted">Welcome to ASMJ Marketplace. Discover products from participating local vendors.</p><div class="panel"><h2>Start exploring</h2><p>Browse published products from approved vendors.</p><a class="btn primary" th:href="@{/products}">Explore products</a></div></div>
+  <form th:action="@{/logout}" method="post" class="logout-form"><button class="btn secondary" type="submit">Sign out</button></form>
+</main>
+</body></html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vendor application | ASMJ Marketplace</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="dashboard-wrap">
+  <div class="page-heading"><div><div class="eyebrow">Vendor application</div><h1 th:text="${profile != null and !#strings.isEmpty(profile.businessName) ? profile.businessName : vendor.fullName}">Vendor</h1><p class="muted">Review business information and manage this vendor's marketplace access.</p></div><a class="btn secondary" th:href="@{/admin/vendors}">Back to vendors</a></div>
+  <div class="notice success" th:if="${successMessage}" th:text="${successMessage}"></div>
+  <div class="notice error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+  <div class="detail-grid">
+    <section class="panel">
+      <h2>Account details</h2>
+      <dl class="detail-list">
+        <dt>Owner name</dt><dd th:text="${vendor.fullName}">Name</dd>
+        <dt>Email</dt><dd th:text="${vendor.email}">Email</dd>
+        <dt>Mobile</dt><dd th:text="${#strings.isEmpty(vendor.mobile) ? 'Not provided' : vendor.mobile}">Mobile</dd>
+        <dt>Registered</dt><dd th:text="${vendor.createdAt}">Date</dd>
+        <dt>Current status</dt><dd><span class="status-pill" th:classappend="${vendor.vendorStatus.name().toLowerCase()}" th:text="${vendor.vendorStatus}">PENDING</span></dd>
+      </dl>
+    </section>
+    <section class="panel">
+      <h2>Business profile</h2>
+      <div th:if="${profile != null}">
+        <dl class="detail-list">
+          <dt>Business name</dt><dd th:text="${profile.businessName}">Shop</dd>
+          <dt>Description</dt><dd th:text="${#strings.isEmpty(profile.businessDescription) ? 'Not provided' : profile.businessDescription}">Description</dd>
+          <dt>Address</dt><dd th:text="${profile.addressLine}">Address</dd>
+          <dt>City</dt><dd th:text="${profile.city}">City</dd>
+          <dt>State</dt><dd th:text="${profile.state}">State</dd>
+          <dt>PIN code</dt><dd th:text="${profile.pinCode}">PIN</dd>
+        </dl>
+      </div>
+      <p class="muted" th:if="${profile == null}">No separate business profile was found. This can occur for vendor accounts created before Phase 2.</p>
+    </section>
+  </div>
+
+  <section class="panel">
+    <h2>Admin actions</h2>
+    <div class="action-grid">
+      <form th:if="${vendor.vendorStatus.name() == 'PENDING' or vendor.vendorStatus.name() == 'REJECTED'}" th:action="@{/admin/vendors/{id}/approve(id=${vendor.id})}" method="post">
+        <label class="field">Approval note (optional)<input name="reason" maxlength="300" placeholder="Optional internal note"></label>
+        <button class="btn primary" type="submit">Approve vendor</button>
+      </form>
+      <form th:if="${vendor.vendorStatus.name() == 'PENDING'}" th:action="@{/admin/vendors/{id}/reject(id=${vendor.id})}" method="post">
+        <label class="field">Reason for rejection<input name="reason" required maxlength="500" placeholder="Explain why the application is rejected"></label>
+        <button class="btn danger" type="submit">Reject application</button>
+      </form>
+      <form th:if="${vendor.vendorStatus.name() == 'APPROVED'}" th:action="@{/admin/vendors/{id}/suspend(id=${vendor.id})}" method="post">
+        <label class="field">Reason for suspension<input name="reason" required maxlength="500" placeholder="Reason is required"></label>
+        <button class="btn danger" type="submit">Suspend vendor</button>
+      </form>
+      <form th:if="${vendor.vendorStatus.name() == 'SUSPENDED'}" th:action="@{/admin/vendors/{id}/reactivate(id=${vendor.id})}" method="post">
+        <label class="field">Reactivation note (optional)<input name="reason" maxlength="300" placeholder="Optional note"></label>
+        <button class="btn primary" type="submit">Reactivate vendor</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Approval history</h2>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Date</th><th>Previous status</th><th>New status</th><th>Admin</th><th>Reason / note</th></tr></thead>
+        <tbody>
+          <tr th:each="event : ${history}">
+            <td th:text="${event.createdAt}">Date</td>
+            <td th:text="${event.fromStatus}">Previous</td>
+            <td th:text="${event.toStatus}">New</td>
+            <td th:text="${event.reviewedBy}">Admin</td>
+            <td th:text="${#strings.isEmpty(event.reason) ? '—' : event.reason}">Reason</td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(history)}"><td colspan="5" class="empty-state">No review actions recorded yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body></html>

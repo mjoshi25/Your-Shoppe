@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Product moderation | ASMJ Marketplace</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body><header th:replace="~{fragments/layout :: header}"></header>
+<main class="dashboard-wrap">
+  <div class="eyebrow">MARKETPLACE ADMIN</div><h1>Product moderation</h1>
+  <p class="muted">Inspect product photos, categories, vendor details and fulfilment before approving or rejecting a listing.</p>
+  <div class="notice success" th:if="${successMessage}" th:text="${successMessage}"></div>
+  <div class="panel empty-state" th:if="${#lists.isEmpty(products)}"><h2>No products submitted</h2><p>Vendor product submissions will appear here.</p></div>
+  <section class="moderation-list" th:unless="${#lists.isEmpty(products)}">
+    <article class="moderation-card" th:each="p : ${products}">
+      <div class="moderation-image">
+        <img th:if="${p.imageUrl != null}" th:src="${p.imageUrl}" th:alt="${p.name}">
+        <div class="image-placeholder" th:if="${p.imageUrl == null}">No image</div>
+      </div>
+      <div class="moderation-content">
+        <div class="moderation-title"><h2 th:text="${p.name}">Product name</h2><span class="status-pill" th:classappend="${#strings.toLowerCase(p.status)}" th:text="${p.status}">PENDING</span></div>
+        <p class="muted" th:text="${p.description}">Description</p>
+        <div class="moderation-facts">
+          <span><b>Vendor</b><span th:text="${p.vendorName}">Vendor</span></span>
+          <span><b>Category</b><span th:text="${p.categoryName != null ? p.categoryName : 'Not assigned'}">Category</span></span>
+          <span><b>Subcategory</b><span th:text="${p.subcategoryName != null ? p.subcategoryName : 'Not assigned'}">Subcategory</span></span>
+          <span><b>Price</b><span th:text="${'₹' + #numbers.formatDecimal(p.price,1,2)}">₹0</span></span>
+          <span><b>Stock</b><span th:text="${p.stockQuantity}">0</span></span>
+          <span><b>Fulfilment</b><span><span th:if="${p.homeDelivery}">Home Delivery</span><span th:if="${p.homeDelivery and p.pickupFromShop}"> · </span><span th:if="${p.pickupFromShop}">Pickup from Shop</span></span></span>
+        </div>
+        <div class="inline-actions">
+          <form th:if="${p.status != T(com.asmj.marketplace.product.ProductStatus).ACTIVE}" th:action="@{/admin/products/{id}/approve(id=${p.id})}" method="post"><button class="btn primary small-btn" type="submit">Approve</button></form>
+          <form th:if="${p.status != T(com.asmj.marketplace.product.ProductStatus).REJECTED}" th:action="@{/admin/products/{id}/reject(id=${p.id})}" method="post"><button class="btn danger small-btn" type="submit">Reject</button></form>
+        </div>
+      </div>
+    </article>
+  </section>
+</main></body></html>

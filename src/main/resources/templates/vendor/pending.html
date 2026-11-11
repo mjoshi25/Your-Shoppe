@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vendor application | ASMJ Marketplace</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="dashboard-wrap">
+  <div class="eyebrow">Vendor account</div>
+  <div class="notice" th:if="${vendorStatus.name() == 'PENDING'}"><strong>Application pending review.</strong> Your vendor application is awaiting administrator approval.</div>
+  <div class="notice error" th:if="${vendorStatus.name() == 'REJECTED'}"><strong>Application not approved.</strong> Please contact marketplace support if you need clarification about the decision.</div>
+  <div class="notice error" th:if="${vendorStatus.name() == 'SUSPENDED'}"><strong>Vendor account suspended.</strong> Selling access is currently disabled. Please contact marketplace administration.</div>
+  <h1>Vendor application status</h1>
+  <p class="muted">Current status: <strong th:text="${vendorStatus}">PENDING</strong></p>
+  <p class="muted">You can sign in and contact marketplace administration, but product publishing and order acceptance are unavailable until your vendor account is approved and active.</p>
+  <form th:action="@{/logout}" method="post"><button class="btn secondary" type="submit">Sign out</button></form>
+</main>
+</body></html>

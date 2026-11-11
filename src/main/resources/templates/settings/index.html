@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Account settings | ASMJ Marketplace</title><link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="dashboard-wrap settings-wrap">
+  <div class="eyebrow">ACCOUNT</div><h1>Settings</h1>
+  <p class="muted" th:text="${'Manage your ' + roleLabel + ' profile, photo and security preferences.'}">Manage your account.</p>
+  <div th:if="${successMessage}" class="notice success" th:text="${successMessage}"></div>
+  <div th:if="${errorMessage}" class="notice error" th:text="${errorMessage}"></div>
+
+  <section class="panel settings-profile-card">
+    <div class="settings-avatar">
+      <img th:if="${currentUser.profileImageUrl != null and !#strings.isEmpty(currentUser.profileImageUrl)}" th:src="${currentUser.profileImageUrl}" alt="Profile photo">
+      <span th:unless="${currentUser.profileImageUrl != null and !#strings.isEmpty(currentUser.profileImageUrl)}" th:text="${#strings.substring(currentUser.fullName,0,1).toUpperCase()}">U</span>
+    </div>
+    <div><h2 th:text="${currentUser.fullName}">User</h2><p class="muted" th:text="${currentUser.email}">user@example.com</p><span class="status-pill" th:text="${roleLabel}">Customer</span></div>
+  </section>
+
+  <section class="panel">
+    <h2>Profile information</h2>
+    <form th:action="@{/settings/profile}" method="post" enctype="multipart/form-data" class="settings-form">
+      <label class="field">Full name<input name="fullName" required minlength="2" maxlength="100" th:value="${currentUser.fullName}"></label>
+      <label class="field">Email address<input th:value="${currentUser.email}" readonly><small>Email address changes are managed separately for account security.</small></label>
+      <label class="field">Mobile number<input name="mobile" maxlength="20" th:value="${currentUser.mobile}" placeholder="Mobile number"></label>
+      <label class="field">Profile photo<input type="file" name="profilePhoto" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WEBP · maximum 5 MB</small></label><label class="settings-check"><input type="checkbox" name="removeProfilePhoto" value="true"> Remove my current profile photo</label>
+
+      <div th:if="${currentUser.role.name() == 'ROLE_CUSTOMER'}" class="settings-subsection">
+        <h3>Delivery address</h3>
+        <label class="field">Address<input name="addressLine" maxlength="250" th:value="${currentUser.addressLine}"></label>
+        <div class="form-grid">
+          <label class="field">City<input name="city" maxlength="80" th:value="${currentUser.city}"></label>
+          <label class="field">State<input name="state" maxlength="80" th:value="${currentUser.state}"></label>
+          <label class="field">PIN code<input name="pinCode" maxlength="10" th:value="${currentUser.pinCode}"></label>
+        </div>
+      </div>
+
+      <div th:if="${currentUser.role.name() == 'ROLE_VENDOR'}" class="settings-subsection">
+        <h3>Business information</h3>
+        <label class="field">Business name<input name="businessName" maxlength="120" th:value="${vendorProfile.businessName}"></label>
+        <label class="field">Business description<textarea name="businessDescription" rows="3" maxlength="1000" th:text="${vendorProfile.businessDescription}"></textarea></label>
+        <label class="field">Business address<input name="businessAddress" maxlength="250" th:value="${vendorProfile.addressLine}"></label>
+        <div class="form-grid">
+          <label class="field">City<input name="businessCity" maxlength="80" th:value="${vendorProfile.city}"></label>
+          <label class="field">State<input name="businessState" maxlength="80" th:value="${vendorProfile.state}"></label>
+          <label class="field">PIN code<input name="businessPinCode" maxlength="10" th:value="${vendorProfile.pinCode}"></label>
+        </div>
+        <p class="muted tiny">Delivery charges and fulfilment options remain available under <a th:href="@{/vendor/settings/fulfilment}">Fulfilment settings</a>.</p>
+      </div>
+
+      <input type="hidden" name="emailNotifications" value="false"><label class="settings-check"><input type="checkbox" name="emailNotifications" value="true" th:checked="${currentUser.emailNotifications}"> Receive account-related email notifications (where email delivery is configured)</label>
+      <button class="btn primary" type="submit">Save profile settings</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Change password</h2>
+    <form th:action="@{/settings/password}" method="post" class="settings-form">
+      <label class="field">Current password<input type="password" name="currentPassword" required autocomplete="current-password"></label>
+      <label class="field">New password<input type="password" name="newPassword" required minlength="8" maxlength="72" autocomplete="new-password"></label>
+      <label class="field">Confirm new password<input type="password" name="confirmPassword" required minlength="8" maxlength="72" autocomplete="new-password"></label>
+      <button class="btn secondary" type="submit">Update password</button>
+    </form>
+  </section>
+</main>
+</body></html>

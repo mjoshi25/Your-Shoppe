@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vendor management | ASMJ Marketplace</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="dashboard-wrap">
+  <div class="page-heading"><div><div class="eyebrow">Administration</div><h1>Vendor management</h1><p class="muted">Review applications and manage vendor account status.</p></div><a class="btn secondary" th:href="@{/admin/dashboard}">Back to dashboard</a></div>
+  <div class="metric-grid compact">
+    <div class="metric-card"><span>Total vendors</span><strong th:text="${totalCount}">0</strong></div>
+    <div class="metric-card"><span>Pending</span><strong th:text="${pendingCount}">0</strong></div>
+    <div class="metric-card"><span>Approved</span><strong th:text="${approvedCount}">0</strong></div>
+    <div class="metric-card"><span>Rejected</span><strong th:text="${rejectedCount}">0</strong></div>
+    <div class="metric-card"><span>Suspended</span><strong th:text="${suspendedCount}">0</strong></div>
+  </div>
+  <section class="panel">
+    <form class="filter-form" method="get" th:action="@{/admin/vendors}">
+      <label class="field">Search<input type="search" name="q" th:value="${query}" placeholder="Name, email or mobile"></label>
+      <label class="field">Status
+        <select name="status">
+          <option value="ALL" th:selected="${selectedStatus == 'ALL'}">All statuses</option>
+          <option value="PENDING" th:selected="${selectedStatus == 'PENDING'}">Pending</option>
+          <option value="APPROVED" th:selected="${selectedStatus == 'APPROVED'}">Approved</option>
+          <option value="REJECTED" th:selected="${selectedStatus == 'REJECTED'}">Rejected</option>
+          <option value="SUSPENDED" th:selected="${selectedStatus == 'SUSPENDED'}">Suspended</option>
+        </select>
+      </label>
+      <button class="btn primary" type="submit">Apply filters</button>
+    </form>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Vendor</th><th>Contact</th><th>Registered</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr th:each="vendor : ${vendors}">
+            <td><strong th:text="${vendor.fullName}">Owner</strong><small th:text="${vendor.email}">email</small></td>
+            <td th:text="${#strings.isEmpty(vendor.mobile) ? '—' : vendor.mobile}">Mobile</td>
+            <td th:text="${vendor.createdAt}">Date</td>
+            <td><span class="status-pill" th:classappend="${vendor.vendorStatus.name().toLowerCase()}" th:text="${vendor.vendorStatus}">PENDING</span></td>
+            <td><a class="text-link" th:href="@{/admin/vendors/{id}(id=${vendor.id})}">View application</a></td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(vendors)}"><td colspan="5" class="empty-state">No vendor accounts match these filters.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body></html>

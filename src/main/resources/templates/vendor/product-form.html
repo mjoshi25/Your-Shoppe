@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${product.id == null ? 'Add product' : 'Edit product'} + ' | ASMJ Marketplace'">Product | ASMJ Marketplace</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body th:attr="data-selected-subcategory=${product.subcategoryName}"><header th:replace="~{fragments/layout :: header}"></header>
+<main class="dashboard-wrap"><div class="eyebrow">VENDOR CENTRE</div><h1 th:text="${product.id == null ? 'Add a product' : 'Edit product'}">Add a product</h1>
+<p class="muted">Add clear product information and a good-quality photo. Choose the matching category and subcategory.</p>
+<div class="notice error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+<section class="panel form-panel">
+<form th:action="${product.id == null ? '/vendor/products' : '/vendor/products/' + product.id + '/edit'}" method="post" enctype="multipart/form-data">
+<label class="field">Product name<input name="name" required minlength="2" maxlength="120" placeholder="e.g. Handcrafted cotton bag" th:value="${product.name}"></label>
+<label class="field">Description<textarea name="description" rows="4" maxlength="1500" placeholder="Describe the product, size, material or other useful details" th:text="${product.description}"></textarea></label>
+<div class="form-grid">
+<label class="field">Category<select id="categoryId" name="categoryId" required><option value="">Choose category</option><option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}" th:selected="${product.categoryId == c.id}"></option></select></label>
+<label class="field">Subcategory<select id="subcategoryName" name="subcategoryName" required disabled><option value="">Select a category first</option></select></label>
+<label class="field">Price (INR)<input type="number" name="price" required min="0.01" step="0.01" placeholder="499.00" th:value="${product.price}"></label>
+<label class="field">Available stock<input type="number" name="stockQuantity" required min="0" step="1" th:value="${product.stockQuantity == null ? 1 : product.stockQuantity}"></label>
+</div>
+<div class="notice">Fulfilment available to customers: <b th:if="${vendorProfile.homeDelivery}">Home Delivery</b><span th:if="${vendorProfile.homeDelivery and vendorProfile.pickupFromShop}"> · </span><b th:if="${vendorProfile.pickupFromShop}">Pickup from Shop</b>. <a th:href="@{/vendor/settings/fulfilment}">Change settings</a></div>
+<div class="notice" th:if="${product.imageUrl != null}"><img th:src="${product.imageUrl}" alt="Current product image" style="max-width:120px;max-height:100px;object-fit:contain"><p>Current image. Select a new file only to replace it.</p></div><label class="field">Product image (JPG, PNG or WEBP; max 5 MB)<input type="file" name="image" accept="image/jpeg,image/png,image/webp" th:required="${product.id == null}"></label>
+<div class="actions"><button class="btn primary" type="submit"><span th:text="${product.id == null ? 'Save product' : 'Update product'}">Save product</span></button><a class="btn secondary" th:href="@{/vendor/products}">Cancel</a></div>
+</form></section></main>
+<script>
+const category=document.getElementById('categoryId');
+const subcategory=document.getElementById('subcategoryName');
+async function loadSubcategories(selectedValue) {
+  subcategory.innerHTML='<option value="">Loading subcategories…</option>'; subcategory.disabled=true;
+  if(!category.value){subcategory.innerHTML='<option value="">Select a category first</option>';return;}
+  try {
+    const response=await fetch('/api/categories/'+encodeURIComponent(category.value)+'/subcategories');
+    if(!response.ok) throw new Error('load failed');
+    const values=await response.json(); subcategory.innerHTML='<option value="">Choose subcategory</option>';
+    values.forEach(value=>{const option=document.createElement('option');option.value=value;option.textContent=value;subcategory.appendChild(option);});
+    if(values.length===0){subcategory.innerHTML='<option value="">No active subcategories</option>';return;}
+    if(selectedValue) subcategory.value=selectedValue; subcategory.disabled=false;
+  } catch(e) { subcategory.innerHTML='<option value="">Unable to load — try again</option>'; }
+}
+category.addEventListener('change',()=>loadSubcategories(''));
+if(category.value) loadSubcategories(document.body.dataset.selectedSubcategory || '');
+</script></body></html>

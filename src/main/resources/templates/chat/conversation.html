@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product enquiry | ASMJ Marketplace</title><link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="dashboard-wrap chat-wrap">
+  <a th:href="@{/products}" class="back-link">← Explore products</a>
+  <section class="panel chat-product">
+    <img th:if="${conversation.productImageUrl != null}" th:src="${conversation.productImageUrl}" alt="Product">
+    <div><div class="eyebrow">PRODUCT ENQUIRY</div><h1 th:text="${conversation.productName}">Product</h1><p class="muted" th:text="${'Vendor: ' + conversation.vendorName}">Vendor</p><p class="muted" th:text="${'Buyer: ' + conversation.buyerName + (conversation.guest?' · Guest buyer':'')}">Buyer</p><small th:if="${conversation.guest}" th:text="${'Guest contact: ' + conversation.buyerMobile}">Contact</small></div>
+  </section>
+  <section class="panel chat-thread">
+    <div class="chat-live-status"><span class="live-dot"></span><span id="chat-live-label">Live updates enabled</span><small>New replies appear automatically</small></div>
+    <div id="chat-messages" class="chat-messages" th:attr="data-messages-url=@{/chat/{id}/messages(id=${conversation.id})}">
+      <article class="chat-message" th:each="m : ${conversation.messages}" th:classappend="${m.senderType == 'BUYER'?'from-buyer':'from-other'}">
+        <div class="chat-message-meta"><strong th:text="${m.senderName}">Name</strong><span th:text="${m.senderType}">BUYER</span></div>
+        <p th:if="${!#strings.isEmpty(m.body)}" th:text="${m.body}">Message</p>
+        <div class="chat-attachments" th:if="${!#lists.isEmpty(m.attachments)}"><a th:each="a : ${m.attachments}" th:href="${a.fileUrl}" target="_blank" rel="noopener" th:text="${a.fileName}">Attachment</a></div>
+        <small th:text="${m.sentAt}">Date</small>
+      </article>
+      <p class="muted" th:if="${#lists.isEmpty(conversation.messages)}">No messages yet. Start the conversation below.</p>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="chat-compose" th:action="@{/chat/{id}/message(id=${conversation.id})}">
+      <textarea name="message" maxlength="2000" rows="3" placeholder="Write your reply or attach a file..."></textarea>
+      <label>Attachment (JPG, PNG, WEBP, PDF, DOC/DOCX · max 8 MB)<input type="file" name="attachment" accept="image/jpeg,image/png,image/webp,application/pdf,text/plain,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></label>
+      <button class="btn primary" type="submit">Send message</button>
+    </form>
+  </section>
+</main>
+<script>
+(() => {
+  const box = document.getElementById('chat-messages');
+  if (!box) return;
+  const url = box.dataset.messagesUrl;
+  let count = box.querySelectorAll('.chat-message').length;
+  let busy = false;
+  const nearBottom = () => box.scrollHeight - box.scrollTop - box.clientHeight < 120;
+  const render = (messages) => {
+    const shouldScroll = nearBottom();
+    box.replaceChildren();
+    messages.forEach(message => {
+      const article = document.createElement('article');
+      article.className = 'chat-message ' + (message.senderType === 'BUYER' ? 'from-buyer' : 'from-other');
+      const meta = document.createElement('div'); meta.className = 'chat-message-meta';
+      const name = document.createElement('strong'); name.textContent = message.senderName || 'Marketplace user';
+      const type = document.createElement('span'); type.textContent = message.senderType || '';
+      meta.append(name, type); article.append(meta);
+      if (message.body) { const body = document.createElement('p'); body.textContent = message.body; article.append(body); }
+      if (Array.isArray(message.attachments) && message.attachments.length) {
+        const attachments = document.createElement('div'); attachments.className = 'chat-attachments';
+        message.attachments.forEach(file => { const a = document.createElement('a'); a.href = file.fileUrl; a.target = '_blank'; a.rel = 'noopener'; a.textContent = file.fileName || 'Attachment'; attachments.append(a); });
+        article.append(attachments);
+      }
+      const time = document.createElement('small');
+      if (message.sentAt) time.textContent = new Date(message.sentAt).toLocaleString();
+      article.append(time); box.append(article);
+    });
+    if (shouldScroll) box.scrollTop = box.scrollHeight;
+  };
+  const refresh = async () => {
+    if (busy || document.hidden) return;
+    busy = true;
+    try {
+      const response = await fetch(url, { headers: { 'Accept': 'application/json' }, cache: 'no-store', credentials: 'same-origin' });
+      if (response.status === 403 || response.status === 401) { document.getElementById('chat-live-label').textContent = 'Please sign in again to continue'; return; }
+      if (!response.ok) throw new Error('refresh failed');
+      const messages = await response.json();
+      if (messages.length !== count) { render(messages); count = messages.length; }
+      document.getElementById('chat-live-label').textContent = 'Live updates enabled';
+    } catch (e) { document.getElementById('chat-live-label').textContent = 'Reconnecting to chat…'; }
+    finally { busy = false; }
+  };
+  box.scrollTop = box.scrollHeight;
+  window.setInterval(refresh, 4000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+})();
+</script>
+</body></html>

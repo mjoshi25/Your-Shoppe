@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<header class="topbar" th:fragment="header">
+  <a class="brand" th:href="@{/}"><span class="brand-mark">A</span> ASMJ <span>Marketplace</span></a>
+  <nav class="main-nav" aria-label="Main navigation">
+    <a sec:authorize="isAuthenticated()" class="nav-profile" th:href="@{/settings}"><img th:if="${signedInUser != null and signedInUser.profileImageUrl != null and !#strings.isEmpty(signedInUser.profileImageUrl)}" th:src="${signedInUser.profileImageUrl}" alt="Profile"><span th:unless="${signedInUser != null and signedInUser.profileImageUrl != null and !#strings.isEmpty(signedInUser.profileImageUrl)}" class="nav-avatar" th:text="${signedInUser != null and signedInUser.fullName != null and !#strings.isEmpty(signedInUser.fullName) ? #strings.substring(signedInUser.fullName,0,1).toUpperCase() : 'U'}">U</span><span th:text="${signedInUser != null and signedInUser.fullName != null ? signedInUser.fullName : 'My account'}">My account</span></a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/settings}">Settings</a>
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/products}">Explore products</a>
+    <a th:href="@{/cart}">Cart</a>
+    <a sec:authorize="isAnonymous()" th:href="@{/register}">Join</a>
+    <a sec:authorize="isAnonymous()" th:href="@{/guest-enquiries}">My enquiries</a>
+    <a sec:authorize="isAnonymous()" class="nav-login" th:href="@{/login}">Sign in</a>
+    <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/customer/dashboard}">My dashboard</a>
+    <a sec:authorize="hasRole('VENDOR')" th:href="@{/dashboard}">My dashboard</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}">Admin dashboard</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/vendors}">Manage vendors</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/products}">Products</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/categories}">Categories</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/enquiries}">Enquiries</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/orders}">Orders</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/commissions}">Commissions</a>
+    <a sec:authorize="hasRole('VENDOR')" th:href="@{/vendor/products}">My products</a>
+    <a sec:authorize="hasRole('VENDOR')" th:href="@{/vendor/enquiries}">Enquiries</a>
+    <a sec:authorize="hasRole('VENDOR')" th:href="@{/vendor/orders}">Orders</a>
+    <a sec:authorize="hasRole('VENDOR')" th:href="@{/vendor/commissions}">Commission statement</a>
+    <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/my-enquiries}">My enquiries</a>
+    <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/customer/orders}">My orders</a>
+    <form sec:authorize="isAuthenticated()" class="nav-logout" th:action="@{/logout}" method="post"><button type="submit">Sign out</button></form>
+  </nav>
+</header>
+</body>
+</html>

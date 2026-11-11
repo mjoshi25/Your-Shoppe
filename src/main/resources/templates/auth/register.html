@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14213d">
+  <title>Create account | ASMJ Marketplace</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="auth-page">
+<a class="brand auth-brand" th:href="@{/}">ASMJ <span>Marketplace</span></a>
+<main class="auth-card wide">
+  <div class="eyebrow">Join the marketplace</div><h1>Create your account</h1>
+  <p class="muted">Enter your personal details. If applying as a vendor, also complete the shop details below.</p>
+  <div class="notice error" role="alert" th:if="${registrationError}" th:text="${registrationError}"></div>
+  <form id="registrationForm" th:object="${form}" method="post">
+    <h2 class="form-section-title">Account details</h2>
+    <div class="form-grid">
+      <label class="field">Full name<input th:field="*{fullName}" required maxlength="100" autocomplete="name"></label>
+      <label class="field">Mobile number<input type="tel" th:field="*{mobile}" maxlength="20" autocomplete="tel"></label>
+      <label class="field full-field">Email address<input type="email" th:field="*{email}" required maxlength="160" autocomplete="email"></label>
+      <label class="field full-field">Password<input type="password" th:field="*{password}" required minlength="8" maxlength="72" autocomplete="new-password"></label>
+    </div>
+    <div class="vendor-fields">
+      <h2 class="form-section-title">Shop / business details <span class="optional-tag">Vendor applicants</span></h2>
+      <div class="form-grid">
+        <label class="field full-field">Shop / business name<input th:field="*{businessName}" maxlength="120"></label>
+        <label class="field full-field">Business description<textarea th:field="*{businessDescription}" rows="3" maxlength="500"></textarea></label>
+        <label class="field full-field">Address<input th:field="*{addressLine}" maxlength="200"></label>
+        <label class="field">City<input th:field="*{city}" maxlength="80"></label>
+        <label class="field">State<input th:field="*{state}" maxlength="80"></label>
+        <label class="field">PIN code<input th:field="*{pinCode}" maxlength="10" inputmode="numeric"></label>
+      </div>
+      <p class="muted tiny">These business details are required only when you select Apply as vendor.</p>
+    </div>
+    <div class="registration-actions">
+      <button class="btn primary" type="submit" th:formaction="@{/register/customer}">Register as customer</button>
+      <button class="btn secondary" type="submit" th:formaction="@{/register/vendor}">Apply as vendor</button>
+    </div>
+    <p class="muted tiny">Vendor applications start in Pending status. Admin approval is required before products can be listed or orders accepted.</p>
+  </form>
+  <p class="form-foot">Already registered? <a th:href="@{/login}">Sign in</a></p>
+</main>
+</body></html>
