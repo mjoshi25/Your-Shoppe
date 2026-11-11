@@ -1,0 +1,13 @@
+package com.asmj.marketplace.product;
+
+import java.time.Instant;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection="product_reviews")
+public class ProductReview {
+ public enum ReviewStatus { PENDING, APPROVED, REJECTED }
+ @Id private String id; @Indexed private String productId; @Indexed private String vendorUserId; @Indexed private String customerUserId; @Indexed private String orderId; private String orderNumber; private String productName; private String customerName; private int rating; private String title; private String comment; private String imageUrl; private String imageFileName; private ReviewStatus status=ReviewStatus.PENDING; private String vendorReply; private Instant vendorReplyAt; private Instant createdAt=Instant.now(); private Instant updatedAt=Instant.now();
+ public String getId(){return id;} public void setId(String v){id=v;} public String getProductId(){return productId;} public void setProductId(String v){productId=v;} public String getVendorUserId(){return vendorUserId;} public void setVendorUserId(String v){vendorUserId=v;} public String getCustomerUserId(){return customerUserId;} public void setCustomerUserId(String v){customerUserId=v;} public String getOrderId(){return orderId;} public void setOrderId(String v){orderId=v;} public String getOrderNumber(){return orderNumber;} public void setOrderNumber(String v){orderNumber=v;} public String getProductName(){return productName;} public void setProductName(String v){productName=v;} public String getCustomerName(){return customerName;} public void setCustomerName(String v){customerName=v;} public int getRating(){return rating;} public void setRating(int v){rating=v;} public String getTitle(){return title;} public void setTitle(String v){title=v;} public String getComment(){return comment;} public void setComment(String v){comment=v;} public String getImageUrl(){return imageUrl;} public void setImageUrl(String v){imageUrl=v;} public String getImageFileName(){return imageFileName;} public void setImageFileName(String v){imageFileName=v;} public ReviewStatus getStatus(){return status;} public void setStatus(ReviewStatus v){status=v;} public String getVendorReply(){return vendorReply;} public void setVendorReply(String v){vendorReply=v;} public Instant getVendorReplyAt(){return vendorReplyAt;} public void setVendorReplyAt(Instant v){vendorReplyAt=v;} public Instant getCreatedAt(){return createdAt;} public void setCreatedAt(Instant v){createdAt=v;} public Instant getUpdatedAt(){return updatedAt;} public void setUpdatedAt(Instant v){updatedAt=v;}
+}

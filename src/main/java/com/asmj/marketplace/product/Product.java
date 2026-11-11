@@ -12,6 +12,7 @@ public class Product {
     @Indexed private String vendorUserId;
     private String vendorName;
     private String name;
+    private java.time.Instant stockUpdatedAt = java.time.Instant.now();
     private String description;
     private String categoryId;
     private String categoryName;
@@ -28,6 +29,7 @@ public class Product {
     public String getVendorUserId(){return vendorUserId;} public void setVendorUserId(String v){vendorUserId=v;}
     public String getVendorName(){return vendorName;} public void setVendorName(String v){vendorName=v;}
     public String getName(){return name;} public void setName(String v){name=v;}
+    public java.time.Instant getStockUpdatedAt(){return stockUpdatedAt;} public void setStockUpdatedAt(java.time.Instant v){stockUpdatedAt=v;}
     public String getDescription(){return description;} public void setDescription(String v){description=v;}
     public String getCategoryId(){return categoryId;} public void setCategoryId(String v){categoryId=v;}
     public String getCategoryName(){return categoryName;} public void setCategoryName(String v){categoryName=v;}

@@ -10,7 +10,8 @@ class TemplateResourcesTest {
         String[] templates = {"chat/inbox.html", "chat/conversation.html", "vendor/orders.html",
                 "order/cart.html", "admin/categories.html", "admin/commissions.html",
                 "vendor/commissions.html", "vendor/product-form.html", "vendor/products.html",
-                "settings/index.html", "admin/vendor-detail.html", "vendor/pending.html"};
+                "settings/index.html", "admin/vendor-detail.html", "vendor/pending.html", "order/tracking.html", "order/invoice.html",
+                "vendor/inventory.html", "vendor/reviews.html", "admin/reviews.html", "product/detail.html"};
         for (String template : templates) {
             assertTrue(new ClassPathResource("templates/" + template).exists(),
                     "Missing Thymeleaf template: " + template);

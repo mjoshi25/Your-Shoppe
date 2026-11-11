@@ -301,3 +301,53 @@ See `PHASE10-CHANGELOG.md` for the vendor-admin pre-approval conversation, docum
 ## Phase 10.1 UI refinement
 
 See `PHASE10.1-UI-CHANGELOG.md` for the navigation, menu, and button styling update. This is a frontend-only refinement and retains the Phase 10 application workflows.
+
+
+## Phases 11, 12 and 13 — Order experience, vendor operations and reviews
+
+### Phase 11 — Order tracking and invoice
+- Orders retain an embedded status history with status, message, actor, role and timestamp. New orders start with a PLACED event; vendor status updates and customer/vendor cancellations are recorded. Existing orders without history remain accessible and show a legacy-history notice.
+- Customers and the owning vendor can open `/orders/{id}/track` and `/orders/{id}/invoice`. Admin can also inspect these pages. Ownership is checked server-side.
+- Invoice is a printable HTML invoice with a browser Print / Save as PDF action. No tax/GST amount is added because tax registration and tax rules have not been configured.
+- Customer cancellation is allowed while PLACED; vendor cancellation follows the existing state machine. Cancelled order quantities are returned to stock once, with stock movement records. Refunds remain manual and must be handled outside this workflow.
+
+### Phase 12 — Vendor dashboard and inventory
+- Vendor dashboard includes listing count, order count, completed and payment-verified sales, low-stock count (quantity <= 5) and recent orders.
+- `/vendor/inventory` shows product stock, low-stock alerts, manual stock adjustments and recent movement history.
+- `stock_movements` records manual adjustments, order stock reductions and cancellation restocks. Each entry stores old/new quantity, reason, vendor, product and timestamp.
+- Vendor inventory routes are protected by the approved-vendor authorization rule.
+
+### Phase 13 — Verified-buyer product reviews
+- A customer may review a product only when they own an order containing that product and the order is COMPLETED with payment status VERIFIED.
+- One review per product per order; rating 1–5, optional title/comment and optional JPG/PNG/WEBP photo (max 8 MB).
+- Reviews are stored as PENDING and do not appear publicly until admin approval. Admin moderation is available at `/admin/reviews`.
+- Vendors can view reviews for their own products and reply to approved reviews at `/vendor/reviews`.
+- Public product details are available at `/products/{id}` and display approved reviews and vendor replies.
+
+### New MongoDB collections
+- `stock_movements` — inventory audit trail.
+- `product_reviews` — buyer reviews and vendor replies.
+
+### Phase 11–13 test checklist
+1. Place an order and verify a PLACED event appears in the customer tracking timeline. Move the order through ACCEPTED, PROCESSING and READY_FOR_PICKUP / OUT_FOR_DELIVERY to COMPLETED; confirm each event and actor is recorded.
+2. Open the invoice as the customer and owning vendor. Confirm order items, quantities, totals, delivery charge, payment method/status and print/save-to-PDF. Try another user's order URL and confirm access is denied.
+3. Cancel a newly placed order as customer and as vendor where allowed. Confirm stock is restored once and a cancellation stock movement is recorded.
+4. Adjust stock from Vendor → Inventory. Confirm the product stock updates and an old/new quantity movement is recorded. Confirm products at quantity 5 or less are flagged low stock.
+5. Place an order, complete it and verify payment (COD receipt or UPI admin verification). Confirm the customer can submit one review per product/order only after both conditions are met.
+6. Try to review an order that is not completed or payment-verified; the server must reject it.
+7. Confirm new reviews are not public until admin approves them. Reject a review and verify it remains hidden.
+8. Confirm vendor can reply only to approved reviews for their own products. Confirm the reply appears on the public product detail page.
+9. Test product detail, tracking, invoice, inventory and review pages on desktop and mobile.
+
+### Deployment and operational notes
+- No new environment variables are required. Existing MongoDB Atlas and Cloudinary configuration is reused.
+- No manual MongoDB migration is required; MongoDB creates the two new collections when first written. Existing order documents without `statusHistory` are handled.
+- Invoice output is browser-printable HTML, not a server-generated PDF.
+- Stock decrement/restock is recorded by application writes; high-concurrency atomic stock reservation and multi-document transactions remain production-hardening work. Test simultaneous orders and cancellation carefully before a high-volume launch.
+- Reviews are verified-buyer only and require a completed order plus VERIFIED payment. Refund processing and review appeals are not included.
+
+Run before deployment:
+```powershell
+mvn clean test
+mvn spring-boot:run
+```
