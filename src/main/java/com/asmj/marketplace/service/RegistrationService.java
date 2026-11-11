@@ -8,6 +8,7 @@ import com.asmj.marketplace.model.VendorStatus;
 import com.asmj.marketplace.repository.UserAccountRepository;
 import com.asmj.marketplace.repository.VendorProfileRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -47,7 +48,24 @@ public class RegistrationService {
         profile.setCity(form.getCity().trim());
         profile.setState(form.getState().trim());
         profile.setPinCode(form.getPinCode().trim());
-        vendorProfiles.save(profile);
+        try {
+            VendorProfile savedProfile = vendorProfiles.save(profile);
+            if (savedProfile == null || !StringUtils.hasText(savedProfile.getId())) {
+                throw new IllegalStateException("Vendor profile was not acknowledged by the database.");
+            }
+        } catch (RuntimeException ex) {
+            // MongoDB transactions are not assumed to be enabled on Atlas free/shared clusters.
+            // Avoid leaving a vendor login without its required business profile.
+            try {
+                users.deleteById(account.getId());
+            } catch (RuntimeException cleanupError) {
+                ex.addSuppressed(cleanupError);
+            }
+            if (ex instanceof DataAccessException) {
+                throw new IllegalStateException("The vendor account could not be completed because the business profile could not be saved. Please retry.", ex);
+            }
+            throw ex;
+        }
     }
 
     private UserAccount createAccount(RegistrationForm form, Role role, VendorStatus status) {
@@ -62,7 +80,11 @@ public class RegistrationService {
         account.setPassword(encoder.encode(form.getPassword()));
         account.setRole(role);
         account.setVendorStatus(status);
-        return users.save(account);
+        UserAccount saved = users.save(account);
+        if (saved == null || !StringUtils.hasText(saved.getId())) {
+            throw new IllegalStateException("The database did not confirm account creation. Please retry.");
+        }
+        return saved;
     }
 
     private String clean(String value) {

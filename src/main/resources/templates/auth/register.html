@@ -13,12 +13,14 @@
   <p class="muted">Enter your personal details. If applying as a vendor, also complete the shop details below.</p>
   <div class="notice error" role="alert" th:if="${registrationError}" th:text="${registrationError}"></div>
   <form id="registrationForm" th:object="${form}" method="post">
+    <!-- Explicit CSRF token is required because the submit buttons use separate formaction URLs. -->
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     <h2 class="form-section-title">Account details</h2>
     <div class="form-grid">
-      <label class="field">Full name<input th:field="*{fullName}" required maxlength="100" autocomplete="name"></label>
+      <label class="field">Full name<input th:field="*{fullName}" required maxlength="100" autocomplete="name"><small class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></small></label>
       <label class="field">Mobile number<input type="tel" th:field="*{mobile}" maxlength="20" autocomplete="tel"></label>
-      <label class="field full-field">Email address<input type="email" th:field="*{email}" required maxlength="160" autocomplete="email"></label>
-      <label class="field full-field">Password<input type="password" th:field="*{password}" required minlength="8" maxlength="72" autocomplete="new-password"></label>
+      <label class="field full-field">Email address<input type="email" th:field="*{email}" required maxlength="160" autocomplete="email"><small class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small></label>
+      <label class="field full-field">Password<input type="password" th:field="*{password}" required minlength="8" maxlength="72" autocomplete="new-password"><small class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small></label>
     </div>
     <div class="vendor-fields">
       <h2 class="form-section-title">Shop / business details <span class="optional-tag">Vendor applicants</span></h2>

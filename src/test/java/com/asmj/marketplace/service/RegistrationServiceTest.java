@@ -14,6 +14,7 @@ import com.asmj.marketplace.repository.VendorProfileRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.dao.DataAccessResourceFailureException;
 
 class RegistrationServiceTest {
     private UserAccountRepository users;
@@ -26,6 +27,16 @@ class RegistrationServiceTest {
         users = mock(UserAccountRepository.class);
         profiles = mock(VendorProfileRepository.class);
         encoder = new BCryptPasswordEncoder();
+        when(users.save(any(UserAccount.class))).thenAnswer(invocation -> {
+            UserAccount saved = invocation.getArgument(0);
+            saved.setId("test-user-id");
+            return saved;
+        });
+        when(profiles.save(any(VendorProfile.class))).thenAnswer(invocation -> {
+            VendorProfile saved = invocation.getArgument(0);
+            saved.setId("test-profile-id");
+            return saved;
+        });
         service = new RegistrationService(users, profiles, encoder);
     }
 
@@ -75,6 +86,25 @@ class RegistrationServiceTest {
                 profile.getUserId().equals("vendor-123")
                 && profile.getBusinessName().equals("Test Shop")
                 && profile.getPinCode().equals("766001")));
+    }
+
+    @Test
+    void removesVendorAccountIfBusinessProfileCannotBeSaved() {
+        when(users.existsByEmailIgnoreCase("test@example.com")).thenReturn(false);
+        when(profiles.save(any(VendorProfile.class)))
+                .thenThrow(new DataAccessResourceFailureException("simulated MongoDB failure"));
+
+        assertThrows(IllegalStateException.class, () -> service.registerVendor(form()));
+        verify(users).deleteById("test-user-id");
+    }
+
+    @Test
+    void doesNotReportSuccessfulCustomerRegistrationWhenMongoSaveFails() {
+        when(users.existsByEmailIgnoreCase("test@example.com")).thenReturn(false);
+        when(users.save(any(UserAccount.class)))
+                .thenThrow(new DataAccessResourceFailureException("simulated MongoDB failure"));
+
+        assertThrows(DataAccessResourceFailureException.class, () -> service.registerCustomer(form()));
     }
 
     @Test

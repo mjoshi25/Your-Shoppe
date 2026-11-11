@@ -24,3 +24,12 @@
 ## Verification status
 - ZIP integrity and expected template/view references checked.
 - Maven compilation and JUnit tests were not executed in the generation environment because Maven is not installed there. Run `mvn clean test` before Render deployment.
+
+
+## Phase 9.1 — Registration persistence hotfix
+- Added an explicit CSRF hidden input to the registration form because the two submit buttons use separate `formaction` endpoints.
+- Added visible field-level validation feedback.
+- Registration now verifies that MongoDB returns a persisted account ID before reporting success.
+- Duplicate email index collisions and MongoDB write failures are handled explicitly and logged server-side.
+- Vendor profile save failure triggers cleanup of the just-created user document to avoid an orphaned vendor account.
+- Added regression tests for registration CSRF markup and database failure handling.

@@ -281,3 +281,14 @@ Test as customer, approved vendor and admin: personalized dashboard greeting, pr
 
 ### Render configuration
 No new infrastructure or environment variables are required beyond the existing MongoDB Atlas, admin bootstrap and Cloudinary settings. Ensure `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY` and `CLOUDINARY_API_SECRET` are configured in the Render service. Keep secrets in Render environment settings, not in source control.
+
+
+## Registration reliability hotfix (Phase 9.1)
+- Registration form now includes an explicit Spring Security CSRF token. This is important because customer and vendor submit buttons post to separate `formaction` endpoints and the form itself has no fixed `th:action`.
+- Validation messages are shown beside full name, email and password fields instead of silently returning the registration page.
+- MongoDB duplicate-key and database failures are handled with clear user-facing messages and server-side error logging; the application no longer redirects to login unless the account save returns a persisted ID.
+- Vendor registration removes the newly-created user record if the required vendor profile cannot be persisted, avoiding an orphaned vendor login.
+- Added regression tests for CSRF form markup, confirmed persistence IDs, database write failure and vendor-profile cleanup.
+
+### Registration troubleshooting
+Set `MONGODB_URI` in the runtime environment to an Atlas connection string that includes the intended database name in its path, for example `/asmj_marketplace`. Ensure the Atlas database user has read/write access to that database and the deployment host is allowed by Atlas Network Access. After registration, inspect the `users` collection in that exact database. Vendor registrations also create a matching document in `vendor_profiles`.

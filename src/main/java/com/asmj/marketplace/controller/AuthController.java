@@ -8,9 +8,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.DataAccessException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class AuthController {
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final RegistrationService registrationService;
 
     public AuthController(RegistrationService registrationService) {
@@ -44,6 +49,13 @@ public class AuthController {
         } catch (IllegalArgumentException ex) {
             model.addAttribute("registrationError", ex.getMessage());
             return "auth/register";
+        } catch (DuplicateKeyException ex) {
+            model.addAttribute("registrationError", "An account with this email already exists. Please sign in or use another email.");
+            return "auth/register";
+        } catch (DataAccessException | IllegalStateException ex) {
+            log.error("Customer registration could not be saved to MongoDB", ex);
+            model.addAttribute("registrationError", "We could not save your account to the database. Please try again. If the problem continues, contact the administrator.");
+            return "auth/register";
         }
     }
 
@@ -56,6 +68,13 @@ public class AuthController {
             return "redirect:/login?vendorPending";
         } catch (IllegalArgumentException ex) {
             model.addAttribute("registrationError", ex.getMessage());
+            return "auth/register";
+        } catch (DuplicateKeyException ex) {
+            model.addAttribute("registrationError", "An account with this email already exists. Please sign in or use another email.");
+            return "auth/register";
+        } catch (DataAccessException | IllegalStateException ex) {
+            log.error("Vendor registration could not be saved completely to MongoDB", ex);
+            model.addAttribute("registrationError", "We could not save your vendor application completely. No incomplete account should be used to sign in. Please retry or contact the administrator.");
             return "auth/register";
         }
     }
