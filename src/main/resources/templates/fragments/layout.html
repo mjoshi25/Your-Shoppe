@@ -34,6 +34,10 @@
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}">Admin dashboard</a>
             <a th:href="@{/settings}">Profile &amp; settings</a>
             <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/customer/orders}">My orders</a>
+            <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/customer/wishlist}">Wishlist</a>
+            <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/customer/recently-viewed}">Recently viewed</a>
+            <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/customer/offers}">Offers &amp; coupons</a>
+            <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/customer/alerts}">Availability alerts</a>
             <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/my-enquiries}">My enquiries</a>
             <a sec:authorize="hasRole('VENDOR')" th:href="@{/vendor/application-chat}">Admin messages</a>
             <div class="nav-dropdown-divider"></div>
@@ -63,6 +67,8 @@
             <a th:href="@{/admin/orders}">Orders</a>
             <a th:href="@{/admin/reviews}">Review moderation</a>
             <a th:href="@{/admin/commissions}">Commissions</a>
+            <a th:href="@{/admin/reports}">Reports &amp; exports</a>
+            <a th:href="@{/admin/coupons}">Coupons</a>
           </div>
         </details>
       </div>

@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/register", "/register/**",
                         "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/chat/**", "/guest-enquiries", "/cart", "/cart/**", "/error").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/checkout", "/customer/orders", "/customer/orders/**").hasRole("CUSTOMER")
+                .requestMatchers("/checkout", "/customer/**", "/coupon/apply", "/coupon/remove").hasRole("CUSTOMER")
                 .requestMatchers("/vendor/orders", "/vendor/orders/**").access((Supplier<Authentication> authentication, RequestAuthorizationContext context) -> { Authentication current=authentication.get(); if(current==null||!current.isAuthenticated()) return new AuthorizationDecision(false); UserAccount account=users.findByEmailIgnoreCase(current.getName()).orElse(null); return new AuthorizationDecision(account!=null && account.getRole()==com.asmj.marketplace.model.Role.ROLE_VENDOR && account.getVendorStatus()==VendorStatus.APPROVED); })
                 .requestMatchers("/vendor/pending", "/vendor/application-chat").hasRole("VENDOR")
                 .requestMatchers("/vendor/**").access((Supplier<Authentication> authentication,

@@ -11,7 +11,9 @@ class TemplateResourcesTest {
                 "order/cart.html", "admin/categories.html", "admin/commissions.html",
                 "vendor/commissions.html", "vendor/product-form.html", "vendor/products.html",
                 "settings/index.html", "admin/vendor-detail.html", "vendor/pending.html", "order/tracking.html", "order/invoice.html",
-                "vendor/inventory.html", "vendor/reviews.html", "admin/reviews.html", "product/detail.html"};
+                "vendor/inventory.html", "vendor/reviews.html", "admin/reviews.html", "product/detail.html",
+                "admin/reports.html", "admin/coupons.html", "customer/wishlist.html",
+                "customer/recently-viewed.html", "customer/alerts.html", "customer/offers.html"};
         for (String template : templates) {
             assertTrue(new ClassPathResource("templates/" + template).exists(),
                     "Missing Thymeleaf template: " + template);

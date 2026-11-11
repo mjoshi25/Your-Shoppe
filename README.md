@@ -351,3 +351,9 @@ Run before deployment:
 mvn clean test
 mvn spring-boot:run
 ```
+
+## Phase 14–15 additions
+See `PHASE14-15-CHANGELOG.md` for admin reports, Excel-compatible CSV export, customer wishlist/recently viewed/reorder, coupon administration and in-app stock availability alerts. Admin reports are at `/admin/reports`; coupons at `/admin/coupons`.
+
+## Phase 14–15 additions
+See `PHASE14-15-CHANGELOG.md` for admin reports, Excel-compatible CSV export, customer wishlist/recently viewed/reorder, coupon administration and in-app stock availability alerts. Admin reports are at `/admin/reports`; coupons at `/admin/coupons`.

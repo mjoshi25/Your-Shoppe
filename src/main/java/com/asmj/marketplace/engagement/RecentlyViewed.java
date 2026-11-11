@@ -1,0 +1,4 @@
+package com.asmj.marketplace.engagement;
+import java.time.Instant; import org.springframework.data.annotation.Id; import org.springframework.data.mongodb.core.index.CompoundIndex; import org.springframework.data.mongodb.core.mapping.Document;
+@Document("recently_viewed_products") @CompoundIndex(name="recent_view_user_product_uq",def="{'customerUserId':1,'productId':1}",unique=true)
+public class RecentlyViewed { @Id private String id; private String customerUserId; private String productId; private Instant viewedAt=Instant.now(); public String getId(){return id;} public void setId(String v){id=v;} public String getCustomerUserId(){return customerUserId;} public void setCustomerUserId(String v){customerUserId=v;} public String getProductId(){return productId;} public void setProductId(String v){productId=v;} public Instant getViewedAt(){return viewedAt;} public void setViewedAt(Instant v){viewedAt=v;} }
