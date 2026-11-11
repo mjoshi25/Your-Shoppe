@@ -296,3 +296,8 @@ Set `MONGODB_URI` in the runtime environment to an Atlas connection string that 
 
 ## Phase 10 — Vendor onboarding chat and button refresh
 See `PHASE10-CHANGELOG.md` for the vendor-admin pre-approval conversation, document attachment flow, security rules and test checklist. No new environment variables are required.
+
+
+## Phase 10.1 UI refinement
+
+See `PHASE10.1-UI-CHANGELOG.md` for the navigation, menu, and button styling update. This is a frontend-only refinement and retains the Phase 10 application workflows.
