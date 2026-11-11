@@ -56,6 +56,23 @@
     </div>
   </section>
 
+  <section class="panel onboarding-chat-panel">
+    <div class="onboarding-chat-heading"><div><span class="eyebrow">Direct communication</span><h2>Vendor application chat</h2><p class="muted">Ask for missing documents, request clarification, and review the vendor's replies before making an approval decision.</p></div><span class="status-pill pending">APPLICATION DISCUSSION</span></div>
+    <div class="onboarding-chat-thread" th:if="${applicationChat != null and !#lists.isEmpty(applicationChat.messages)}">
+      <article class="onboarding-chat-message" th:each="entry : ${applicationChat.messages}" th:classappend="${entry.senderType == 'ADMIN' ? 'from-admin' : 'from-vendor'}">
+        <div class="onboarding-chat-meta"><strong th:text="${entry.senderName}">Sender</strong><span th:text="${entry.senderType == 'ADMIN' ? 'ADMIN' : 'VENDOR'}">SENDER</span><time th:text="${#temporals.format(entry.sentAt, 'dd MMM yyyy, hh:mm a')}">Date</time></div>
+        <p th:if="${!#strings.isEmpty(entry.body)}" th:text="${entry.body}">Message</p>
+        <div class="chat-attachments" th:if="${!#lists.isEmpty(entry.attachments)}"><a th:each="file : ${entry.attachments}" th:href="${file.fileUrl}" target="_blank" rel="noopener" th:text="${file.fileName}">Attachment</a></div>
+      </article>
+    </div>
+    <p class="empty-state" th:if="${applicationChat == null or #lists.isEmpty(applicationChat.messages)}">No messages yet. Send a message to request documents or clarification from this vendor.</p>
+    <form class="onboarding-chat-compose" th:action="@{/admin/vendors/{id}/application-chat(id=${vendor.id})}" method="post" enctype="multipart/form-data">
+      <label class="field">Message to vendor<textarea name="message" rows="3" maxlength="2000" placeholder="For example: Please upload your business registration document and confirm your shop address."></textarea></label>
+      <label class="field">Request / attach document (optional)<input type="file" name="attachment" accept=".jpg,.jpeg,.png,.webp,.pdf,.txt,.doc,.docx"><small>JPG, PNG, WEBP, PDF, TXT, DOC or DOCX · Maximum 8 MB</small></label>
+      <button class="btn primary btn-icon" type="submit"><span>Send message</span><span aria-hidden="true">→</span></button>
+    </form>
+  </section>
+
   <section class="panel">
     <h2>Approval history</h2>
     <div class="table-scroll">

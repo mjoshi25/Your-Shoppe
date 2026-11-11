@@ -11,6 +11,22 @@
   <h1>Vendor application status</h1>
   <p class="muted">Current status: <strong th:text="${vendorStatus}">PENDING</strong></p>
   <p class="muted">You can sign in and contact marketplace administration, but product publishing and order acceptance are unavailable until your vendor account is approved and active.</p>
+  <section class="panel onboarding-chat-panel">
+    <div class="onboarding-chat-heading"><div><span class="eyebrow">Vendor support</span><h2>Chat with marketplace admin</h2><p class="muted">You can ask questions, reply to document requests and send additional business documents here, even while your application is pending.</p></div><span class="status-pill pending">DIRECT SUPPORT</span></div>
+    <div class="onboarding-chat-thread" th:if="${applicationChat != null and !#lists.isEmpty(applicationChat.messages)}">
+      <article class="onboarding-chat-message" th:each="entry : ${applicationChat.messages}" th:classappend="${entry.senderType == 'VENDOR' ? 'from-vendor' : 'from-admin'}">
+        <div class="onboarding-chat-meta"><strong th:text="${entry.senderName}">Sender</strong><span th:text="${entry.senderType == 'ADMIN' ? 'ADMIN' : 'YOU'}">SENDER</span><time th:text="${#temporals.format(entry.sentAt, 'dd MMM yyyy, hh:mm a')}">Date</time></div>
+        <p th:if="${!#strings.isEmpty(entry.body)}" th:text="${entry.body}">Message</p>
+        <div class="chat-attachments" th:if="${!#lists.isEmpty(entry.attachments)}"><a th:each="file : ${entry.attachments}" th:href="${file.fileUrl}" target="_blank" rel="noopener" th:text="${file.fileName}">Attachment</a></div>
+      </article>
+    </div>
+    <p class="empty-state" th:if="${applicationChat == null or #lists.isEmpty(applicationChat.messages)}">No messages from administration yet. You can send a message or upload documents proactively.</p>
+    <form class="onboarding-chat-compose" th:action="@{/vendor/application-chat}" method="post" enctype="multipart/form-data">
+      <label class="field">Your message<textarea name="message" rows="3" maxlength="2000" placeholder="Write your reply or ask the admin a question..."></textarea></label>
+      <label class="field">Attach supporting document (optional)<input type="file" name="attachment" accept=".jpg,.jpeg,.png,.webp,.pdf,.txt,.doc,.docx"><small>JPG, PNG, WEBP, PDF, TXT, DOC or DOCX · Maximum 8 MB</small></label>
+      <button class="btn primary btn-icon" type="submit"><span>Send reply</span><span aria-hidden="true">→</span></button>
+    </form>
+  </section>
   <form th:action="@{/logout}" method="post"><button class="btn secondary" type="submit">Sign out</button></form>
 </main>
 </body></html>

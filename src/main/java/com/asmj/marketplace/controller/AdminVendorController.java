@@ -1,6 +1,7 @@
 package com.asmj.marketplace.controller;
 
 import com.asmj.marketplace.model.VendorProfile;
+import com.asmj.marketplace.chat.VendorApplicationConversationRepository;
 import com.asmj.marketplace.model.VendorStatus;
 import com.asmj.marketplace.repository.VendorProfileRepository;
 import com.asmj.marketplace.service.VendorManagementService;
@@ -15,10 +16,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdminVendorController {
     private final VendorManagementService vendors;
     private final VendorProfileRepository profiles;
+    private final VendorApplicationConversationRepository applicationChats;
 
-    public AdminVendorController(VendorManagementService vendors, VendorProfileRepository profiles) {
+    public AdminVendorController(VendorManagementService vendors, VendorProfileRepository profiles, VendorApplicationConversationRepository applicationChats) {
         this.vendors = vendors;
         this.profiles = profiles;
+        this.applicationChats = applicationChats;
     }
 
     @GetMapping
@@ -42,6 +45,8 @@ public class AdminVendorController {
         model.addAttribute("vendor", vendor);
         model.addAttribute("profile", profile);
         model.addAttribute("history", vendors.history(id));
+        var applicationChat = applicationChats.findByVendorUserId(id).orElse(null);
+        model.addAttribute("applicationChat", applicationChat);
         return "admin/vendor-detail";
     }
 

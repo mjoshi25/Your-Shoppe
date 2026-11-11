@@ -220,3 +220,34 @@ body{color:var(--ink);background:#f7f9fc}
 .chat-messages{max-height:62vh;overflow-y:auto;overscroll-behavior:contain;padding:5px 4px 12px;scroll-behavior:smooth}
 @media(max-width:640px){.nav-profile{max-width:140px}.nav-profile img,.nav-avatar{width:26px;height:26px;min-width:26px}.settings-profile-card{align-items:flex-start;padding:16px}.settings-avatar{width:68px;height:68px;flex-basis:68px;font-size:24px}.settings-wrap{margin-top:28px}.chat-live-status{flex-wrap:wrap}.chat-live-status small{width:100%;margin-left:17px}.chat-messages{max-height:58vh}}
 .unread-pill{display:inline-flex;align-items:center;border-radius:99px;background:#fff0d9;color:#8a4b08;padding:6px 10px;font-size:.75rem;font-weight:800;white-space:nowrap}
+
+
+/* Phase 10: consistent marketplace action system */
+.btn{position:relative;gap:9px;min-height:44px;padding:11px 19px;border:1px solid transparent;border-radius:11px;font-weight:750;letter-spacing:.01em;box-shadow:0 2px 5px rgba(25,45,80,.07);transition:transform .16s ease,box-shadow .16s ease,background .16s ease,border-color .16s ease}
+.btn:focus-visible{outline:3px solid rgba(65,105,190,.28);outline-offset:2px}
+.btn:active{transform:translateY(0) scale(.985);box-shadow:0 1px 3px rgba(25,45,80,.1)}
+.btn.primary{background:linear-gradient(135deg,#3157a4,#426fc5);color:#fff;border-color:#3157a4;box-shadow:0 5px 13px rgba(49,87,164,.2)}
+.btn.primary:hover{background:linear-gradient(135deg,#294b91,#365fae);box-shadow:0 8px 19px rgba(49,87,164,.26)}
+.btn.secondary{background:#f1f5fb;color:#29477e;border-color:#dce5f3}
+.btn.secondary:hover{background:#e5edf9;border-color:#cbd9ef}
+.btn.danger,.btn-danger{background:linear-gradient(135deg,#b8323c,#d34a54);color:#fff;border-color:#b8323c;box-shadow:0 5px 13px rgba(184,50,60,.16)}
+.btn.danger:hover,.btn-danger:hover{background:#a92832;box-shadow:0 8px 18px rgba(184,50,60,.2)}
+.btn.success{background:linear-gradient(135deg,#16804b,#1b9a5b);color:#fff;border-color:#16804b}
+.btn:disabled,.btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+button:not(.btn){font:inherit}
+.onboarding-chat-panel{border-color:#dbe5f4;box-shadow:0 10px 28px rgba(33,58,102,.055)}
+.onboarding-chat-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding-bottom:14px;border-bottom:1px solid #edf1f7}
+.onboarding-chat-heading h2{margin:7px 0 5px}.onboarding-chat-heading p{margin:0;max-width:660px}
+.onboarding-chat-thread{display:grid;gap:12px;max-height:520px;overflow-y:auto;padding:18px 3px}
+.onboarding-chat-message{max-width:min(780px,94%);padding:13px 15px;border:1px solid #e5eaf2;border-radius:14px;background:#f7f9fc;overflow-wrap:anywhere}
+.onboarding-chat-message.from-admin{margin-right:auto;border-top-left-radius:4px;background:#eef4ff;border-color:#dce7fa}
+.onboarding-chat-message.from-vendor{margin-left:auto;border-top-right-radius:4px;background:#f0faf4;border-color:#d9eee1}
+.onboarding-chat-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:#64748b;font-size:11px}
+.onboarding-chat-meta strong{color:#26364f;font-size:13px}.onboarding-chat-meta span{font-size:9px;font-weight:850;letter-spacing:.6px;border-radius:30px;background:#fff;padding:4px 7px}.onboarding-chat-meta time{margin-left:auto}
+.onboarding-chat-message p{white-space:pre-wrap;line-height:1.6;color:#27364d;font-size:13px;margin:10px 0 2px}
+.onboarding-chat-compose{display:grid;gap:9px;padding-top:17px;border-top:1px solid #edf1f7}
+.onboarding-chat-compose textarea{width:100%;min-height:88px;resize:vertical;border:1px solid #d8e1ee;border-radius:11px;padding:12px;font:inherit}
+.onboarding-chat-compose input[type=file]{display:block;width:100%;margin-top:7px;font-size:13px}
+.onboarding-chat-compose small{display:block;margin-top:6px;color:#718096;font-weight:400}
+.onboarding-chat-compose .btn{justify-self:start;min-width:150px}
+@media(max-width:640px){.btn{min-height:46px;padding:12px 16px}.onboarding-chat-heading{flex-direction:column;gap:8px}.onboarding-chat-message{max-width:100%;padding:12px}.onboarding-chat-meta time{width:100%;margin-left:0}.onboarding-chat-compose .btn{width:100%}.action-grid .btn{width:100%}}

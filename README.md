@@ -292,3 +292,7 @@ No new infrastructure or environment variables are required beyond the existing 
 
 ### Registration troubleshooting
 Set `MONGODB_URI` in the runtime environment to an Atlas connection string that includes the intended database name in its path, for example `/asmj_marketplace`. Ensure the Atlas database user has read/write access to that database and the deployment host is allowed by Atlas Network Access. After registration, inspect the `users` collection in that exact database. Vendor registrations also create a matching document in `vendor_profiles`.
+
+
+## Phase 10 — Vendor onboarding chat and button refresh
+See `PHASE10-CHANGELOG.md` for the vendor-admin pre-approval conversation, document attachment flow, security rules and test checklist. No new environment variables are required.

@@ -1,6 +1,7 @@
 package com.asmj.marketplace.controller;
 
 import com.asmj.marketplace.model.Role;
+import com.asmj.marketplace.chat.VendorApplicationConversationRepository;
 import com.asmj.marketplace.model.UserAccount;
 import com.asmj.marketplace.model.VendorStatus;
 import com.asmj.marketplace.repository.UserAccountRepository;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class DashboardController {
     private final UserAccountRepository users;
     private final VendorManagementService vendorManagement;
+    private final VendorApplicationConversationRepository applicationChats;
 
-    public DashboardController(UserAccountRepository users, VendorManagementService vendorManagement) {
+    public DashboardController(UserAccountRepository users, VendorManagementService vendorManagement, VendorApplicationConversationRepository applicationChats) {
         this.users = users;
         this.vendorManagement = vendorManagement;
+        this.applicationChats = applicationChats;
     }
 
     @GetMapping("/")
@@ -60,10 +63,11 @@ public class DashboardController {
         return "dashboard";
     }
 
-    @GetMapping("/vendor/pending")
+    @GetMapping({"/vendor/pending", "/vendor/application-chat"})
     public String vendorPending(Principal principal, Model model) {
         UserAccount user = users.findByEmailIgnoreCase(principal.getName()).orElseThrow();
         model.addAttribute("vendorStatus", user.getVendorStatus());
+        model.addAttribute("applicationChat", applicationChats.findByVendorUserId(user.getId()).orElse(null));
         return "vendor/pending";
     }
 }
