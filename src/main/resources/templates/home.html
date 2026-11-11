@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#10213f"><title>ASMJ Marketplace | Shop local, grow together</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#10213f"><title>ASMJ Shoppe | Shop local, grow together</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
 <body class="landing-page">
 <header th:replace="~{fragments/layout :: header}"></header>
 <main>
@@ -29,5 +29,5 @@
     <div class="join-banner"><div><div class="eyebrow light-eyebrow">YOUR COMMUNITY, YOUR MARKETPLACE</div><h2>Ready to be part of it?</h2><p>Join as a customer or apply to bring your business online.</p></div><a class="btn banner-btn" th:href="@{/register}" sec:authorize="isAnonymous()">Create your account →</a><a class="btn banner-btn" th:href="@{/dashboard}" sec:authorize="isAuthenticated()">Open dashboard →</a></div>
   </section>
 </main>
-<footer class="site-footer"><span>© ASMJ Marketplace</span><span>Built to connect local businesses and customers.</span></footer>
+<footer class="site-footer"><span>© ASMJ Shoppe</span><span>Built to connect local businesses and customers.</span></footer>
 </body></html>

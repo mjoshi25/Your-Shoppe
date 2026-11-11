@@ -1,4 +1,4 @@
-# ASMJ Marketplace – Phase 14 & 15
+# ASMJ Shoppe – Phase 14 & 15
 
 Built on the Phase 11–13 baseline. Existing Java 17 / Spring Boot / Thymeleaf / MongoDB / Cloudinary architecture is retained.
 

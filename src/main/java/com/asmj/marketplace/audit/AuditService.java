@@ -1,0 +1,3 @@
+package com.asmj.marketplace.audit;
+import java.time.Instant; import org.springframework.stereotype.Service;
+@Service public class AuditService { private final AuditEventRepository repository; public AuditService(AuditEventRepository r){repository=r;} public void record(String actor,String role,String action,String type,String id,String details){AuditEvent e=new AuditEvent();e.setCreatedAt(Instant.now());e.setActor(actor==null?"system":actor);e.setRole(role==null?"SYSTEM":role);e.setAction(action);e.setEntityType(type);e.setEntityId(id);e.setDetails(details==null?"":details.substring(0,Math.min(details.length(),500)));repository.save(e);} }

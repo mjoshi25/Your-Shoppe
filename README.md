@@ -1,4 +1,4 @@
-# ASMJ Marketplace — Phase 9
+# ASMJ Shoppe — Phase 9
 
 Standalone multi-vendor marketplace foundation using Java 17, Spring Boot, Thymeleaf, Spring Security and MongoDB.
 
@@ -24,7 +24,7 @@ Standalone multi-vendor marketplace foundation using Java 17, Spring Boot, Thyme
 $env:MONGODB_URI="mongodb+srv://<username>:<password>@<cluster>/<database>?retryWrites=true&w=majority"
 $env:APP_ADMIN_EMAIL="admin@yourdomain.com"
 $env:APP_ADMIN_PASSWORD="Use-A-Strong-Unique-Password"
-$env:APP_ADMIN_NAME="ASMJ Marketplace Admin"
+$env:APP_ADMIN_NAME="ASMJ Shoppe Admin"
 ```
 
 Do not commit real credentials or place them in `application.properties`.
@@ -357,3 +357,17 @@ See `PHASE14-15-CHANGELOG.md` for admin reports, Excel-compatible CSV export, cu
 
 ## Phase 14–15 additions
 See `PHASE14-15-CHANGELOG.md` for admin reports, Excel-compatible CSV export, customer wishlist/recently viewed/reorder, coupon administration and in-app stock availability alerts. Admin reports are at `/admin/reports`; coupons at `/admin/coupons`.
+
+
+## Phases 16–19 (ASMJ Shoppe production preparation)
+
+- Phase 16: security response headers, session fixation protection, role-checked order schedule endpoints, and admin audit event viewer.
+- Phase 17: vendor-configured serviceable Indian PIN codes; delivery checkout rejects unsupported PIN codes.
+- Phase 18: vendor-configured weekday/time/capacity slots for delivery and pickup; customer requested date/time; order time request/accept/decline conversation stored on order.
+- Phase 19: UPI order placement without upfront proof; customer pays vendor directly and submits UTR/screenshot from My Orders; admin verifies/rejects; vendor commission remains a separate vendor-to-admin settlement.
+
+Slot format in vendor fulfilment settings: `MONDAY|09:00|11:00|5` (weekday, start, end, maximum orders). PIN codes are comma- or whitespace-separated six-digit values. Time zone: Asia/Kolkata.
+
+Important: Render/Maven compilation, automated tests, MongoDB integration, browser testing and live end-to-end checks must be run by the project owner before production. Slot capacity enforcement is application-level and should be upgraded to an atomic reservation operation before high-concurrency traffic.
+
+For Render HTTPS session cookies, ensure `SESSION_COOKIE_SECURE=true` is configured (included in the supplied `render.yaml`). Commission eligible value currently follows the existing ledger rule: merchandise subtotal before coupon discount and excluding delivery charges; confirm this policy before high-volume trading.

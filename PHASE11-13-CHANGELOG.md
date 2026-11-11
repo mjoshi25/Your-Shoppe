@@ -1,4 +1,4 @@
-# ASMJ Marketplace – Phases 11, 12 and 13
+# ASMJ Shoppe – Phases 11, 12 and 13
 
 ## Phase 11 – Order tracking and invoice
 - Embedded order status history records placement, vendor status transitions and cancellation with actor, role, note and timestamp.

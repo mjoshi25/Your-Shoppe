@@ -1,4 +1,4 @@
-# ASMJ Marketplace — Phase 9 changes
+# ASMJ Shoppe — Phase 9 changes
 
 ## Chat
 - Added authorization-checked GET `/chat/{id}/messages` endpoint returning the current conversation messages.

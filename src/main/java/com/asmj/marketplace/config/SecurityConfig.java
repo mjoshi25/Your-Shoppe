@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.Customizer;
 
 @Configuration
 public class SecurityConfig {
@@ -43,7 +44,7 @@ public class SecurityConfig {
         http.authenticationProvider(authenticationProvider)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/register", "/register/**",
-                        "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/chat/**", "/guest-enquiries", "/cart", "/cart/**", "/error").permitAll()
+                        "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/api/products/**", "/chat/**", "/guest-enquiries", "/cart", "/cart/**", "/error").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/checkout", "/customer/**", "/coupon/apply", "/coupon/remove").hasRole("CUSTOMER")
                 .requestMatchers("/vendor/orders", "/vendor/orders/**").access((Supplier<Authentication> authentication, RequestAuthorizationContext context) -> { Authentication current=authentication.get(); if(current==null||!current.isAuthenticated()) return new AuthorizationDecision(false); UserAccount account=users.findByEmailIgnoreCase(current.getName()).orElse(null); return new AuthorizationDecision(account!=null && account.getRole()==com.asmj.marketplace.model.Role.ROLE_VENDOR && account.getVendorStatus()==VendorStatus.APPROVED); })
@@ -61,6 +62,11 @@ public class SecurityConfig {
                             && account.getVendorStatus() == VendorStatus.APPROVED);
                 })
                 .requestMatchers("/customer/**", "/my-enquiries").hasRole("CUSTOMER")
+                .requestMatchers("/orders/**").access((Supplier<Authentication> authentication, RequestAuthorizationContext context) -> {
+                    Authentication current=authentication.get(); if(current==null||!current.isAuthenticated()) return new AuthorizationDecision(false);
+                    UserAccount account=users.findByEmailIgnoreCase(current.getName()).orElse(null);
+                    return new AuthorizationDecision(account!=null && account.isEnabled() && (account.getRole()==com.asmj.marketplace.model.Role.ROLE_ADMIN || account.getRole()==com.asmj.marketplace.model.Role.ROLE_CUSTOMER || (account.getRole()==com.asmj.marketplace.model.Role.ROLE_VENDOR && account.getVendorStatus()==VendorStatus.APPROVED)));
+                })
                 .anyRequest().authenticated())
             .formLogin(form -> form
                 .loginPage("/login")
@@ -71,6 +77,12 @@ public class SecurityConfig {
             .logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll())
             .exceptionHandling(ex -> ex.accessDeniedPage("/access-denied"));
 
+        http.sessionManagement(session -> session.sessionFixation(fixation -> fixation.migrateSession()));
+        http.headers(headers -> headers
+            .contentTypeOptions(Customizer.withDefaults())
+            .frameOptions(frame -> frame.deny())
+            .referrerPolicy(referrer -> referrer.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+            .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000)));
         return http.build();
     }
 }

@@ -33,7 +33,7 @@ public class AdminBootstrap {
             admin.setRole(Role.ROLE_ADMIN);
             admin.setVendorStatus(VendorStatus.NOT_APPLICABLE);
             users.save(admin);
-            System.out.println("Initial ASMJ Marketplace admin account created.");
+            System.out.println("Initial ASMJ Shoppe admin account created.");
         };
     }
 }

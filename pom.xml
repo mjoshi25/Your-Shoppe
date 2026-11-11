@@ -5,8 +5,8 @@
     <groupId>com.asmj</groupId>
     <artifactId>asmj-marketplace</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ASMJ Marketplace</name>
-    <description>Standalone multi-vendor marketplace built with Spring Boot and Thymeleaf</description>
+    <name>ASMJ Shoppe</name>
+    <description>ASMJ Shoppe pan-India multi-vendor marketplace built with Spring Boot and Thymeleaf</description>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>

@@ -133,7 +133,7 @@ textarea:focus,select:focus{outline:none;border-color:#5277c4;box-shadow:0 0 0 3
  .metric-card strong{font-size:25px}
 }
 
-/* ASMJ Marketplace refreshed visual system */
+/* ASMJ Shoppe refreshed visual system */
 :root{--navy:#10213f;--blue:#315fba;--ink:#17243d;--muted:#68758b;--line:#e8edf5;--surface:#fff}
 body{color:var(--ink);background:#f7f9fc}
 .topbar{position:sticky;top:0;z-index:20;min-height:74px;padding:12px clamp(18px,5vw,76px);background:rgba(255,255,255,.96);backdrop-filter:blur(14px);box-shadow:0 5px 24px rgba(20,39,75,.045)}

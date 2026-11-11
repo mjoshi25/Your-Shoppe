@@ -12,12 +12,18 @@ class TemplateResourcesTest {
                 "vendor/commissions.html", "vendor/product-form.html", "vendor/products.html",
                 "settings/index.html", "admin/vendor-detail.html", "vendor/pending.html", "order/tracking.html", "order/invoice.html",
                 "vendor/inventory.html", "vendor/reviews.html", "admin/reviews.html", "product/detail.html",
-                "admin/reports.html", "admin/coupons.html", "customer/wishlist.html",
-                "customer/recently-viewed.html", "customer/alerts.html", "customer/offers.html"};
+                "admin/reports.html", "admin/coupons.html", "admin/audit.html", "customer/wishlist.html",
+                "customer/recently-viewed.html", "customer/alerts.html", "customer/offers.html", "order/checkout.html"};
         for (String template : templates) {
             assertTrue(new ClassPathResource("templates/" + template).exists(),
                     "Missing Thymeleaf template: " + template);
         }
+    }
+
+    @Test void checkoutSupportsDateSlotsAndDeferredUpiEvidence() throws Exception {
+        String checkout = new String(new ClassPathResource("templates/order/checkout.html").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        assertTrue(checkout.contains("requestedDate") && checkout.contains("requestedSlotKey"), "Checkout must capture a requested date and slot");
+        assertTrue(checkout.contains("Pay vendor after placing order"), "UPI must be paid after order placement");
     }
 
     @Test void registrationFormIncludesExplicitCsrfTokenForBothSubmitActions() throws Exception {

@@ -22,6 +22,9 @@ public class VendorProfile {
     private boolean pickupFromShop = true;
     private BigDecimal deliveryCharge = BigDecimal.ZERO;
     private String upiId;
+    private java.util.List<String> serviceablePinCodes = new java.util.ArrayList<>();
+    private java.util.List<String> deliverySlotDefinitions = new java.util.ArrayList<>();
+    private java.util.List<String> pickupSlotDefinitions = new java.util.ArrayList<>();
     private Instant createdAt = Instant.now();
     private Instant updatedAt = Instant.now();
 
@@ -43,6 +46,14 @@ public class VendorProfile {
     public void setHomeDelivery(boolean value) { this.homeDelivery = value; }
     public BigDecimal getDeliveryCharge() { return deliveryCharge; }
     public void setDeliveryCharge(BigDecimal value) { this.deliveryCharge = value; }
+    public java.util.List<String> getServiceablePinCodes() { return serviceablePinCodes == null ? java.util.List.of() : serviceablePinCodes; }
+    public void setServiceablePinCodes(java.util.List<String> v) { serviceablePinCodes = v == null ? new java.util.ArrayList<>() : v; }
+    public String getDeliverySlotsText() { return String.join("\n", deliverySlotDefinitions == null ? java.util.List.of() : deliverySlotDefinitions); }
+    public String getPickupSlotsText() { return String.join("\n", pickupSlotDefinitions == null ? java.util.List.of() : pickupSlotDefinitions); }
+    public java.util.List<String> getDeliverySlotDefinitions() { return deliverySlotDefinitions == null ? java.util.List.of() : deliverySlotDefinitions; }
+    public void setDeliverySlotDefinitions(java.util.List<String> v) { deliverySlotDefinitions = v == null ? new java.util.ArrayList<>() : v; }
+    public java.util.List<String> getPickupSlotDefinitions() { return pickupSlotDefinitions == null ? java.util.List.of() : pickupSlotDefinitions; }
+    public void setPickupSlotDefinitions(java.util.List<String> v) { pickupSlotDefinitions = v == null ? new java.util.ArrayList<>() : v; }
     public String getUpiId() { return upiId; }
     public void setUpiId(String value) { this.upiId = value; }
     public boolean isPickupFromShop() { return pickupFromShop; }

@@ -1,6 +1,7 @@
 package com.asmj.marketplace.controller;
 
 import com.asmj.marketplace.model.VendorProfile;
+import com.asmj.marketplace.audit.AuditService;
 import com.asmj.marketplace.chat.VendorApplicationConversationRepository;
 import com.asmj.marketplace.model.VendorStatus;
 import com.asmj.marketplace.repository.VendorProfileRepository;
@@ -17,11 +18,13 @@ public class AdminVendorController {
     private final VendorManagementService vendors;
     private final VendorProfileRepository profiles;
     private final VendorApplicationConversationRepository applicationChats;
+    private final AuditService audit;
 
-    public AdminVendorController(VendorManagementService vendors, VendorProfileRepository profiles, VendorApplicationConversationRepository applicationChats) {
+    public AdminVendorController(VendorManagementService vendors, VendorProfileRepository profiles, VendorApplicationConversationRepository applicationChats, AuditService audit) {
         this.vendors = vendors;
         this.profiles = profiles;
         this.applicationChats = applicationChats;
+        this.audit = audit;
     }
 
     @GetMapping
@@ -54,33 +57,34 @@ public class AdminVendorController {
     public String approve(@PathVariable String id, @RequestParam(required = false) String reason,
                           Principal principal, RedirectAttributes redirect) {
         return perform(id, () -> vendors.approve(id, principal.getName(), reason),
-                "Vendor approved successfully.", redirect);
+                "Vendor approved successfully.", redirect, principal.getName(), "APPROVED");
     }
 
     @PostMapping("/{id}/reject")
     public String reject(@PathVariable String id, @RequestParam String reason,
                          Principal principal, RedirectAttributes redirect) {
         return perform(id, () -> vendors.reject(id, principal.getName(), reason),
-                "Vendor application rejected.", redirect);
+                "Vendor application rejected.", redirect, principal.getName(), "REJECTED");
     }
 
     @PostMapping("/{id}/suspend")
     public String suspend(@PathVariable String id, @RequestParam String reason,
                           Principal principal, RedirectAttributes redirect) {
         return perform(id, () -> vendors.suspend(id, principal.getName(), reason),
-                "Vendor suspended. New selling access is blocked.", redirect);
+                "Vendor suspended. New selling access is blocked.", redirect, principal.getName(), "SUSPENDED");
     }
 
     @PostMapping("/{id}/reactivate")
     public String reactivate(@PathVariable String id, @RequestParam(required = false) String reason,
                              Principal principal, RedirectAttributes redirect) {
         return perform(id, () -> vendors.reactivate(id, principal.getName(), reason),
-                "Vendor reactivated successfully.", redirect);
+                "Vendor reactivated successfully.", redirect, principal.getName(), "REACTIVATED");
     }
 
-    private String perform(String id, Runnable action, String success, RedirectAttributes redirect) {
+    private String perform(String id, Runnable action, String success, RedirectAttributes redirect, String actor, String actionName) {
         try {
             action.run();
+            audit.record(actor,"ADMIN","VENDOR_"+actionName,"VENDOR",id,success);
             redirect.addFlashAttribute("successMessage", success);
         } catch (IllegalArgumentException ex) {
             redirect.addFlashAttribute("errorMessage", ex.getMessage());

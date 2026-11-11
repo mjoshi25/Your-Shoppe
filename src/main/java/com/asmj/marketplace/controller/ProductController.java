@@ -1,5 +1,7 @@
 package com.asmj.marketplace.controller;
 
+import com.asmj.marketplace.audit.AuditService;
+
 import com.asmj.marketplace.model.UserAccount;
 import com.asmj.marketplace.model.Category;
 import com.asmj.marketplace.model.VendorProfile;
@@ -25,11 +27,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ProductController {
     private final ProductRepository products; private final UserAccountRepository users; private final CloudinaryImageService images;
-    private final CategoryRepository categories; private final VendorProfileRepository vendorProfiles; private final MarketplaceOrderRepository orders;
+    private final CategoryRepository categories; private final VendorProfileRepository vendorProfiles; private final MarketplaceOrderRepository orders; private final AuditService audit;
     @Value("${app.products.require-approval:true}") private boolean requireApproval;
     public ProductController(ProductRepository products, UserAccountRepository users, CloudinaryImageService images,
-                             CategoryRepository categories, VendorProfileRepository vendorProfiles, MarketplaceOrderRepository orders){
-        this.products=products;this.users=users;this.images=images;this.categories=categories;this.vendorProfiles=vendorProfiles;this.orders=orders;
+                             CategoryRepository categories, VendorProfileRepository vendorProfiles, MarketplaceOrderRepository orders, AuditService audit){
+        this.products=products;this.users=users;this.images=images;this.categories=categories;this.vendorProfiles=vendorProfiles;this.orders=orders;this.audit=audit;
     }
 
     @GetMapping("/products") public String publicProducts(@RequestParam(required=false) String categoryId,@RequestParam(required=false) String subcategoryName,@RequestParam(required=false) String q,Model model){
@@ -56,18 +58,34 @@ public class ProductController {
         return "vendor/fulfilment";
     }
     @PostMapping("/vendor/settings/fulfilment") public String saveFulfilment(@RequestParam(defaultValue="false") boolean homeDelivery,
-            @RequestParam(defaultValue="false") boolean pickupFromShop, @RequestParam(defaultValue="0") BigDecimal deliveryCharge, @RequestParam(required=false) String upiId, Principal principal, RedirectAttributes redirect) {
+            @RequestParam(defaultValue="false") boolean pickupFromShop, @RequestParam(defaultValue="0") BigDecimal deliveryCharge, @RequestParam(required=false) String upiId, @RequestParam(required=false) String serviceablePinCodes, @RequestParam(required=false) String deliverySlots, @RequestParam(required=false) String pickupSlots, Principal principal, RedirectAttributes redirect) {
         if(!homeDelivery && !pickupFromShop){redirect.addFlashAttribute("errorMessage","Enable at least one fulfilment option.");return "redirect:/vendor/settings/fulfilment";}
         if(deliveryCharge==null || deliveryCharge.compareTo(BigDecimal.ZERO)<0 || deliveryCharge.compareTo(new BigDecimal("100000"))>0){redirect.addFlashAttribute("errorMessage","Enter a valid delivery charge between ₹0 and ₹100000.");return "redirect:/vendor/settings/fulfilment";}
         UserAccount vendor=users.findByEmailIgnoreCase(principal.getName()).orElseThrow();
         VendorProfile profile=vendorProfiles.findByUserId(vendor.getId()).orElseGet(VendorProfile::new);
         profile.setUserId(vendor.getId()); profile.setHomeDelivery(homeDelivery); profile.setPickupFromShop(pickupFromShop); profile.setDeliveryCharge(deliveryCharge); profile.setUpiId(upiId==null?null:upiId.trim());
-        profile.setUpdatedAt(java.time.Instant.now()); vendorProfiles.save(profile);
+        try {
+            profile.setServiceablePinCodes(parsePins(serviceablePinCodes));
+            if(homeDelivery && profile.getServiceablePinCodes().isEmpty()) throw new IllegalArgumentException("Add at least one valid 6-digit serviceable PIN code before enabling delivery.");
+            profile.setDeliverySlotDefinitions(parseSlots(deliverySlots)); profile.setPickupSlotDefinitions(parseSlots(pickupSlots));
+            if(homeDelivery && profile.getDeliverySlotDefinitions().isEmpty()) throw new IllegalArgumentException("Configure at least one delivery time slot.");
+            if(pickupFromShop && profile.getPickupSlotDefinitions().isEmpty()) throw new IllegalArgumentException("Configure at least one pickup time slot.");
+        } catch(IllegalArgumentException ex) { redirect.addFlashAttribute("errorMessage",ex.getMessage()); return "redirect:/vendor/settings/fulfilment"; }
+        profile.setUpdatedAt(java.time.Instant.now()); vendorProfiles.save(profile); audit.record(vendor.getEmail(),"VENDOR","FULFILMENT_SETTINGS_UPDATED","VENDOR_PROFILE",profile.getId(),"Delivery PIN coverage and fulfilment slots updated.");
         for(Product product : products.findByVendorUserIdOrderByCreatedAtDesc(vendor.getId())) {
             product.setHomeDelivery(homeDelivery); product.setPickupFromShop(pickupFromShop); products.save(product);
         }
         redirect.addFlashAttribute("successMessage","Your customer fulfilment options have been updated.");
         return "redirect:/vendor/settings/fulfilment";
+    }
+    private java.util.List<String> parsePins(String raw){
+        java.util.LinkedHashSet<String> pins=new java.util.LinkedHashSet<>(); if(raw!=null) for(String p:raw.split("[,\\s]+")){String x=p.trim();if(!x.isEmpty()){if(!x.matches("[0-9]{6}"))throw new IllegalArgumentException("Every serviceable PIN code must contain exactly 6 digits.");pins.add(x);}}
+        if(pins.size()>1000)throw new IllegalArgumentException("You can configure up to 1000 serviceable PIN codes."); return new java.util.ArrayList<>(pins);
+    }
+    private java.util.List<String> parseSlots(String raw){
+        java.util.List<String> slots=new java.util.ArrayList<>(); if(raw==null)return slots;
+        for(String line:raw.split("\\r?\\n")){String x=line.trim();if(x.isEmpty())continue;String[] p=x.split("\\|");if(p.length!=4)throw new IllegalArgumentException("Slot format must be DAY|HH:mm|HH:mm|capacity, one slot per line.");try{java.time.DayOfWeek.valueOf(p[0].trim().toUpperCase(java.util.Locale.ROOT));java.time.LocalTime start=java.time.LocalTime.parse(p[1].trim()),end=java.time.LocalTime.parse(p[2].trim());int cap=Integer.parseInt(p[3].trim());if(!end.isAfter(start)||cap<1||cap>500)throw new IllegalArgumentException();slots.add(p[0].trim().toUpperCase(java.util.Locale.ROOT)+"|"+start+"|"+end+"|"+cap);}catch(RuntimeException ex){throw new IllegalArgumentException("Invalid slot: "+x+". Use e.g. MONDAY|09:00|11:00|5.");}}
+        if(slots.size()>100)throw new IllegalArgumentException("You can configure up to 100 time slots per fulfilment method.");return slots;
     }
     @PostMapping("/vendor/products") public String create(@RequestParam String name,@RequestParam String description,@RequestParam BigDecimal price,@RequestParam Integer stockQuantity,@RequestParam String categoryId,@RequestParam String subcategoryName,
             @RequestParam("image") MultipartFile image,Principal principal,Model model,RedirectAttributes redirect){
@@ -85,7 +103,7 @@ public class ProductController {
                 throw new IllegalArgumentException("Please configure at least one fulfilment option in Vendor Settings before adding products.");
             Map<String,Object> upload=images.uploadProductImage(image);
             Product p=new Product();p.setVendorUserId(vendor.getId());p.setVendorName(vendor.getFullName());p.setName(name.trim());p.setDescription(description==null?"":description.trim());p.setCategoryId(category.getId());p.setCategoryName(category.getName());p.setSubcategoryName(subcategoryName);
-            p.setHomeDelivery(profile.isHomeDelivery());p.setPickupFromShop(profile.isPickupFromShop());p.setPrice(price);p.setStockQuantity(stockQuantity);p.setImageUrl(String.valueOf(upload.get("secure_url")));p.setImagePublicId(String.valueOf(upload.get("public_id")));p.setStatus(requireApproval?ProductStatus.PENDING:ProductStatus.ACTIVE);products.save(p);
+            p.setHomeDelivery(profile.isHomeDelivery());p.setPickupFromShop(profile.isPickupFromShop());p.setPrice(price);p.setStockQuantity(stockQuantity);p.setImageUrl(String.valueOf(upload.get("secure_url")));p.setImagePublicId(String.valueOf(upload.get("public_id")));p.setStatus(requireApproval?ProductStatus.PENDING:ProductStatus.ACTIVE);products.save(p); audit.record(vendor.getEmail(),"VENDOR","PRODUCT_CREATED","PRODUCT",p.getId(),p.getName());
             redirect.addFlashAttribute("successMessage",requireApproval?"Product submitted for admin approval.":"Product published successfully.");return "redirect:/vendor/products";
          } catch(IllegalArgumentException|IllegalStateException ex){
             model.addAttribute("errorMessage",ex.getMessage());model.addAttribute("product",new Product());
@@ -121,6 +139,6 @@ public class ProductController {
     }
 
     @GetMapping("/admin/products") public String adminProducts(Model model){model.addAttribute("products",products.findAllByOrderByCreatedAtDesc());return "admin/products";}
-    @PostMapping("/admin/products/{id}/approve") public String approve(@PathVariable String id,RedirectAttributes redirect){Product p=products.findById(id).orElseThrow();p.setStatus(ProductStatus.ACTIVE);products.save(p);redirect.addFlashAttribute("successMessage","Product approved and published.");return "redirect:/admin/products";}
-    @PostMapping("/admin/products/{id}/reject") public String reject(@PathVariable String id,RedirectAttributes redirect){Product p=products.findById(id).orElseThrow();p.setStatus(ProductStatus.REJECTED);products.save(p);redirect.addFlashAttribute("successMessage","Product rejected.");return "redirect:/admin/products";}
+    @PostMapping("/admin/products/{id}/approve") public String approve(@PathVariable String id,Principal principal,RedirectAttributes redirect){Product p=products.findById(id).orElseThrow();p.setStatus(ProductStatus.ACTIVE);products.save(p);audit.record(principal.getName(),"ADMIN","PRODUCT_APPROVED","PRODUCT",p.getId(),p.getName());redirect.addFlashAttribute("successMessage","Product approved and published.");return "redirect:/admin/products";}
+    @PostMapping("/admin/products/{id}/reject") public String reject(@PathVariable String id,Principal principal,RedirectAttributes redirect){Product p=products.findById(id).orElseThrow();p.setStatus(ProductStatus.REJECTED);products.save(p);audit.record(principal.getName(),"ADMIN","PRODUCT_REJECTED","PRODUCT",p.getId(),p.getName());redirect.addFlashAttribute("successMessage","Product rejected.");return "redirect:/admin/products";}
 }
