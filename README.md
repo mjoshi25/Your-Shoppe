@@ -375,3 +375,10 @@ For Render HTTPS session cookies, ensure `SESSION_COOKIE_SECURE=true` is configu
 
 ## Phase 20 — ASMJ Shoppe branding
 See `PHASE20-CHANGELOG.md` for logo, favicon, theme and template updates.
+
+### Checkout slot defaults and Thymeleaf compatibility fix
+
+- Checkout slot options are now prepared in `OrderController` as simple `key`, `day` and `label` values. This removes the unsupported `#strings.substringBeforeLast(...)` expression that caused checkout template evaluation to fail.
+- New and existing vendor profiles without custom schedules receive default delivery and pickup slots for all seven days: 09:00–12:00, 12:00–15:00 and 15:00–18:00, each with an initial capacity of 10 orders.
+- Vendors can edit delivery and pickup schedules independently in Vendor Settings. Saving custom definitions overrides the defaults.
+- Default slots are application-level fallback defaults; they become persisted custom definitions when the vendor saves the settings form.

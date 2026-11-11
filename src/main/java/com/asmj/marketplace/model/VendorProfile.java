@@ -48,11 +48,30 @@ public class VendorProfile {
     public void setDeliveryCharge(BigDecimal value) { this.deliveryCharge = value; }
     public java.util.List<String> getServiceablePinCodes() { return serviceablePinCodes == null ? java.util.List.of() : serviceablePinCodes; }
     public void setServiceablePinCodes(java.util.List<String> v) { serviceablePinCodes = v == null ? new java.util.ArrayList<>() : v; }
-    public String getDeliverySlotsText() { return String.join("\n", deliverySlotDefinitions == null ? java.util.List.of() : deliverySlotDefinitions); }
-    public String getPickupSlotsText() { return String.join("\n", pickupSlotDefinitions == null ? java.util.List.of() : pickupSlotDefinitions); }
-    public java.util.List<String> getDeliverySlotDefinitions() { return deliverySlotDefinitions == null ? java.util.List.of() : deliverySlotDefinitions; }
+    /**
+     * Default everyday schedule used for new and legacy vendor profiles that do not
+     * yet have their own schedule. Format: DAY|start|end|capacity.
+     */
+    private static java.util.List<String> defaultDailySlots() {
+        java.util.List<String> slots = new java.util.ArrayList<>();
+        for (java.time.DayOfWeek day : java.time.DayOfWeek.values()) {
+            slots.add(day.name() + "|09:00|12:00|10");
+            slots.add(day.name() + "|12:00|15:00|10");
+            slots.add(day.name() + "|15:00|18:00|10");
+        }
+        return slots;
+    }
+    public String getDeliverySlotsText() { return String.join("\n", getDeliverySlotDefinitions()); }
+    public String getPickupSlotsText() { return String.join("\n", getPickupSlotDefinitions()); }
+    public java.util.List<String> getDeliverySlotDefinitions() {
+        return deliverySlotDefinitions == null || deliverySlotDefinitions.isEmpty()
+                ? defaultDailySlots() : deliverySlotDefinitions;
+    }
     public void setDeliverySlotDefinitions(java.util.List<String> v) { deliverySlotDefinitions = v == null ? new java.util.ArrayList<>() : v; }
-    public java.util.List<String> getPickupSlotDefinitions() { return pickupSlotDefinitions == null ? java.util.List.of() : pickupSlotDefinitions; }
+    public java.util.List<String> getPickupSlotDefinitions() {
+        return pickupSlotDefinitions == null || pickupSlotDefinitions.isEmpty()
+                ? defaultDailySlots() : pickupSlotDefinitions;
+    }
     public void setPickupSlotDefinitions(java.util.List<String> v) { pickupSlotDefinitions = v == null ? new java.util.ArrayList<>() : v; }
     public String getUpiId() { return upiId; }
     public void setUpiId(String value) { this.upiId = value; }
