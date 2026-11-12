@@ -68,7 +68,20 @@ public class OrderController {
   String destination=String.join(", ",Arrays.asList(address,city,state,pinCode,"India").stream().filter(x->x!=null&&!x.isBlank()).toList());
   GoogleRouteResult route=routes.drivingRoute(profile.getShopLatitude(),profile.getShopLongitude(),latitude,longitude);BigDecimal km=route.distanceKm();BigDecimal free=profile.getFreeDeliveryDistanceKm();BigDecimal excess=km.subtract(free).max(BigDecimal.ZERO);int chargeable=excess.setScale(0,RoundingMode.CEILING).intValueExact();BigDecimal rate=profile.getExtraDeliveryRatePerKm();BigDecimal charge=rate.multiply(BigDecimal.valueOf(chargeable)).setScale(2,RoundingMode.HALF_UP);
   DeliveryQuote quote=new DeliveryQuote();quote.setVendorUserId(first.getVendorUserId());quote.setOriginAddress(origin);quote.setAddressFingerprint(fingerprint(address,city,state,pinCode,latitude,longitude));quote.setDistanceKm(km);quote.setFreeDistanceKm(free);quote.setRatePerKm(rate);quote.setChargeableKm(chargeable);quote.setCharge(charge);quote.setEncodedPolyline(route.encodedPolyline());quote.setOriginLatitude(profile.getShopLatitude());quote.setOriginLongitude(profile.getShopLongitude());quote.setDestinationLatitude(latitude);quote.setDestinationLongitude(longitude);quote.setCreatedAt(Instant.now());session.setAttribute("asmjDeliveryQuote",quote);
-  return Map.of("success",true,"distanceKm",km,"freeDistanceKm",free,"chargeableKm",chargeable,"ratePerKm",rate,"deliveryCharge",charge,"encodedPolyline",route.encodedPolyline(),"originLatitude",profile.getShopLatitude(),"originLongitude",profile.getShopLongitude(),"destinationLatitude",latitude,"destinationLongitude",longitude,"message",km.compareTo(free)<=0?"Your delivery is within the free-distance allowance.":"Driving distance calculated successfully.");
+  Map<String,Object> response = new LinkedHashMap<>();
+  response.put("success", true);
+  response.put("distanceKm", km);
+  response.put("freeDistanceKm", free);
+  response.put("chargeableKm", chargeable);
+  response.put("ratePerKm", rate);
+  response.put("deliveryCharge", charge);
+  response.put("encodedPolyline", route.encodedPolyline());
+  response.put("originLatitude", profile.getShopLatitude());
+  response.put("originLongitude", profile.getShopLongitude());
+  response.put("destinationLatitude", latitude);
+  response.put("destinationLongitude", longitude);
+  response.put("message", km.compareTo(free) <= 0 ? "Your delivery is within the free-distance allowance." : "Driving distance calculated successfully.");
+  return response;
   } catch(IllegalArgumentException|IllegalStateException ex) { return Map.of("success",false,"message",ex.getMessage()==null?"Unable to calculate delivery distance.":ex.getMessage()); }
  }
  private boolean validCoordinates(double lat,double lng){return Double.isFinite(lat)&&Double.isFinite(lng)&&lat>=-90&&lat<=90&&lng>=-180&&lng<=180;}
