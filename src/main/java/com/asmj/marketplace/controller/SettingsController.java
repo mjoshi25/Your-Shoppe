@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.beans.factory.annotation.Value;
 
 @Controller
 public class SettingsController {
@@ -26,6 +27,7 @@ public class SettingsController {
     private final VendorProfileRepository vendorProfiles;
     private final CloudinaryImageService uploads;
     private final PasswordEncoder passwordEncoder;
+    @Value("${google.maps.browser-api-key:}") private String googleMapsBrowserApiKey;
 
     public SettingsController(UserAccountRepository users, VendorProfileRepository vendorProfiles,
                               CloudinaryImageService uploads, PasswordEncoder passwordEncoder) {
@@ -39,6 +41,7 @@ public class SettingsController {
     public String settings(Principal principal, Model model) {
         UserAccount user = current(principal);
         model.addAttribute("currentUser", user);
+        model.addAttribute("googleMapsBrowserApiKey", googleMapsBrowserApiKey);
         model.addAttribute("roleLabel", roleLabel(user.getRole()));
         if (user.getRole() == Role.ROLE_VENDOR) {
             model.addAttribute("vendorProfile", vendorProfiles.findByUserId(user.getId()).orElseGet(() -> {
@@ -61,6 +64,8 @@ public class SettingsController {
             @RequestParam(required=false) String businessCity,
             @RequestParam(required=false) String businessState,
             @RequestParam(required=false) String businessPinCode,
+            @RequestParam(required=false) Double businessLatitude, @RequestParam(required=false) Double businessLongitude,
+            @RequestParam(required=false) Double deliveryLatitude, @RequestParam(required=false) Double deliveryLongitude,
             RedirectAttributes ra) {
         UserAccount user = current(principal);
         String name = fullName == null ? "" : fullName.trim();
@@ -88,6 +93,7 @@ public class SettingsController {
         if (user.getRole() == Role.ROLE_CUSTOMER) {
             user.setAddressLine(clean(addressLine)); user.setCity(clean(city));
             user.setState(clean(state)); user.setPinCode(clean(pinCode));
+            if (validCoordinates(deliveryLatitude, deliveryLongitude)) { user.setDeliveryLatitude(deliveryLatitude); user.setDeliveryLongitude(deliveryLongitude); }
         }
         user.setEmailNotifications(emailNotifications != null && emailNotifications.contains("true"));
         users.save(user);
@@ -101,6 +107,7 @@ public class SettingsController {
             if (businessCity != null) profile.setCity(clean(businessCity));
             if (businessState != null) profile.setState(clean(businessState));
             if (businessPinCode != null) profile.setPinCode(clean(businessPinCode));
+            if (validCoordinates(businessLatitude, businessLongitude)) { profile.setShopLatitude(businessLatitude); profile.setShopLongitude(businessLongitude); }
             profile.setUpdatedAt(Instant.now());
             vendorProfiles.save(profile);
         }
@@ -134,6 +141,7 @@ public class SettingsController {
     private UserAccount current(Principal principal) {
         return users.findByEmailIgnoreCase(principal.getName()).orElseThrow();
     }
+    private boolean validCoordinates(Double lat, Double lng) { return lat != null && lng != null && Double.isFinite(lat) && Double.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180; }
     private String clean(String value) { return value == null ? null : value.trim(); }
     private String roleLabel(Role role) {
         return switch (role) {

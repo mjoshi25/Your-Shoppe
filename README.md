@@ -420,3 +420,15 @@ The implementation calls `https://routes.googleapis.com/directions/v2:computeRou
 - A missing/invalid Google Routes API key or unrouteable address blocks distance-priced delivery checkout with an error; customers can choose pickup where available. The app does not silently fall back to straight-line distance.
 - Reward amounts are configurable by admin. Suggested initial defaults are ₹5,000, ₹3,000, ₹2,000, ₹1,000 and ₹500; confirm funding and eligibility rules before publishing a period.
 - Maven compilation and live Google API calls must be tested in the target environment after setting the API key. This archive must not be treated as fully production-verified until those tests pass.
+
+
+## Google Maps visual route setup (Phase 21 map enhancement)
+
+Enable both **Routes API** and **Maps JavaScript API** in the same Google Cloud project. Two separate Google Cloud API keys are recommended:
+
+- `GOOGLE_MAPS_API_KEY` (server-side): enable Routes API only; used by Spring Boot to calculate the driving distance and return the encoded route polyline. Keep this key secret in Render environment variables.
+- `GOOGLE_MAPS_BROWSER_API_KEY` (browser-side): enable Maps JavaScript API only; restrict by HTTP referrers to the production Render hostname, custom domain and localhost used for development. Do not add Geocoding API unless address autocomplete/reverse-geocoding is added in a later release. This key is visible in the browser by design and must be referrer/API restricted.
+
+Vendors must open Account Settings → Business information, click the map to set the shop pin, and save. Customers can set a delivery pin in Account Settings or adjust it on checkout. Checkout displays vendor and customer markers and the returned driving route. The checkout route quote is bound to the customer address, destination coordinates, vendor shop coordinates, vendor and 15-minute expiry.
+
+Do not enable distance-based pricing until the vendor has saved a shop pin and the two keys have been configured.

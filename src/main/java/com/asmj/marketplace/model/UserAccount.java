@@ -20,6 +20,8 @@ public class UserAccount {
     private String city;
     private String state;
     private String pinCode;
+    private Double deliveryLatitude;
+    private Double deliveryLongitude;
     private boolean emailNotifications = true;
     private String password;
     private Role role;
@@ -45,6 +47,10 @@ public class UserAccount {
     public void setState(String state) { this.state = state; }
     public String getPinCode() { return pinCode; }
     public void setPinCode(String pinCode) { this.pinCode = pinCode; }
+    public Double getDeliveryLatitude() { return deliveryLatitude; }
+    public void setDeliveryLatitude(Double value) { this.deliveryLatitude = value; }
+    public Double getDeliveryLongitude() { return deliveryLongitude; }
+    public void setDeliveryLongitude(Double value) { this.deliveryLongitude = value; }
     public boolean isEmailNotifications() { return emailNotifications; }
     public void setEmailNotifications(boolean emailNotifications) { this.emailNotifications = emailNotifications; }
     public String getPassword() { return password; }

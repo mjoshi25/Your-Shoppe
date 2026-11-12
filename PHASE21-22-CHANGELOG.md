@@ -38,3 +38,12 @@ Do not commit or share the actual key. See README.md under “Google Maps Routes
 - Reward ranking uses the application's available completed/payment-verified order records. The current data model has no separate refund flag/workflow, so externally refunded orders cannot be automatically identified or excluded. Cancelled orders are excluded from completed sales.
 - Reward cash amounts are editable by admin. Initial suggested values are ₹5,000 / ₹3,000 / ₹2,000 / ₹1,000 / ₹500; confirm the actual benefit budget before publishing winners.
 - Maven was unavailable in the build environment (`mvn: command not found`), and the project has no Maven wrapper. Therefore Maven compilation, unit tests, Spring context startup, MongoDB tests and live Google API calls have NOT been run. Static checks only are reported for this archive.
+
+
+## Map visibility enhancement
+- Added saved shop latitude/longitude to vendor profile and delivery latitude/longitude to customer account.
+- Added interactive map pin selection in Account Settings for vendor shop and customer delivery locations.
+- Checkout now displays the vendor and customer map markers, lets customers adjust their destination pin, and draws the actual driving route returned by Google Routes API.
+- Route quotes are tied to destination coordinates and current vendor shop coordinates as well as the typed address; changes require a fresh quote.
+- Added separate `GOOGLE_MAPS_BROWSER_API_KEY` configuration for Maps JavaScript API.
+- Google Routes API now receives selected coordinates and returns encoded route geometry, not distance alone.

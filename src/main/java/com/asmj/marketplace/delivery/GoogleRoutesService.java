@@ -18,14 +18,14 @@ public class GoogleRoutesService {
         this.client = builder.baseUrl("https://routes.googleapis.com").build();
     }
 
-    public BigDecimal drivingDistanceKm(String origin, String destination) {
+    public GoogleRouteResult drivingRoute(double originLat, double originLng, double destinationLat, double destinationLng) {
         if (apiKey == null || apiKey.isBlank())
             throw new IllegalStateException("Google Routes API is not configured yet. Please contact the marketplace administrator or choose pickup.");
-        if (origin == null || origin.isBlank() || destination == null || destination.isBlank())
-            throw new IllegalArgumentException("Complete vendor shop and customer delivery addresses are required to calculate road distance.");
+        validateCoordinate(originLat, originLng);
+        validateCoordinate(destinationLat, destinationLng);
         Map<String,Object> body = Map.of(
-                "origin", Map.of("address", origin),
-                "destination", Map.of("address", destination),
+                "origin", Map.of("location", Map.of("latLng", Map.of("latitude", originLat, "longitude", originLng))),
+                "destination", Map.of("location", Map.of("latLng", Map.of("latitude", destinationLat, "longitude", destinationLng))),
                 "travelMode", "DRIVE",
                 "routingPreference", "TRAFFIC_UNAWARE",
                 "units", "METRIC"
@@ -34,16 +34,24 @@ public class GoogleRoutesService {
             JsonNode response = client.post().uri("/directions/v2:computeRoutes")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("X-Goog-Api-Key", apiKey)
-                    .header("X-Goog-FieldMask", "routes.distanceMeters")
+                    .header("X-Goog-FieldMask", "routes.distanceMeters,routes.polyline.encodedPolyline")
                     .body(body).retrieve().body(JsonNode.class);
-            JsonNode meters = response == null ? null : response.path("routes").path(0).path("distanceMeters");
-            if (meters == null || !meters.canConvertToLong() || meters.asLong() < 0)
-                throw new IllegalStateException("Google Maps could not find a driving route for these addresses. Please check the address or choose pickup.");
-            return BigDecimal.valueOf(meters.asLong()).divide(BigDecimal.valueOf(1000), 3, RoundingMode.HALF_UP);
+            JsonNode route = response == null ? null : response.path("routes").path(0);
+            JsonNode meters = route == null ? null : route.path("distanceMeters");
+            String polyline = route == null ? null : route.path("polyline").path("encodedPolyline").asText(null);
+            if (meters == null || !meters.canConvertToLong() || meters.asLong() <= 0 || polyline == null || polyline.isBlank())
+                throw new IllegalStateException("Google Maps could not find a driving route for these locations. Please adjust the map pins or choose pickup.");
+            BigDecimal km = BigDecimal.valueOf(meters.asLong()).divide(BigDecimal.valueOf(1000), 3, RoundingMode.HALF_UP);
+            return new GoogleRouteResult(km, polyline);
         } catch (org.springframework.web.client.RestClientResponseException ex) {
-            throw new IllegalStateException("Google Maps distance service returned an error. Please retry or choose pickup. (HTTP " + ex.getStatusCode().value() + ")");
+            throw new IllegalStateException("Google Maps route service returned an error. Please retry or choose pickup. (HTTP " + ex.getStatusCode().value() + ")");
         } catch (org.springframework.web.client.RestClientException ex) {
-            throw new IllegalStateException("Unable to reach Google Maps distance service. Please retry or choose pickup.");
+            throw new IllegalStateException("Unable to reach Google Maps route service. Please retry or choose pickup.");
         }
+    }
+
+    private void validateCoordinate(double lat, double lng) {
+        if (!Double.isFinite(lat) || !Double.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180)
+            throw new IllegalArgumentException("Please select valid vendor and delivery locations on the map.");
     }
 }
