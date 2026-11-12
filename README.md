@@ -382,3 +382,41 @@ See `PHASE20-CHANGELOG.md` for logo, favicon, theme and template updates.
 - New and existing vendor profiles without custom schedules receive default delivery and pickup slots for all seven days: 09:00–12:00, 12:00–15:00 and 15:00–18:00, each with an initial capacity of 10 orders.
 - Vendors can edit delivery and pickup schedules independently in Vendor Settings. Saving custom definitions overrides the defaults.
 - Default slots are application-level fallback defaults; they become persisted custom definitions when the vendor saves the settings form.
+
+## Phase 21 — Road-distance delivery pricing
+- Vendors can enable distance-based home-delivery pricing and configure a free-distance allowance plus an extra charge per started kilometre.
+- Checkout asks Google Routes API for driving distance between the vendor's registered shop address and the customer's complete delivery address.
+- Delivery remains subject to the vendor's configured serviceable PIN-code list.
+- The quote is stored server-side in the customer session for 15 minutes and is bound to the exact delivery address and vendor. Checkout rejects missing, changed or expired quotes.
+- The order stores the measured road distance, free-distance allowance, per-km rate, chargeable kilometres and final delivery charge as a snapshot. Later vendor setting changes do not alter old orders.
+- When distance pricing is disabled, the legacy fixed delivery charge remains available. Pickup has no delivery charge.
+- Additional kilometres are rounded up to the next whole kilometre after subtracting the free-distance allowance. Example: 12 km route − 5 km free = 7 chargeable km.
+
+### Google Maps Routes API setup
+1. Open https://console.cloud.google.com/ and sign in with the Google account that will own ASMJ Shoppe billing.
+2. Create a project named `ASMJ Shoppe Production` (or select your existing production project).
+3. Open Billing and link a valid billing account. Google requires billing for Routes API requests.
+4. Open APIs & Services → Library, search for `Routes API`, open it and click Enable.
+5. Open Google Maps Platform → Keys & Credentials (or APIs & Services → Credentials), choose Create credentials → API key.
+6. Open the new key's settings. Under API restrictions, choose Restrict key and allow only `Routes API`. Do not enable unrelated APIs on this key.
+7. This key is used by the Spring Boot server, not by a browser. Do not use HTTP-referrer restrictions. If your Render plan/service has stable outbound IP addresses, add those IPs under IP-address application restrictions. If it does not, leave application restriction unset for now, keep the Routes API restriction enabled, and rotate the key if exposure is suspected.
+8. Set a budget alert and configure Routes API quotas in Google Cloud Console. Budget alerts notify you; they are not necessarily a hard spending cap. Review usage regularly.
+9. In Render → ASMJ Shoppe web service → Environment, add `GOOGLE_MAPS_API_KEY` with the key value, save changes and redeploy/restart.
+10. For local Windows PowerShell testing, set `$env:GOOGLE_MAPS_API_KEY="your-key"` before running `mvn spring-boot:run`.
+11. Never commit the real key to Git, `.env.example`, application.properties or source code. The app reads it server-side from `GOOGLE_MAPS_API_KEY`.
+
+The implementation calls `https://routes.googleapis.com/directions/v2:computeRoutes` with `travelMode=DRIVE` and requests only `routes.distanceMeters`. Full addresses are sent to Routes API directly; a separate Geocoding API is not required for this flow. Google setup reference: https://developers.google.com/maps/documentation/routes/get-api-key
+
+## Phase 22 — Six-month Seller Excellence Rewards
+- Admin can configure an exact six-calendar-month period, minimum verified completed orders, five reward titles and reward values.
+- Ranking uses verified completed orders within the period and net merchandise sales (subtotal less discounts; delivery charges excluded).
+- Tie-breakers are average approved product rating, lower cancellation percentage, then completed order count.
+- Only approved vendors meeting the minimum completed-order requirement and without overdue marketplace commission are eligible. The five highest eligible vendors are ranked.
+- Admin reviews provisional rankings and explicitly publishes winners. Published awards are stored as historical records and appear in vendor reward history.
+- Vendor workspace contains a Seller rewards page with provisional performance, rank and published awards.
+
+### Phase 21–22 configuration notes
+- Configure each vendor's shop address under Profile Settings before enabling distance pricing.
+- A missing/invalid Google Routes API key or unrouteable address blocks distance-priced delivery checkout with an error; customers can choose pickup where available. The app does not silently fall back to straight-line distance.
+- Reward amounts are configurable by admin. Suggested initial defaults are ₹5,000, ₹3,000, ₹2,000, ₹1,000 and ₹500; confirm funding and eligibility rules before publishing a period.
+- Maven compilation and live Google API calls must be tested in the target environment after setting the API key. This archive must not be treated as fully production-verified until those tests pass.

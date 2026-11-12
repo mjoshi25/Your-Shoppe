@@ -21,6 +21,9 @@ public class VendorProfile {
     private boolean homeDelivery = true;
     private boolean pickupFromShop = true;
     private BigDecimal deliveryCharge = BigDecimal.ZERO;
+    private boolean distanceBasedDeliveryEnabled = false;
+    private BigDecimal freeDeliveryDistanceKm = new BigDecimal("5.0");
+    private BigDecimal extraDeliveryRatePerKm = new BigDecimal("10.00");
     private String upiId;
     private java.util.List<String> serviceablePinCodes = new java.util.ArrayList<>();
     private java.util.List<String> deliverySlotDefinitions = new java.util.ArrayList<>();
@@ -46,6 +49,12 @@ public class VendorProfile {
     public void setHomeDelivery(boolean value) { this.homeDelivery = value; }
     public BigDecimal getDeliveryCharge() { return deliveryCharge; }
     public void setDeliveryCharge(BigDecimal value) { this.deliveryCharge = value; }
+    public boolean isDistanceBasedDeliveryEnabled() { return distanceBasedDeliveryEnabled; }
+    public void setDistanceBasedDeliveryEnabled(boolean value) { this.distanceBasedDeliveryEnabled = value; }
+    public BigDecimal getFreeDeliveryDistanceKm() { return freeDeliveryDistanceKm == null ? new BigDecimal("5.0") : freeDeliveryDistanceKm; }
+    public void setFreeDeliveryDistanceKm(BigDecimal value) { this.freeDeliveryDistanceKm = value; }
+    public BigDecimal getExtraDeliveryRatePerKm() { return extraDeliveryRatePerKm == null ? new BigDecimal("10.00") : extraDeliveryRatePerKm; }
+    public void setExtraDeliveryRatePerKm(BigDecimal value) { this.extraDeliveryRatePerKm = value; }
     public java.util.List<String> getServiceablePinCodes() { return serviceablePinCodes == null ? java.util.List.of() : serviceablePinCodes; }
     public void setServiceablePinCodes(java.util.List<String> v) { serviceablePinCodes = v == null ? new java.util.ArrayList<>() : v; }
     /**

@@ -58,15 +58,17 @@ public class ProductController {
         return "vendor/fulfilment";
     }
     @PostMapping("/vendor/settings/fulfilment") public String saveFulfilment(@RequestParam(defaultValue="false") boolean homeDelivery,
-            @RequestParam(defaultValue="false") boolean pickupFromShop, @RequestParam(defaultValue="0") BigDecimal deliveryCharge, @RequestParam(required=false) String upiId, @RequestParam(required=false) String serviceablePinCodes, @RequestParam(required=false) String deliverySlots, @RequestParam(required=false) String pickupSlots, Principal principal, RedirectAttributes redirect) {
+            @RequestParam(defaultValue="false") boolean pickupFromShop, @RequestParam(defaultValue="0") BigDecimal deliveryCharge, @RequestParam(defaultValue="false") boolean distanceBasedDeliveryEnabled, @RequestParam(defaultValue="5.0") BigDecimal freeDeliveryDistanceKm, @RequestParam(defaultValue="10.0") BigDecimal extraDeliveryRatePerKm, @RequestParam(required=false) String upiId, @RequestParam(required=false) String serviceablePinCodes, @RequestParam(required=false) String deliverySlots, @RequestParam(required=false) String pickupSlots, Principal principal, RedirectAttributes redirect) {
         if(!homeDelivery && !pickupFromShop){redirect.addFlashAttribute("errorMessage","Enable at least one fulfilment option.");return "redirect:/vendor/settings/fulfilment";}
         if(deliveryCharge==null || deliveryCharge.compareTo(BigDecimal.ZERO)<0 || deliveryCharge.compareTo(new BigDecimal("100000"))>0){redirect.addFlashAttribute("errorMessage","Enter a valid delivery charge between ₹0 and ₹100000.");return "redirect:/vendor/settings/fulfilment";}
+        if(freeDeliveryDistanceKm==null || freeDeliveryDistanceKm.signum()<0 || freeDeliveryDistanceKm.compareTo(new BigDecimal("500"))>0 || extraDeliveryRatePerKm==null || extraDeliveryRatePerKm.signum()<0 || extraDeliveryRatePerKm.compareTo(new BigDecimal("10000"))>0){redirect.addFlashAttribute("errorMessage","Enter a valid free distance (0–500 km) and extra per-km rate (₹0–₹10000).");return "redirect:/vendor/settings/fulfilment";}
         UserAccount vendor=users.findByEmailIgnoreCase(principal.getName()).orElseThrow();
         VendorProfile profile=vendorProfiles.findByUserId(vendor.getId()).orElseGet(VendorProfile::new);
-        profile.setUserId(vendor.getId()); profile.setHomeDelivery(homeDelivery); profile.setPickupFromShop(pickupFromShop); profile.setDeliveryCharge(deliveryCharge); profile.setUpiId(upiId==null?null:upiId.trim());
+        profile.setUserId(vendor.getId()); profile.setHomeDelivery(homeDelivery); profile.setPickupFromShop(pickupFromShop); profile.setDeliveryCharge(deliveryCharge); profile.setDistanceBasedDeliveryEnabled(homeDelivery && distanceBasedDeliveryEnabled); profile.setFreeDeliveryDistanceKm(freeDeliveryDistanceKm); profile.setExtraDeliveryRatePerKm(extraDeliveryRatePerKm); profile.setUpiId(upiId==null?null:upiId.trim());
         try {
             profile.setServiceablePinCodes(parsePins(serviceablePinCodes));
             if(homeDelivery && profile.getServiceablePinCodes().isEmpty()) throw new IllegalArgumentException("Add at least one valid 6-digit serviceable PIN code before enabling delivery.");
+            if(homeDelivery && distanceBasedDeliveryEnabled && (blank(profile.getAddressLine()) || blank(profile.getCity()) || blank(profile.getState()) || blank(profile.getPinCode()))) throw new IllegalArgumentException("Complete your shop address, city, state and PIN code in Profile Settings before enabling distance-based pricing.");
             profile.setDeliverySlotDefinitions(parseSlots(deliverySlots)); profile.setPickupSlotDefinitions(parseSlots(pickupSlots));
             if(homeDelivery && profile.getDeliverySlotDefinitions().isEmpty()) throw new IllegalArgumentException("Configure at least one delivery time slot.");
             if(pickupFromShop && profile.getPickupSlotDefinitions().isEmpty()) throw new IllegalArgumentException("Configure at least one pickup time slot.");
@@ -78,6 +80,7 @@ public class ProductController {
         redirect.addFlashAttribute("successMessage","Your customer fulfilment options have been updated.");
         return "redirect:/vendor/settings/fulfilment";
     }
+    private boolean blank(String v){return v==null||v.isBlank();}
     private java.util.List<String> parsePins(String raw){
         java.util.LinkedHashSet<String> pins=new java.util.LinkedHashSet<>(); if(raw!=null) for(String p:raw.split("[,\\s]+")){String x=p.trim();if(!x.isEmpty()){if(!x.matches("[0-9]{6}"))throw new IllegalArgumentException("Every serviceable PIN code must contain exactly 6 digits.");pins.add(x);}}
         if(pins.size()>1000)throw new IllegalArgumentException("You can configure up to 1000 serviceable PIN codes."); return new java.util.ArrayList<>(pins);
