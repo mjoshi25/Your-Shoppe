@@ -33,7 +33,7 @@ public class VendorCouponController {
     }
     @PostMapping("/vendor/coupons/participation") public String participation(@RequestParam(required=false) List<String> couponCodes, Principal principal, RedirectAttributes ra) {
         UserAccount vendor=users.findByEmailIgnoreCase(principal.getName()).orElseThrow();
-        VendorProfile profile=profiles.findByUserId(vendor.getId()).orElseGet(VendorProfile::new()); profile.setUserId(vendor.getId());
+        VendorProfile profile=profiles.findByUserId(vendor.getId()).orElseGet(VendorProfile::new); profile.setUserId(vendor.getId());
         List<String> valid=new ArrayList<>(); if(couponCodes!=null) for(String code:couponCodes){String normalized=code.trim().toUpperCase(Locale.ROOT);if(coupons.findByCodeIgnoreCase(normalized).filter(this::currentlyAvailable).isPresent()&&!valid.contains(normalized))valid.add(normalized);}
         profile.setAcceptedCouponCodes(valid); profile.setUpdatedAt(Instant.now()); profiles.save(profile);
         ra.addFlashAttribute("successMessage","Your coupon participation preferences have been saved. Changes apply to new orders only."); return "redirect:/vendor/coupons";
