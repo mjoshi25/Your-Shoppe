@@ -18,6 +18,8 @@ public class VendorProfile {
     private String city;
     private String state;
     private String pinCode;
+    private Double latitude;
+    private Double longitude;
     private boolean homeDelivery = true;
     private boolean pickupFromShop = true;
     private BigDecimal deliveryCharge = BigDecimal.ZERO;
@@ -45,6 +47,10 @@ public class VendorProfile {
     public void setCity(String city) { this.city = city; }
     public String getState() { return state; }
     public void setState(String state) { this.state = state; }
+    public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+    public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
     public boolean isHomeDelivery() { return homeDelivery; }
     public void setHomeDelivery(boolean value) { this.homeDelivery = value; }
     public BigDecimal getDeliveryCharge() { return deliveryCharge; }

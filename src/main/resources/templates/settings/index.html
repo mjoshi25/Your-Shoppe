@@ -30,7 +30,7 @@
 
       <div th:if="${currentUser.role.name() == 'ROLE_CUSTOMER'}" class="settings-subsection">
         <h3>Delivery address</h3>
-        <label class="field">Search delivery location<div class="place-search" data-target="customerAddress" data-city-target="customerCity" data-state-target="customerState" data-pin-target="customerPin"><span class="muted">Type a shop, street, landmark or locality and choose a suggestion.</span></div><input id="customerAddress" name="addressLine" maxlength="250" th:value="${currentUser.addressLine}"></label>
+        <label class="field">Search delivery location<div class="place-search" data-target="customerAddress" data-city-target="customerCity" data-state-target="customerState" data-pin-target="customerPin" data-lat-target="customerLatitude" data-lng-target="customerLongitude"><span class="muted">Search for an address, then select a suggestion.</span></div><div id="customerMap" class="location-map" data-lat="" data-lng=""></div><input type="hidden" id="customerLatitude" name="customerLatitude" th:value="${currentUser.latitude}"><input type="hidden" id="customerLongitude" name="customerLongitude" th:value="${currentUser.longitude}"><input id="customerAddress" name="addressLine" maxlength="250" th:value="${currentUser.addressLine}"></label>
         <div class="form-grid">
           <label class="field">City<input id="customerCity" name="city" maxlength="80" th:value="${currentUser.city}"></label>
           <label class="field">State<input id="customerState" name="state" maxlength="80" th:value="${currentUser.state}"></label>
@@ -42,7 +42,7 @@
         <h3>Business information</h3>
         <label class="field">Business name<input name="businessName" maxlength="120" th:value="${vendorProfile.businessName}"></label>
         <label class="field">Business description<textarea name="businessDescription" rows="3" maxlength="1000" th:text="${vendorProfile.businessDescription}"></textarea></label>
-        <label class="field">Search business/shop location<div class="place-search" data-target="businessAddress" data-city-target="businessCity" data-state-target="businessState" data-pin-target="businessPinCode"><span class="muted">Type your shop name, street, landmark or locality and choose a suggestion.</span></div><input id="businessAddress" name="businessAddress" maxlength="250" th:value="${vendorProfile.addressLine}"></label>
+        <label class="field">Search business/shop location<div class="place-search" data-target="businessAddress" data-city-target="businessCity" data-state-target="businessState" data-pin-target="businessPinCode" data-lat-target="businessLatitude" data-lng-target="businessLongitude"><span class="muted">Search for your shop address, then select a suggestion.</span></div><div id="businessMap" class="location-map" th:attr="data-lat=${vendorProfile.latitude},data-lng=${vendorProfile.longitude}"></div><input type="hidden" id="businessLatitude" name="businessLatitude" th:value="${vendorProfile.latitude}"><input type="hidden" id="businessLongitude" name="businessLongitude" th:value="${vendorProfile.longitude}"><input id="businessAddress" name="businessAddress" maxlength="250" th:value="${vendorProfile.addressLine}"></label>
         <div class="form-grid">
           <label class="field">City<input id="businessCity" name="businessCity" maxlength="80" th:value="${vendorProfile.city}"></label>
           <label class="field">State<input id="businessState" name="businessState" maxlength="80" th:value="${vendorProfile.state}"></label>
@@ -67,22 +67,27 @@
   </section>
 </main>
 <script th:if="${googleMapsBrowserKey != null and !#strings.isEmpty(googleMapsBrowserKey)}" th:src="'https://maps.googleapis.com/maps/api/js?key='+${googleMapsBrowserKey}+'&v=weekly&libraries=places'"></script>
+<style>.location-map{width:100%;height:320px;min-height:260px;border:1px solid #ddd;border-radius:12px;margin:10px 0 16px;background:#f2f2f2}.place-search gmp-place-autocomplete{width:100%}@media(max-width:600px){.location-map{height:260px}}</style>
 <script th:inline="none">
 (async function(){
-  if(!window.google||!google.maps||!google.maps.importLibrary)return;
-  try{
-    const places=await google.maps.importLibrary('places');
-    document.querySelectorAll('.place-search[data-target]').forEach(host=>{
-      const widget=new places.PlaceAutocompleteElement({includedRegionCodes:['in']});
-      widget.placeholder='Search location'; widget.style.width='100%'; host.replaceChildren(widget);
-      widget.addEventListener('gmp-select',async event=>{
-        try{const place=event.placePrediction.toPlace();await place.fetchFields({fields:['formattedAddress','addressComponents']});
-          const target=document.getElementById(host.dataset.target);if(target){target.value=place.formattedAddress||'';target.dispatchEvent(new Event('input',{bubbles:true}));}
-          const components=place.addressComponents||[];const find=(type)=>components.find(c=>(c.types||[]).includes(type))?.longText||'';[['city','locality'],['state','administrative_area_level_1'],['pin','postal_code']].forEach(([key,type])=>{const field=document.getElementById(host.dataset[key+'Target']);if(field){const value=find(type)||(key==='city'?find('postal_town'):'');if(value){field.value=value;field.dispatchEvent(new Event('input',{bubbles:true}));}}});
-        }catch(e){host.insertAdjacentText('beforeend',' Could not load this location. Please type the address manually.');}
-      });
-    });
-  }catch(e){console.warn('Google Places autocomplete unavailable; manual address entry remains available.',e);}
+ const mapsMessage='Google Maps could not load. Check the browser API key, billing, and Maps JavaScript API restriction.';
+ if(!window.google||!google.maps||!google.maps.importLibrary){document.querySelectorAll('.location-map').forEach(m=>m.textContent=mapsMessage);return;}
+ try{
+  const places=await google.maps.importLibrary('places'); const maps=await google.maps.importLibrary('maps');
+  document.querySelectorAll('.place-search[data-target]').forEach(host=>{
+   const mapId=host.closest('.settings-subsection')?.querySelector('.location-map')?.id; const mapEl=mapId?document.getElementById(mapId):null;
+   if(!mapEl)return;
+   const latField=document.getElementById(host.dataset.latTarget),lngField=document.getElementById(host.dataset.lngTarget);
+   const initialLat=Number(latField?.value),initialLng=Number(lngField?.value); const hasInitial=!!latField?.value&&!!lngField?.value&&Number.isFinite(initialLat)&&Number.isFinite(initialLng);
+   const map=new maps.Map(mapEl,{center:hasInitial?{lat:initialLat,lng:initialLng}:{lat:20.5,lng:84.0},zoom:hasInitial?16:6,mapTypeControl:true,streetViewControl:false,fullscreenControl:true});
+   let marker=null; const setMarker=(position,updateFields)=>{if(!marker){marker=new google.maps.Marker({map,position,draggable:true,title:'Drag to adjust the exact location'});marker.addListener('dragend',()=>{const p=marker.getPosition();if(latField)latField.value=p.lat().toFixed(7);if(lngField)lngField.value=p.lng().toFixed(7);});}else marker.setPosition(position);map.panTo(position);map.setZoom(16);if(updateFields){if(latField)latField.value=position.lat.toFixed(7);if(lngField)lngField.value=position.lng.toFixed(7);}};
+   if(hasInitial)setMarker({lat:initialLat,lng:initialLng},false);
+   ['customerAddress','customerCity','customerState','customerPin','businessAddress','businessCity','businessState','businessPinCode'].forEach(id=>{const field=document.getElementById(id);field?.addEventListener('input',()=>{if(latField)latField.value='';if(lngField)lngField.value='';});});
+   const widget=new places.PlaceAutocompleteElement({includedRegionCodes:['in']});widget.placeholder='Search address, shop, landmark, locality or PIN code';widget.style.width='100%';host.replaceChildren(widget);
+   widget.addEventListener('gmp-select',async event=>{try{const place=event.placePrediction.toPlace();await place.fetchFields({fields:['formattedAddress','addressComponents','location']});if(!place.location)throw new Error('No map location returned');const pos={lat:place.location.lat(),lng:place.location.lng()};const address=document.getElementById(host.dataset.target);if(address){address.value=place.formattedAddress||'';address.dispatchEvent(new Event('input',{bubbles:true}));}const comps=place.addressComponents||[];const find=(type)=>comps.find(c=>(c.types||[]).includes(type))?.longText||'';[['city','locality'],['state','administrative_area_level_1'],['pin','postal_code']].forEach(([key,type])=>{const field=document.getElementById(host.dataset[key+'Target']);if(field){const value=find(type)||(key==='city'?find('postal_town'):'');if(value){field.value=value;field.dispatchEvent(new Event('input',{bubbles:true}));}}});setMarker(pos,true);mapEl.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(err){host.insertAdjacentText('beforeend',' Unable to locate this result. Try another search.');}});
+   map.addListener('click',e=>{if(e.latLng)setMarker({lat:e.latLng.lat(),lng:e.latLng.lng()},true);});
+  });
+ }catch(e){console.error('Google Maps location picker failed',e);document.querySelectorAll('.location-map').forEach(m=>m.textContent=mapsMessage);}
 })();
 </script>
 </body></html>
