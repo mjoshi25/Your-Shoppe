@@ -30,6 +30,8 @@ public class VendorProfile {
     private java.util.List<String> serviceablePinCodes = new java.util.ArrayList<>();
     private java.util.List<String> deliverySlotDefinitions = new java.util.ArrayList<>();
     private java.util.List<String> pickupSlotDefinitions = new java.util.ArrayList<>();
+    /** Coupon codes explicitly accepted by this shop. */
+    private java.util.List<String> acceptedCouponCodes = new java.util.ArrayList<>();
     private Instant createdAt = Instant.now();
     private Instant updatedAt = Instant.now();
 
@@ -88,6 +90,8 @@ public class VendorProfile {
                 ? defaultDailySlots() : pickupSlotDefinitions;
     }
     public void setPickupSlotDefinitions(java.util.List<String> v) { pickupSlotDefinitions = v == null ? new java.util.ArrayList<>() : v; }
+    public java.util.List<String> getAcceptedCouponCodes() { return acceptedCouponCodes == null ? java.util.List.of() : acceptedCouponCodes; }
+    public void setAcceptedCouponCodes(java.util.List<String> v) { acceptedCouponCodes = v == null ? new java.util.ArrayList<>() : new java.util.ArrayList<>(v); }
     public String getUpiId() { return upiId; }
     public void setUpiId(String value) { this.upiId = value; }
     public boolean isPickupFromShop() { return pickupFromShop; }

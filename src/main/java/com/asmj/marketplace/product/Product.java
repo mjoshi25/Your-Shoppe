@@ -29,6 +29,8 @@ public class Product {
     private boolean seededTestProduct = false;
     private String seedBatchId;
     private String seedKey;
+    /** Vendor can exclude this product from shop coupons. */
+    private boolean couponExcluded = false;
     public String getId(){return id;} public void setId(String v){id=v;}
     public String getVendorUserId(){return vendorUserId;} public void setVendorUserId(String v){vendorUserId=v;}
     public String getVendorName(){return vendorName;} public void setVendorName(String v){vendorName=v;}
@@ -49,4 +51,5 @@ public class Product {
     public boolean isSeededTestProduct(){return seededTestProduct;} public void setSeededTestProduct(boolean v){seededTestProduct=v;}
     public String getSeedBatchId(){return seedBatchId;} public void setSeedBatchId(String v){seedBatchId=v;}
     public String getSeedKey(){return seedKey;} public void setSeedKey(String v){seedKey=v;}
+    public boolean isCouponExcluded(){return couponExcluded;} public void setCouponExcluded(boolean v){couponExcluded=v;}
 }
