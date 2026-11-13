@@ -67,7 +67,7 @@
   </section>
 </main>
 <script th:if="${googleMapsBrowserKey != null and !#strings.isEmpty(googleMapsBrowserKey)}" th:src="'https://maps.googleapis.com/maps/api/js?key='+${googleMapsBrowserKey}+'&v=weekly&libraries=places'"></script>
-<script>
+<script th:inline="none">
 (async function(){
   if(!window.google||!google.maps||!google.maps.importLibrary)return;
   try{
