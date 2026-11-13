@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import java.time.Instant;
 
 @Service
 public class RegistrationService {
@@ -73,6 +74,7 @@ public class RegistrationService {
         if (users.existsByEmailIgnoreCase(email)) {
             throw new IllegalArgumentException("An account with this email already exists.");
         }
+        if (!form.isTermsAccepted()) throw new IllegalArgumentException("You must agree to the Terms & Conditions before registering.");
         UserAccount account = new UserAccount();
         account.setFullName(form.getFullName().trim());
         account.setEmail(email);
@@ -80,6 +82,9 @@ public class RegistrationService {
         account.setPassword(encoder.encode(form.getPassword()));
         account.setRole(role);
         account.setVendorStatus(status);
+        account.setTermsAccepted(true);
+        account.setAcceptedTermsVersion("1.0");
+        account.setTermsAcceptedAt(Instant.now());
         UserAccount saved = users.save(account);
         if (saved == null || !StringUtils.hasText(saved.getId())) {
             throw new IllegalStateException("The database did not confirm account creation. Please retry.");

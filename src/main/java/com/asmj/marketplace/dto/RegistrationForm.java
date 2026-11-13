@@ -3,6 +3,7 @@ package com.asmj.marketplace.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.AssertTrue;
 
 public class RegistrationForm {
     @NotBlank @Size(max = 100)
@@ -13,6 +14,12 @@ public class RegistrationForm {
     private String password;
     @Size(max = 20)
     private String mobile;
+
+    private boolean termsAccepted;
+
+    @AssertTrue(message = "You must agree to the Terms & Conditions before registering.")
+    public boolean isTermsAccepted() { return termsAccepted; }
+    public void setTermsAccepted(boolean termsAccepted) { this.termsAccepted = termsAccepted; }
 
     @Size(max = 120)
     private String businessName;

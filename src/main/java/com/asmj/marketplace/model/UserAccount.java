@@ -28,6 +28,9 @@ public class UserAccount {
     private VendorStatus vendorStatus = VendorStatus.NOT_APPLICABLE;
     private boolean enabled = true;
     private Instant createdAt = Instant.now();
+    private boolean termsAccepted;
+    private String acceptedTermsVersion;
+    private Instant termsAcceptedAt;
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -63,4 +66,10 @@ public class UserAccount {
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public boolean isTermsAccepted() { return termsAccepted; }
+    public void setTermsAccepted(boolean termsAccepted) { this.termsAccepted = termsAccepted; }
+    public String getAcceptedTermsVersion() { return acceptedTermsVersion; }
+    public void setAcceptedTermsVersion(String acceptedTermsVersion) { this.acceptedTermsVersion = acceptedTermsVersion; }
+    public Instant getTermsAcceptedAt() { return termsAcceptedAt; }
+    public void setTermsAcceptedAt(Instant termsAcceptedAt) { this.termsAcceptedAt = termsAcceptedAt; }
 }

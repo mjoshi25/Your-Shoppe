@@ -22,6 +22,9 @@ public class AuthController {
         this.registrationService = registrationService;
     }
 
+    @GetMapping("/terms")
+    public String terms() { return "auth/terms"; }
+
     @GetMapping("/login")
     public String login(Authentication authentication) {
         return authentication != null && authentication.isAuthenticated()
