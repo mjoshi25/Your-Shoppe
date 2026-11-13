@@ -34,7 +34,7 @@
       </div>
       <p class="muted tiny">These business details are required only when you select Apply as vendor.</p>
     </div>
-    <label class="field full-field" style="display:flex;align-items:flex-start;gap:10px;margin:18px 0"><input type="checkbox" th:field="*{termsAccepted}" required style="width:auto;margin-top:4px"><span>I have read and agree to the <a th:href="@{/terms}" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span></label>
+    <label class="field full-field terms-consent" style="display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:18px 0;cursor:pointer;line-height:1.5"><input type="checkbox" th:field="*{termsAccepted}" required style="width:20px;height:20px;min-width:20px;flex:0 0 20px;margin:0;accent-color:#541477"><span style="display:inline;line-height:1.5">I have read and agree to the <a th:href="@{/terms}" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span></label>
     <small class="field-error" th:if="${#fields.hasErrors('termsAccepted')}" th:errors="*{termsAccepted}"></small>
     <div class="registration-actions">
       <button class="btn primary" type="submit" th:formaction="@{/register/customer}">Register as customer</button>
