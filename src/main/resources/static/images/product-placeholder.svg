@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Product image placeholder">
+  <rect width="640" height="480" rx="28" fill="#f5edf9"/>
+  <circle cx="320" cy="205" r="112" fill="#eadcf2"/>
+  <path d="M250 174h140l18 151H232l18-151Z" fill="#6d2b8b" opacity=".9"/>
+  <path d="M280 178v-24a40 40 0 0 1 80 0v24" fill="none" stroke="#6d2b8b" stroke-width="14" stroke-linecap="round"/>
+  <path d="M282 238h76" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".85"/>
+  <text x="320" y="390" text-anchor="middle" fill="#54216e" font-family="Arial,sans-serif" font-size="25" font-weight="700">SAMPLE PRODUCT</text>
+  <text x="320" y="424" text-anchor="middle" fill="#80618e" font-family="Arial,sans-serif" font-size="17">Upload a real photo after approval</text>
+</svg>

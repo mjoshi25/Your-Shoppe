@@ -25,6 +25,10 @@ public class Product {
     private String imagePublicId;
     @Indexed private ProductStatus status = ProductStatus.PENDING;
     private Instant createdAt = Instant.now();
+    /** Identifies products created by the controlled application test-data seeder. */
+    private boolean seededTestProduct = false;
+    private String seedBatchId;
+    private String seedKey;
     public String getId(){return id;} public void setId(String v){id=v;}
     public String getVendorUserId(){return vendorUserId;} public void setVendorUserId(String v){vendorUserId=v;}
     public String getVendorName(){return vendorName;} public void setVendorName(String v){vendorName=v;}
@@ -42,4 +46,7 @@ public class Product {
     public String getImagePublicId(){return imagePublicId;} public void setImagePublicId(String v){imagePublicId=v;}
     public ProductStatus getStatus(){return status;} public void setStatus(ProductStatus v){status=v;}
     public Instant getCreatedAt(){return createdAt;} public void setCreatedAt(Instant v){createdAt=v;}
+    public boolean isSeededTestProduct(){return seededTestProduct;} public void setSeededTestProduct(boolean v){seededTestProduct=v;}
+    public String getSeedBatchId(){return seedBatchId;} public void setSeedBatchId(String v){seedBatchId=v;}
+    public String getSeedKey(){return seedKey;} public void setSeedKey(String v){seedKey=v;}
 }

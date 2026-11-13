@@ -312,3 +312,11 @@ input:focus,select:focus,textarea:focus{border-color:#9855b4;box-shadow:0 0 0 3p
 @media print{.brand-logo,.auth-logo{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 .place-search{width:100%;margin:.35rem 0 .6rem}
 .place-search gmp-place-autocomplete{display:block;width:100%;max-width:100%;font:inherit}
+
+/* Vendor order workflow: one clear next action, with compact mobile controls. */
+.order-next-step{margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--asmj-line);border-left:4px solid var(--asmj-purple);border-radius:14px;background:#fcf9fe}
+.order-next-step p{margin:.35rem 0 .8rem;line-height:1.55}
+.order-next-step .actions{display:flex;flex-wrap:wrap;gap:.65rem;align-items:center}
+.order-next-step .actions form{margin:0}
+.order-next-step .notice{margin:.25rem 0;padding:.75rem .9rem}
+@media(max-width:640px){.order-next-step{padding:.85rem}.order-next-step .actions{display:grid;grid-template-columns:1fr}.order-next-step .actions form,.order-next-step .actions button{width:100%}}

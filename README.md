@@ -430,3 +430,7 @@ The implementation calls `https://routes.googleapis.com/directions/v2:computeRou
 - UPI payment is available only after vendor acceptance. The server enforces this, and the vendor verifies each submitted amount. An UPI order cannot enter PROCESSING until the full amount is recorded as received.
 - Vendors can record COD receipts, partial payments, and partial/full refunds categorized as merchandise, delivery or other. The order keeps an auditable payment/refund ledger; admin reports include transaction-date totals and a payment/refund CSV export. Only merchandise refunds reduce net merchandise sales used for Seller Excellence ranking.
 - Refund amounts are deducted from Seller Excellence net merchandise sales. Commission ledger recalculation after refunds remains a manual admin reconciliation step because refunds are not currently categorized by merchandise versus delivery.
+
+
+## Phase 24 – Vendor order workflow and test catalogue
+See `PHASE24-CHANGELOG.md` for the guided vendor order actions and the one-time sample-product creation/deletion controls for `shop1@asmj.co.in`. Both sample-data flags default to `false`.

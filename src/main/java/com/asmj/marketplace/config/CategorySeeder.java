@@ -5,8 +5,10 @@ import com.asmj.marketplace.repository.CategoryRepository;
 import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.core.annotation.Order;
 
 @Component
+@Order(1)
 public class CategorySeeder implements CommandLineRunner {
     private final CategoryRepository categories;
     public CategorySeeder(CategoryRepository categories){this.categories=categories;}
