@@ -69,7 +69,6 @@ public class ProductController {
             profile.setServiceablePinCodes(parsePins(serviceablePinCodes));
             if(homeDelivery && profile.getServiceablePinCodes().isEmpty()) throw new IllegalArgumentException("Add at least one valid 6-digit serviceable PIN code before enabling delivery.");
             if(homeDelivery && distanceBasedDeliveryEnabled && (blank(profile.getAddressLine()) || blank(profile.getCity()) || blank(profile.getState()) || blank(profile.getPinCode()))) throw new IllegalArgumentException("Complete your shop address, city, state and PIN code in Profile Settings before enabling distance-based pricing.");
-            if(homeDelivery && distanceBasedDeliveryEnabled && (profile.getShopLatitude()==null || profile.getShopLongitude()==null)) throw new IllegalArgumentException("Open Profile Settings, select your exact shop location on the map, and save it before enabling distance-based pricing.");
             profile.setDeliverySlotDefinitions(parseSlots(deliverySlots)); profile.setPickupSlotDefinitions(parseSlots(pickupSlots));
             if(homeDelivery && profile.getDeliverySlotDefinitions().isEmpty()) throw new IllegalArgumentException("Configure at least one delivery time slot.");
             if(pickupFromShop && profile.getPickupSlotDefinitions().isEmpty()) throw new IllegalArgumentException("Configure at least one pickup time slot.");

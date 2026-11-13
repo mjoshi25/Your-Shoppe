@@ -30,32 +30,24 @@
 
       <div th:if="${currentUser.role.name() == 'ROLE_CUSTOMER'}" class="settings-subsection">
         <h3>Delivery address</h3>
-        <label class="field">Address<input name="addressLine" maxlength="250" th:value="${currentUser.addressLine}"></label>
+        <label class="field">Search delivery location<div class="place-search" data-target="customerAddress" data-city-target="customerCity" data-state-target="customerState" data-pin-target="customerPin"><span class="muted">Type a shop, street, landmark or locality and choose a suggestion.</span></div><input id="customerAddress" name="addressLine" maxlength="250" th:value="${currentUser.addressLine}"></label>
         <div class="form-grid">
-          <label class="field">City<input name="city" maxlength="80" th:value="${currentUser.city}"></label>
-          <label class="field">State<input name="state" maxlength="80" th:value="${currentUser.state}"></label>
-          <label class="field">PIN code<input name="pinCode" maxlength="10" th:value="${currentUser.pinCode}"></label>
+          <label class="field">City<input id="customerCity" name="city" maxlength="80" th:value="${currentUser.city}"></label>
+          <label class="field">State<input id="customerState" name="state" maxlength="80" th:value="${currentUser.state}"></label>
+          <label class="field">PIN code<input id="customerPin" name="pinCode" maxlength="10" th:value="${currentUser.pinCode}"></label>
         </div>
-        <p class="muted">Select your exact delivery point on the map. The pin is used to calculate the vendor's driving route.</p>
-        <input type="hidden" id="deliveryLatitude" name="deliveryLatitude" th:value="${currentUser.deliveryLatitude}">
-        <input type="hidden" id="deliveryLongitude" name="deliveryLongitude" th:value="${currentUser.deliveryLongitude}">
-        <button type="button" class="btn secondary" id="useCurrentProfileLocation">Use my current location</button><div id="profileLocationMap" class="map-panel" aria-label="Select delivery location on map"></div><p id="profileMapStatus" class="muted tiny">Click the map to place your delivery pin.</p>
       </div>
 
       <div th:if="${currentUser.role.name() == 'ROLE_VENDOR'}" class="settings-subsection">
         <h3>Business information</h3>
         <label class="field">Business name<input name="businessName" maxlength="120" th:value="${vendorProfile.businessName}"></label>
         <label class="field">Business description<textarea name="businessDescription" rows="3" maxlength="1000" th:text="${vendorProfile.businessDescription}"></textarea></label>
-        <label class="field">Business address<input name="businessAddress" maxlength="250" th:value="${vendorProfile.addressLine}"></label>
+        <label class="field">Search business/shop location<div class="place-search" data-target="businessAddress" data-city-target="businessCity" data-state-target="businessState" data-pin-target="businessPinCode"><span class="muted">Type your shop name, street, landmark or locality and choose a suggestion.</span></div><input id="businessAddress" name="businessAddress" maxlength="250" th:value="${vendorProfile.addressLine}"></label>
         <div class="form-grid">
-          <label class="field">City<input name="businessCity" maxlength="80" th:value="${vendorProfile.city}"></label>
-          <label class="field">State<input name="businessState" maxlength="80" th:value="${vendorProfile.state}"></label>
-          <label class="field">PIN code<input name="businessPinCode" maxlength="10" th:value="${vendorProfile.pinCode}"></label>
+          <label class="field">City<input id="businessCity" name="businessCity" maxlength="80" th:value="${vendorProfile.city}"></label>
+          <label class="field">State<input id="businessState" name="businessState" maxlength="80" th:value="${vendorProfile.state}"></label>
+          <label class="field">PIN code<input id="businessPinCode" name="businessPinCode" maxlength="10" th:value="${vendorProfile.pinCode}"></label>
         </div>
-        <p class="muted">Select your shop's exact location on the map. This is the starting point for driving-distance delivery charges.</p>
-        <input type="hidden" id="businessLatitude" name="businessLatitude" th:value="${vendorProfile.shopLatitude}">
-        <input type="hidden" id="businessLongitude" name="businessLongitude" th:value="${vendorProfile.shopLongitude}">
-        <button type="button" class="btn secondary" id="useCurrentProfileLocation">Use my current location</button><div id="profileLocationMap" class="map-panel" aria-label="Select shop location on map"></div><p id="profileMapStatus" class="muted tiny">Click the map to place your shop pin.</p>
         <p class="muted tiny">Delivery charges and fulfilment options remain available under <a th:href="@{/vendor/settings/fulfilment}">Fulfilment settings</a>.</p>
       </div>
 
@@ -74,10 +66,23 @@
     </form>
   </section>
 </main>
-<style>.map-panel{width:100%;height:340px;min-height:280px;border-radius:14px;border:1px solid #ddd;overflow:hidden;background:#f2f2f2}.map-panel:empty:after{content:'Loading Google Map…';display:grid;place-items:center;height:100%;color:#666}</style>
-<script th:inline="javascript">
-const mapsBrowserKey=/*[[${googleMapsBrowserApiKey}]]*/ '';
-window.initSettingsMap=function(){const node=document.getElementById('profileLocationMap');if(!node)return;const vendorLat=document.getElementById('businessLatitude'),vendorLng=document.getElementById('businessLongitude');const customerLat=document.getElementById('deliveryLatitude'),customerLng=document.getElementById('deliveryLongitude');const latInput=vendorLat||customerLat,lngInput=vendorLng||customerLng;const lat=Number(latInput.value),lng=Number(lngInput.value);const hasPin=latInput.value!==''&&lngInput.value!=='';const center=hasPin?{lat,lng}:{lat:20.5937,lng:78.9629};const map=new google.maps.Map(node,{center,zoom:hasPin?16:5,mapTypeControl:true,streetViewControl:false,fullscreenControl:true});let marker=hasPin?new google.maps.Marker({position:center,map,draggable:true}):null;const status=document.getElementById('profileMapStatus');function update(point){latInput.value=point.lat().toFixed(7);lngInput.value=point.lng().toFixed(7);if(!marker)marker=new google.maps.Marker({position:point,map,draggable:true});else marker.setPosition(point);status.textContent='Selected coordinates: '+latInput.value+', '+lngInput.value+'. Save profile settings to retain this location.';}map.addListener('click',e=>update(e.latLng));if(marker)marker.addListener('dragend',e=>update(e.latLng));const locate=document.getElementById('useCurrentProfileLocation');if(locate)locate.addEventListener('click',()=>{if(!navigator.geolocation){status.textContent='Location access is not available in this browser.';return;}status.textContent='Finding your current location…';navigator.geolocation.getCurrentPosition(pos=>{const point=new google.maps.LatLng(pos.coords.latitude,pos.coords.longitude);map.setCenter(point);map.setZoom(16);update(point);},()=>{status.textContent='Could not access your location. Allow location permission or click the map to set the pin.';},{enableHighAccuracy:true,timeout:10000,maximumAge:60000});});};
-if(mapsBrowserKey){const script=document.createElement('script');script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(mapsBrowserKey)+'&callback=initSettingsMap&loading=async';script.async=true;script.defer=true;script.onerror=()=>{const status=document.getElementById('profileMapStatus');if(status)status.textContent='Google Map could not load. Check the browser API key and Maps JavaScript API restrictions.';};document.head.appendChild(script);}else{const status=document.getElementById('profileMapStatus');if(status)status.textContent='Map is not configured yet. The administrator must add GOOGLE_MAPS_BROWSER_API_KEY in Render.';}
+<script th:if="${googleMapsBrowserKey != null and !#strings.isEmpty(googleMapsBrowserKey)}" th:src="'https://maps.googleapis.com/maps/api/js?key='+${googleMapsBrowserKey}+'&v=weekly&libraries=places'"></script>
+<script>
+(async function(){
+  if(!window.google||!google.maps||!google.maps.importLibrary)return;
+  try{
+    const places=await google.maps.importLibrary('places');
+    document.querySelectorAll('.place-search[data-target]').forEach(host=>{
+      const widget=new places.PlaceAutocompleteElement({includedRegionCodes:['in']});
+      widget.placeholder='Search location'; widget.style.width='100%'; host.replaceChildren(widget);
+      widget.addEventListener('gmp-select',async event=>{
+        try{const place=event.placePrediction.toPlace();await place.fetchFields({fields:['formattedAddress','addressComponents']});
+          const target=document.getElementById(host.dataset.target);if(target){target.value=place.formattedAddress||'';target.dispatchEvent(new Event('input',{bubbles:true}));}
+          const components=place.addressComponents||[];const find=(type)=>components.find(c=>(c.types||[]).includes(type))?.longText||'';[['city','locality'],['state','administrative_area_level_1'],['pin','postal_code']].forEach(([key,type])=>{const field=document.getElementById(host.dataset[key+'Target']);if(field){const value=find(type)||(key==='city'?find('postal_town'):'');if(value){field.value=value;field.dispatchEvent(new Event('input',{bubbles:true}));}}});
+        }catch(e){host.insertAdjacentText('beforeend',' Could not load this location. Please type the address manually.');}
+      });
+    });
+  }catch(e){console.warn('Google Places autocomplete unavailable; manual address entry remains available.',e);}
+})();
 </script>
 </body></html>

@@ -9,8 +9,8 @@
 - Each started kilometre after the free allowance is chargeable (ceiling rounding). For example, 5 km free and 12 km road distance means 7 chargeable km.
 - Quote is stored server-side in the session, bound to vendor and normalized address fingerprint, and expires after 15 minutes. Checkout refuses missing, expired or address-mismatched quotes.
 - Order snapshots include origin address, road distance, free distance, rate, chargeable kilometres and final delivery charge. Invoice and tracking show the calculated distance.
-- API key is server-side only and read from `GOOGLE_MAPS_API_KEY`; it is never rendered into browser HTML/JavaScript.
-- No Geocoding or Places API is needed for this address-to-address Routes API flow.
+- The Routes API key remains server-side and is read from `GOOGLE_MAPS_API_KEY`. Optional address suggestions use a separate browser key; see README setup steps.
+- Manual address entry needs only Routes API. Search suggestions additionally require Maps JavaScript API and Places API (New).
 
 ## Phase 22: six-month Seller Excellence Rewards
 
@@ -26,24 +26,16 @@
 
 Add this Render environment variable after creating and restricting the Google Routes API key:
 
-`GOOGLE_MAPS_API_KEY=<your-restricted-server-side-key>`
+`GOOGLE_MAPS_API_KEY=<your-restricted-server-side-routes-key>`
+`GOOGLE_MAPS_BROWSER_API_KEY=<your-restricted-http-referrer-browser-key>`
 
 Do not commit or share the actual key. See README.md under “Google Maps Routes API setup” for Google Cloud Console and Render steps.
 
 ## Important validation notes
 
 - Existing vendor fixed delivery charges remain active unless the vendor explicitly enables distance pricing.
-- Distance pricing is not usable until `GOOGLE_MAPS_API_KEY` is configured and the vendor has a complete shop address under Profile Settings.
+- Distance pricing is not usable until `GOOGLE_MAPS_API_KEY` is configured and the vendor has a complete shop address under Profile Settings. Address suggestions additionally require `GOOGLE_MAPS_BROWSER_API_KEY`; manual typing remains available without it.
 - If Google Routes cannot calculate a route, distance-priced delivery checkout is blocked with a clear error; the application does not silently use straight-line distance or the old fixed charge. Pickup remains available where enabled.
-- Reward ranking uses the application's available completed/payment-verified order records. The current data model has no separate refund flag/workflow, so externally refunded orders cannot be automatically identified or excluded. Cancelled orders are excluded from completed sales.
+- Reward ranking uses completed/payment-verified order records and now deducts vendor-recorded refunds from net merchandise sales; fully refunded orders do not count as qualifying completed sales. Refunds are recorded manually by the vendor and are not independently confirmed by a bank/UPI provider.
 - Reward cash amounts are editable by admin. Initial suggested values are ₹5,000 / ₹3,000 / ₹2,000 / ₹1,000 / ₹500; confirm the actual benefit budget before publishing winners.
 - Maven was unavailable in the build environment (`mvn: command not found`), and the project has no Maven wrapper. Therefore Maven compilation, unit tests, Spring context startup, MongoDB tests and live Google API calls have NOT been run. Static checks only are reported for this archive.
-
-
-## Map visibility enhancement
-- Added saved shop latitude/longitude to vendor profile and delivery latitude/longitude to customer account.
-- Added interactive map pin selection in Account Settings for vendor shop and customer delivery locations.
-- Checkout now displays the vendor and customer map markers, lets customers adjust their destination pin, and draws the actual driving route returned by Google Routes API.
-- Route quotes are tied to destination coordinates and current vendor shop coordinates as well as the typed address; changes require a fresh quote.
-- Added separate `GOOGLE_MAPS_BROWSER_API_KEY` configuration for Maps JavaScript API.
-- Google Routes API now receives selected coordinates and returns encoded route geometry, not distance alone.

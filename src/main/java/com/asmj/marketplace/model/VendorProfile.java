@@ -18,8 +18,6 @@ public class VendorProfile {
     private String city;
     private String state;
     private String pinCode;
-    private Double shopLatitude;
-    private Double shopLongitude;
     private boolean homeDelivery = true;
     private boolean pickupFromShop = true;
     private BigDecimal deliveryCharge = BigDecimal.ZERO;
@@ -90,10 +88,6 @@ public class VendorProfile {
     public void setPickupFromShop(boolean value) { this.pickupFromShop = value; }
     public String getPinCode() { return pinCode; }
     public void setPinCode(String pinCode) { this.pinCode = pinCode; }
-    public Double getShopLatitude() { return shopLatitude; }
-    public void setShopLatitude(Double value) { this.shopLatitude = value; }
-    public Double getShopLongitude() { return shopLongitude; }
-    public void setShopLongitude(Double value) { this.shopLongitude = value; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }

@@ -405,6 +405,9 @@ See `PHASE20-CHANGELOG.md` for logo, favicon, theme and template updates.
 10. For local Windows PowerShell testing, set `$env:GOOGLE_MAPS_API_KEY="your-key"` before running `mvn spring-boot:run`.
 11. Never commit the real key to Git, `.env.example`, application.properties or source code. The app reads it server-side from `GOOGLE_MAPS_API_KEY`.
 
+### Optional searchable address suggestions (Places autocomplete)
+The address fields also support type-to-search suggestions. To enable this, in the same Google Cloud project enable **Maps JavaScript API** and **Places API (New)**. Create a second API key for browser use, restrict its application to HTTP referrers (your exact production domain, e.g. `https://your-domain.example/*`, plus `http://localhost:8080/*` for local testing), and restrict its APIs to Maps JavaScript API and Places API (New). Add it in Render as `GOOGLE_MAPS_BROWSER_API_KEY`. This browser key is expected to be visible in page source, so HTTP-referrer and API restrictions are mandatory. If it is not configured, users can still type the address manually; route pricing continues to use the separate server-side Routes API key.
+
 The implementation calls `https://routes.googleapis.com/directions/v2:computeRoutes` with `travelMode=DRIVE` and requests only `routes.distanceMeters`. Full addresses are sent to Routes API directly; a separate Geocoding API is not required for this flow. Google setup reference: https://developers.google.com/maps/documentation/routes/get-api-key
 
 ## Phase 22 — Six-month Seller Excellence Rewards
@@ -421,14 +424,9 @@ The implementation calls `https://routes.googleapis.com/directions/v2:computeRou
 - Reward amounts are configurable by admin. Suggested initial defaults are ₹5,000, ₹3,000, ₹2,000, ₹1,000 and ₹500; confirm funding and eligibility rules before publishing a period.
 - Maven compilation and live Google API calls must be tested in the target environment after setting the API key. This archive must not be treated as fully production-verified until those tests pass.
 
-
-## Google Maps visual route setup (Phase 21 map enhancement)
-
-Enable both **Routes API** and **Maps JavaScript API** in the same Google Cloud project. Two separate Google Cloud API keys are recommended:
-
-- `GOOGLE_MAPS_API_KEY` (server-side): enable Routes API only; used by Spring Boot to calculate the driving distance and return the encoded route polyline. Keep this key secret in Render environment variables.
-- `GOOGLE_MAPS_BROWSER_API_KEY` (browser-side): enable Maps JavaScript API only; restrict by HTTP referrers to the production Render hostname, custom domain and localhost used for development. Do not add Geocoding API unless address autocomplete/reverse-geocoding is added in a later release. This key is visible in the browser by design and must be referrer/API restricted.
-
-Vendors must open Account Settings → Business information, click the map to set the shop pin, and save. Customers can set a delivery pin in Account Settings or adjust it on checkout. Checkout displays vendor and customer markers and the returned driving route. The checkout route quote is bound to the customer address, destination coordinates, vendor shop coordinates, vendor and 15-minute expiry.
-
-Do not enable distance-based pricing until the vendor has saved a shop pin and the two keys have been configured.
+## Phase 23 — Pre-launch corrections
+- Searchable Google Places address suggestions are available on customer delivery address and vendor shop/business address fields. Selecting a result fills the formatted address and available city/state/PIN components; manual typing remains available.
+- Configure the separate browser key as `GOOGLE_MAPS_BROWSER_API_KEY` after enabling Maps JavaScript API and Places API (New). Restrict it by website HTTP referrer and API. Keep the Routes API server key separate as `GOOGLE_MAPS_API_KEY`.
+- UPI payment is available only after vendor acceptance. The server enforces this, and the vendor verifies each submitted amount. An UPI order cannot enter PROCESSING until the full amount is recorded as received.
+- Vendors can record COD receipts, partial payments, and partial/full refunds categorized as merchandise, delivery or other. The order keeps an auditable payment/refund ledger; admin reports include transaction-date totals and a payment/refund CSV export. Only merchandise refunds reduce net merchandise sales used for Seller Excellence ranking.
+- Refund amounts are deducted from Seller Excellence net merchandise sales. Commission ledger recalculation after refunds remains a manual admin reconciliation step because refunds are not currently categorized by merchandise versus delivery.

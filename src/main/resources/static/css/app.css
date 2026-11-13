@@ -310,3 +310,5 @@ input:focus,select:focus,textarea:focus{border-color:#9855b4;box-shadow:0 0 0 3p
 .metric-card,.panel,.feature-card{border-color:var(--asmj-line)}
 @media(max-width:640px){.site-header .brand-logo{width:178px;max-height:48px}.site-header .topbar{gap:10px}}
 @media print{.brand-logo,.auth-logo{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+.place-search{width:100%;margin:.35rem 0 .6rem}
+.place-search gmp-place-autocomplete{display:block;width:100%;max-width:100%;font:inherit}
