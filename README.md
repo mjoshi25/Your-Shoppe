@@ -442,3 +442,9 @@ The implementation calls `https://routes.googleapis.com/directions/v2:computeRou
 
 ## Phase 24 – Vendor order workflow and test catalogue
 See `PHASE24-CHANGELOG.md` for the guided vendor order actions and the one-time sample-product creation/deletion controls for `shop1@asmj.co.in`. Both sample-data flags default to `false`.
+
+## Paid vendor advertising (Phases 33–37)
+
+ASMJ Shoppe includes an optional fixed-price advertising module. Vendors create campaigns from **Vendor workspace → Paid advertising**, choose a placement and duration, upload a banner, and pay ASMJ Shoppe directly by UPI. Admin configures the advertising UPI ID/QR, placements and prices under **Administration → Advertising management**. Payment proof (UTR and screenshot) is verified separately from creative approval. Only approved, payment-verified campaigns within their scheduled India-local date range are displayed. Impressions and clicks are tracked and shown in campaign reports.
+
+Advertising UPI collections are separate from customer order payments and weekly vendor commissions. Configure Cloudinary as already required for existing image/document uploads, then configure the advertising UPI details in the admin screen before vendors create campaigns. See `PHASE33-37-ADVERTISING.md` for workflow, collections, and validation notes.

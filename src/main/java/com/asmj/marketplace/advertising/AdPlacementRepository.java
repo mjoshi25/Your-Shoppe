@@ -1,0 +1,1 @@
+package com.asmj.marketplace.advertising; import java.util.*; import org.springframework.data.mongodb.repository.MongoRepository; public interface AdPlacementRepository extends MongoRepository<AdPlacement,String>{Optional<AdPlacement> findByCode(String code); List<AdPlacement> findByEnabledTrueOrderByNameAsc();}

@@ -1,0 +1,1 @@
+package com.asmj.marketplace.advertising; import org.springframework.data.mongodb.repository.MongoRepository; public interface AdvertisingSettingsRepository extends MongoRepository<AdvertisingSettings,String>{}

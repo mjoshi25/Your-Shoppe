@@ -1,0 +1,1 @@
+package com.asmj.marketplace.advertising; import java.time.LocalDate; import org.springframework.data.mongodb.repository.MongoRepository; public interface AdEventRepository extends MongoRepository<AdEvent,String>{boolean existsByCampaignIdAndEventTypeAndVisitorKeyAndEventDate(String campaignId,String eventType,String visitorKey,LocalDate eventDate);}

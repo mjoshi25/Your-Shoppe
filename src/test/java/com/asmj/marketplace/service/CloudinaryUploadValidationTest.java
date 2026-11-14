@@ -18,6 +18,17 @@ class CloudinaryUploadValidationTest {
         assertThrows(IllegalArgumentException.class, () -> uploads.uploadDocument(file, "test"));
     }
 
+    @Test void rejectsUnsupportedAdvertisementBannerTypesBeforeCloudinaryCall() {
+        MockMultipartFile file = new MockMultipartFile("banner", "payload.svg", "image/svg+xml", new byte[]{1,2,3});
+        assertThrows(IllegalArgumentException.class, () -> uploads.uploadAdvertisementBanner(file));
+    }
+
+    @Test void rejectsAdvertisementBannersLargerThanFiveMegabytes() {
+        byte[] content = new byte[5 * 1024 * 1024 + 1];
+        MockMultipartFile file = new MockMultipartFile("banner", "banner.png", "image/png", content);
+        assertThrows(IllegalArgumentException.class, () -> uploads.uploadAdvertisementBanner(file));
+    }
+
     @Test void rejectsEmptyAttachments() {
         MockMultipartFile file = new MockMultipartFile("attachment", "", "", new byte[0]);
         assertThrows(IllegalArgumentException.class, () -> uploads.uploadDocument(file, "test"));

@@ -35,6 +35,15 @@ public class CloudinaryImageService {
         return upload(file, "asmj-marketplace/profile-photos", "image");
     }
 
+    /** Uploads marketplace advertising banners (JPG, PNG or WEBP), maximum 5 MB. */
+    public Map<String,Object> uploadAdvertisementBanner(MultipartFile file) {
+        validate(file, 5L * 1024 * 1024);
+        String type=contentType(file);
+        if (!type.equals("image/jpeg") && !type.equals("image/png") && !type.equals("image/webp"))
+            throw new IllegalArgumentException("Advertisement banners must be JPG, PNG or WEBP images.");
+        return upload(file, "asmj-marketplace/advertising/banners", "image");
+    }
+
     /** Uploads payment evidence, chat attachments and receipts. */
     public Map<String,Object> uploadDocument(MultipartFile file, String folder) {
         validate(file, 8L * 1024 * 1024);

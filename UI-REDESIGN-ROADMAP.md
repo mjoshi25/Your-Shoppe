@@ -22,3 +22,11 @@ Business rules and existing Spring Boot/Thymeleaf/MongoDB/Cloudinary integration
 - Added a common responsive presentation layer for operational pages (orders, reports, commissions, coupons, inventory, rewards, chat, settings, forms and tables).
 - No Java source, controllers, services, repositories, MongoDB entities, security rules, application properties, environment configuration or deployment files were changed.
 - This is a UI-only combined milestone. Do not deploy to production until the complete role-by-role workflow regression has passed in a separate staging environment.
+
+## Phases 33–37 — Paid Advertising (implemented in this release)
+- Phase 33: MongoDB advertising foundation, placement inventory, fixed-duration packages, UPI settings and separate payment/creative states.
+- Phase 34: Vendor campaign creation, banner uploads, internal destination/product/category targeting, PIN targeting and UPI proof submission.
+- Phase 35: Admin placement/package/UPI configuration, payment verification, creative approval/rejection, campaign suspension and capacity checks.
+- Phase 36: Sponsored placements on homepage, category/search, product detail and cart pages; sponsored disclosure; no checkout ads.
+- Phase 37: Deduplicated session-level impressions/clicks, vendor/admin analytics, daily rotation and automatic campaign expiry.
+- Phase 38 remains: user-side responsive, browser, MongoDB, Cloudinary and complete end-to-end acceptance testing.

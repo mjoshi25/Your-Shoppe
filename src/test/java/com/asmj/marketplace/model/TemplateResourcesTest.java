@@ -12,12 +12,23 @@ class TemplateResourcesTest {
                 "vendor/commissions.html", "vendor/product-form.html", "vendor/products.html",
                 "settings/index.html", "admin/vendor-detail.html", "vendor/pending.html", "order/tracking.html", "order/invoice.html",
                 "vendor/inventory.html", "vendor/reviews.html", "admin/reviews.html", "product/detail.html",
+                "vendor/advertising.html", "admin/advertising.html", "advertising/create.html", "advertising/payment.html", "advertising/slots.html",
                 "admin/reports.html", "admin/coupons.html", "admin/audit.html", "customer/wishlist.html",
                 "customer/recently-viewed.html", "customer/alerts.html", "customer/offers.html", "order/checkout.html"};
         for (String template : templates) {
             assertTrue(new ClassPathResource("templates/" + template).exists(),
                     "Missing Thymeleaf template: " + template);
         }
+    }
+
+    @Test void advertisingTemplatesKeepPaymentAndApprovalWorkflowsSeparate() throws Exception {
+        String vendor = new String(new ClassPathResource("templates/vendor/advertising.html").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        String admin = new String(new ClassPathResource("templates/admin/advertising.html").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        String payment = new String(new ClassPathResource("templates/advertising/payment.html").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        assertTrue(vendor.contains("/vendor/advertising/new"), "Vendors must be able to create campaigns");
+        assertTrue(payment.contains("name=\"utr\"") && payment.contains("name=\"proof\""), "UPI evidence must be collected");
+        assertTrue(admin.contains("/payment/verify") && admin.contains("/approve"), "Admin must verify payment separately from creative approval");
+        assertTrue(admin.contains("advertising/settings") && admin.contains("advertising/packages"), "Admin must configure UPI and fixed packages");
     }
 
     @Test void checkoutSupportsDateSlotsAndDeferredUpiEvidence() throws Exception {
