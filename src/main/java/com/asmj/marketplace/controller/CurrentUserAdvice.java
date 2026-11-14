@@ -18,7 +18,13 @@ public class CurrentUserAdvice {
 
     @ModelAttribute
     public void addSignedInUser(Principal principal, Model model, HttpServletRequest request) {
-        Map<String,List<AdCampaign>> slots = new HashMap<>();
+        Map<String,List<AdCampaign>> slots = new LinkedHashMap<>();
+        // Thymeleaf templates address these map entries by placement code.
+        // Seed every known key so an empty campaign inventory renders safely.
+        for (String placement : List.of("HOME_HERO", "HOME_CARD", "CATEGORY_BANNER",
+                "SEARCH_SPONSORED", "PRODUCT_DETAIL", "CART_BANNER")) {
+            slots.put(placement, new ArrayList<>());
+        }
         String categoryId=request.getParameter("categoryId");
         jakarta.servlet.http.HttpSession session=request.getSession(false);
         String targetPin=session==null?null:(String)session.getAttribute("asmjAdTargetPin");
