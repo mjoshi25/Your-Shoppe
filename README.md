@@ -1,3 +1,11 @@
+# ASMJ Shoppe — Current project baseline (Phase 27 + UI Phase 28)
+
+This project ZIP is based on the Phase 27 Vendor Coupons Menu Fix release. Phase 28 adds a responsive shared marketplace header, global product search, shared visual tokens and accessibility foundations. See `PHASE28-UI-FOUNDATION.md` and `UI-REDESIGN-ROADMAP.md` for the current redesign scope and remaining milestones.
+
+**Deployment safety:** This is a development ZIP only. It has not been deployed. Do not replace the production repository or Render service until the owner has reviewed, tested and explicitly approved the release.
+
+---
+
 # ASMJ Shoppe — Phase 9
 
 Standalone multi-vendor marketplace foundation using Java 17, Spring Boot, Thymeleaf, Spring Security and MongoDB.

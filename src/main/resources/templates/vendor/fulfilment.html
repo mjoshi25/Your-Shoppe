@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/favicon-192.png"><meta name="theme-color" content="#541477"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Fulfilment settings | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
 <body><header th:replace="~{fragments/layout :: header}"></header>
-<main class="dashboard-wrap"><div class="eyebrow">VENDOR CENTRE</div><h1>Pickup & delivery settings</h1>
+<main class="dashboard-wrap" id="main-content" tabindex="-1"><div class="eyebrow">VENDOR CENTRE</div><h1>Pickup & delivery settings</h1>
 <p class="muted">Choose how customers can receive orders from your shop. You can enable either option or both.</p>
 <div class="notice success" th:if="${successMessage}" th:text="${successMessage}"></div><div class="notice error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 <section class="panel"><form th:action="@{/vendor/settings/fulfilment}" method="post">

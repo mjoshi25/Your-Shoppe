@@ -6,7 +6,7 @@
 </head>
 <body>
 <header th:replace="~{fragments/layout :: header}"></header>
-<main class="dashboard-wrap settings-wrap">
+<main class="dashboard-wrap settings-wrap" id="main-content" tabindex="-1">
   <div class="eyebrow">ACCOUNT</div><h1>Settings</h1>
   <p class="muted" th:text="${'Manage your ' + roleLabel + ' profile, photo and security preferences.'}">Manage your account.</p>
   <div th:if="${successMessage}" class="notice success" th:text="${successMessage}"></div>

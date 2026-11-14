@@ -8,7 +8,7 @@
 </head>
 <body class="auth-page">
 <a class="brand auth-brand" th:href="@{/}" aria-label="ASMJ Shoppe home"><img class="auth-logo" th:src="@{/images/asmj-shoppe-logo.svg}" alt="ASMJ Shoppe — Shop, Sell, Grow Together"></a>
-<main class="auth-card wide">
+<main class="auth-card wide" id="main-content" tabindex="-1">
   <div class="eyebrow">Join the marketplace</div><h1>Create your account</h1>
   <p class="muted">Enter your personal details. If applying as a vendor, also complete the shop details below.</p>
   <div class="notice error" role="alert" th:if="${registrationError}" th:text="${registrationError}"></div>

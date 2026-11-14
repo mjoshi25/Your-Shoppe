@@ -1,33 +1,22 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head><meta charset="UTF-8"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/favicon-192.png"><meta name="theme-color" content="#541477"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#10213f"><title>ASMJ Shoppe | Shop local, grow together</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
-<body class="landing-page">
-<header th:replace="~{fragments/layout :: header}"></header>
-<main>
-  <section class="hero-shell">
-    <div class="hero-copy">
-      <div class="eyebrow light-eyebrow"><span class="eyebrow-dot"></span> A PAN-INDIA MULTI-VENDOR MARKETPLACE.</div>
-      <h1>Shop more.<br><span>Discover everywhere.</span></h1>
-      <p>Discover products from vendors across India, shop with confidence, and support businesses wherever they serve.</p>
-      <div class="actions" sec:authorize="isAnonymous()"><a class="btn primary hero-btn" th:href="@{/products}">Explore products <span>→</span></a><a class="btn hero-outline" th:href="@{/register}">Join ASMJ</a></div>
-      <div class="actions" sec:authorize="isAuthenticated()"><a class="btn primary hero-btn" th:href="@{/dashboard}">Go to my dashboard <span>→</span></a><a class="btn hero-outline" th:href="@{/products}">Explore products</a></div>
-      <div class="hero-proof"><span class="proof-icon">✓</span> Trusted vendors across India · Simple ordering · Flexible delivery and pickup</div>
-    </div>
-    <div class="hero-art" aria-label="Marketplace shopping illustration">
-      <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
-      <div class="shop-card"><div class="shop-top"><span class="shop-logo">A</span><span class="shop-status">LOCAL MARKET</span></div><div class="shop-bag">🛍️</div><strong>Shop across India</strong><small>Find products from trusted vendors</small><div class="shop-tags"><span>Everyday finds</span><span>Vendor favourites</span></div></div>
-      <div class="float-chip chip-one">✦ Trusted local sellers</div><div class="float-chip chip-two">♡ Shop with ease</div>
+<head><meta charset="UTF-8"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/favicon-192.png"><meta name="theme-color" content="#541477"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Discover products from independent vendors across India with ASMJ Shoppe."><title>ASMJ Shoppe | Shop · Sell · Grow Together</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body class="landing-page"><header th:replace="~{fragments/layout :: header}"></header>
+<main id="main-content" tabindex="-1" class="home-redesign">
+  <section class="market-hero">
+    <div class="market-hero-inner">
+      <div class="market-hero-copy"><div class="eyebrow hero-kicker"><span class="live-dot"></span> THE MARKETPLACE THAT BRINGS BUSINESSES CLOSER</div>
+        <h1>Good finds.<br><span>Great local stories.</span></h1>
+        <p>Discover products from independent sellers across India. Shop confidently, connect directly with vendors and choose convenient delivery or pickup.</p>
+        <div class="market-hero-actions"><a class="btn market-primary" th:href="@{/products}">Explore the marketplace <span aria-hidden="true">→</span></a><a class="btn market-secondary" th:href="@{/register}">Start selling</a></div>
+        <div class="market-trust-row"><span>✓ Vendor-reviewed marketplace</span><span>✓ Flexible fulfilment</span><span>✓ Direct seller connection</span></div>
+      </div>
+      <div class="market-hero-visual" aria-label="Shopping bags and marketplace illustration"><div class="hero-glow"></div><div class="hero-product-tile tile-back"><span>DISCOVER</span><b>Everyday<br>essentials</b><i>✦</i></div><div class="hero-product-tile tile-front"><div class="hero-bag-art">🛍️</div><strong>Shop across India</strong><small>Find something you love</small><div class="hero-mini-tags"><span>Local finds</span><span>New favourites</span></div></div><div class="hero-float hero-float-top">✦ Independent sellers</div><div class="hero-float hero-float-bottom">♡ Made for easy shopping</div></div>
     </div>
   </section>
-  <section class="landing-content">
-    <div class="section-heading"><div><div class="eyebrow">MADE FOR SHOPPERS ACROSS INDIA</div><h2>One platform. More possibilities.</h2></div><p>Whether you are shopping or running a business, ASMJ brings the essentials together.</p></div>
-    <div class="feature-grid">
-      <article class="feature-card"><div class="feature-icon lavender">⌕</div><h3>Discover local products</h3><p>Browse products from participating businesses and find what you need close to home.</p><a th:href="@{/products}">Explore marketplace →</a></article>
-      <article class="feature-card"><div class="feature-icon mint">↗</div><h3>Grow your business</h3><p>Apply to become a vendor, build your shop profile and showcase your products online.</p><a sec:authorize="isAnonymous()" th:href="@{/register}">Become a vendor →</a><a sec:authorize="isAuthenticated()" th:href="@{/dashboard}">Open your dashboard →</a></article>
-      <article class="feature-card"><div class="feature-icon peach">✓</div><h3>Managed with care</h3><p>Vendor applications are reviewed by the ASMJ team to support a trusted marketplace.</p><a sec:authorize="isAnonymous()" th:href="@{/login}">Account sign in →</a><a sec:authorize="isAuthenticated()" th:href="@{/dashboard}">Open your dashboard →</a></article>
-    </div>
-    <div class="join-banner"><div><div class="eyebrow light-eyebrow">YOUR COMMUNITY, YOUR MARKETPLACE</div><h2>Ready to be part of it?</h2><p>Join as a customer or apply to bring your business online.</p></div><a class="btn banner-btn" th:href="@{/register}" sec:authorize="isAnonymous()">Create your account →</a><a class="btn banner-btn" th:href="@{/dashboard}" sec:authorize="isAuthenticated()">Open dashboard →</a></div>
+  <section class="home-discovery"><div class="home-section-head"><div><div class="eyebrow">YOUR NEXT GREAT FIND</div><h2>Explore the marketplace</h2><p>Browse a growing collection from participating vendors.</p></div><a class="home-text-link" th:href="@{/products}">Shop all products <span>→</span></a></div>
+    <div class="discovery-grid"><a class="discovery-card discovery-purple" th:href="@{/products}"><span class="discovery-icon">⌕</span><span class="discovery-copy"><b>Discover products</b><small>Explore the full catalogue</small></span><span class="discovery-arrow">↗</span></a><a class="discovery-card discovery-gold" th:href="@{/customer/offers}" sec:authorize="hasRole('CUSTOMER')"><span class="discovery-icon">%</span><span class="discovery-copy"><b>Offers for you</b><small>Explore available coupons</small></span><span class="discovery-arrow">↗</span></a><a class="discovery-card discovery-mint" th:href="@{/register}"><span class="discovery-icon">↗</span><span class="discovery-copy"><b>Become a seller</b><small>Bring your business online</small></span><span class="discovery-arrow">↗</span></a></div>
   </section>
-</main>
-<footer class="site-footer"><span>© ASMJ Shoppe</span><span>Shop · Sell · Grow Together — a pan-India marketplace.</span></footer>
-</body></html>
+  <section class="home-how"><div class="home-section-head centered"><div><div class="eyebrow">SIMPLE BY DESIGN</div><h2>A better way to shop and sell</h2><p>Everything you need to make marketplace connections work.</p></div></div><div class="how-grid"><article class="how-card"><span class="how-number">01</span><div class="how-icon">⌕</div><h3>Find your favourites</h3><p>Search products, compare options and explore participating vendors.</p></article><article class="how-card"><span class="how-number">02</span><div class="how-icon">♡</div><h3>Connect with sellers</h3><p>Ask questions, choose fulfilment options and place an order with confidence.</p></article><article class="how-card"><span class="how-number">03</span><div class="how-icon">✦</div><h3>Grow together</h3><p>Shop from independent businesses or join as a vendor and reach new customers.</p></article></div></section>
+  <section class="seller-banner"><div><div class="eyebrow hero-kicker">FOR AMBITIOUS BUSINESSES</div><h2>Your products deserve<br>a bigger audience.</h2><p>Set up your vendor profile, list your products and grow with ASMJ Shoppe.</p></div><a class="btn seller-banner-btn" th:href="@{/register}">Become a seller <span>→</span></a><div class="seller-banner-mark">A</div></section>
+</main><footer class="site-footer"><span>© ASMJ Shoppe</span><span>Shop · Sell · Grow Together — a pan-India marketplace.</span></footer></body></html>

@@ -3,7 +3,7 @@
 <head><meta charset="UTF-8"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/favicon-192.png"><meta name="theme-color" content="#541477"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Vendor application | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
 <body>
 <header th:replace="~{fragments/layout :: header}"></header>
-<main class="dashboard-wrap">
+<main class="dashboard-wrap" id="main-content" tabindex="-1">
   <div class="page-heading"><div><div class="eyebrow">Vendor application</div><h1 th:text="${profile != null and !#strings.isEmpty(profile.businessName) ? profile.businessName : vendor.fullName}">Vendor</h1><p class="muted">Review business information and manage this vendor's marketplace access.</p></div><a class="btn secondary" th:href="@{/admin/vendors}">Back to vendors</a></div>
   <div class="notice success" th:if="${successMessage}" th:text="${successMessage}"></div>
   <div class="notice error" th:if="${errorMessage}" th:text="${errorMessage}"></div>

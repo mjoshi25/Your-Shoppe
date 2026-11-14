@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head><meta charset="UTF-8"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/favicon-192.png"><meta name="theme-color" content="#541477"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${product.id == null ? 'Add product' : 'Edit product'} + ' | ASMJ Shoppe'">Product | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
 <body th:attr="data-selected-subcategory=${product.subcategoryName}"><header th:replace="~{fragments/layout :: header}"></header>
-<main class="dashboard-wrap"><div class="eyebrow">VENDOR CENTRE</div><h1 th:text="${product.id == null ? 'Add a product' : 'Edit product'}">Add a product</h1>
+<main class="dashboard-wrap" id="main-content" tabindex="-1"><div class="eyebrow">VENDOR CENTRE</div><h1 th:text="${product.id == null ? 'Add a product' : 'Edit product'}">Add a product</h1>
 <p class="muted">Add clear product information and a good-quality photo. Choose the matching category and subcategory.</p>
 <div class="notice error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 <section class="panel form-panel">
