@@ -19,6 +19,12 @@ public class CurrentUserAdvice {
     @ModelAttribute
     public void addSignedInUser(Principal principal, Model model, HttpServletRequest request) {
         Map<String,List<AdCampaign>> slots = new HashMap<>();
+        // Always expose every supported placement, even when no live campaign exists.
+        // Thymeleaf's map-property syntax throws when a key is absent.
+        for (String code : List.of("HOME_HERO", "HOME_CARD", "CATEGORY_BANNER",
+                "SEARCH_SPONSORED", "PRODUCT_DETAIL", "CART_BANNER")) {
+            slots.put(code, new ArrayList<>());
+        }
         String categoryId=request.getParameter("categoryId");
         jakarta.servlet.http.HttpSession session=request.getSession(false);
         String targetPin=session==null?null:(String)session.getAttribute("asmjAdTargetPin");

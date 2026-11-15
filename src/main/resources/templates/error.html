@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#541477">
+  <title>Something went wrong | ASMJ Shoppe</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="landing-page">
+  <main class="container" style="max-width:680px;margin:10vh auto;padding:32px;text-align:center">
+    <p class="eyebrow">ASMJ SHOPPE</p>
+    <h1>We couldn't complete that request</h1>
+    <p>Please return to the homepage and try again. If the problem continues, contact ASMJ Shoppe support.</p>
+    <p th:if="${status != null}" class="muted" th:text="|Error code: ${status}|">Error code</p>
+    <a class="btn market-primary" th:href="@{/}">Return to homepage</a>
+  </main>
+</body>
+</html>
