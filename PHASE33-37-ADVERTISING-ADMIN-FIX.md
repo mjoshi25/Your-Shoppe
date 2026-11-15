@@ -27,3 +27,9 @@
 - CSS parser: 975 rules, zero top-level parse errors.
 - Maven tests/build not run because Maven is not installed in the build environment.
 - Live Thymeleaf rendering, MongoDB integration and browser verification remain to be performed locally/staging.
+
+
+## Campaign status visibility follow-up
+- Added a dedicated Campaign status column beside Creative status. It shows the actual campaign lifecycle value (APPROVED, SUSPENDED, EXPIRED, REFUNDED, or pending/rejected state) with a high-contrast badge.
+- Removed the duplicate low-visibility status text from the campaign/vendor cell.
+- This is a display-only admin change; it does not modify campaign records or payment/approval state.

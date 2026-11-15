@@ -35,6 +35,7 @@ class TemplateResourcesTest {
         assertTrue(edit.contains("${campaign.title}") && edit.contains("${campaign.description}") && edit.contains("${campaign.targetPinCodesText}"), "Campaign edit form must be populated from the selected campaign");
         assertTrue(admin.contains("Restore campaign") && admin.contains("Suspend campaign"), "Suspend and restore actions must be explicit and distinguishable");
         assertTrue(admin.contains("ad-creative-status") && admin.contains("ad-creative-approve") && admin.contains("ad-creative-reject"), "Creative status and both creative actions must use clear visual styles");
+        assertTrue(admin.contains("Campaign status") && admin.contains("ad-campaign-status") && admin.contains("${c.status}"), "Campaign lifecycle status must be shown separately from creative approval");
     }
 
     @Test void checkoutSupportsDateSlotsAndDeferredUpiEvidence() throws Exception {
