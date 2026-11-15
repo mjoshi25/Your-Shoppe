@@ -488,3 +488,36 @@ html{scroll-behavior:smooth}body{background:var(--shop-canvas);color:var(--shop-
 @media(max-width:380px){.sponsored-ad-link{flex-direction:column}.sponsored-ad picture img{height:130px;min-height:130px}.sponsored-ad-copy{flex-basis:auto}.ad-stat-grid{gap:8px}}
 
 .ad-review-thumb{display:block;width:116px;height:54px;object-fit:cover;border-radius:8px;border:1px solid #e8e0ef;margin-bottom:6px}.ad-inline-form textarea{min-width:0;width:100%;border:1px solid #ddd;border-radius:8px;padding:8px;font:inherit}
+
+/* Admin advertising actions and campaign editor — high contrast, explicit intent */
+.ad-page .ad-admin-actions{display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:145px}
+.ad-page .ad-admin-actions form{margin:0;border:0;background:transparent;padding:0}
+.ad-page .ad-admin-actions .btn{width:100%;min-height:36px;padding:8px 11px;font-size:11px;font-weight:850;white-space:normal;line-height:1.25}
+.ad-page .ad-action-edit{background:#f0e5f7!important;color:#4d1768!important;border:1px solid #cbaedb!important}
+.ad-page .ad-action-edit:hover{background:#e5d3f0!important;color:#351047!important}
+.ad-page .ad-action-suspend{background:#fff0ed!important;color:#a52b22!important;border:1px solid #e8aaa2!important}
+.ad-page .ad-action-suspend:hover{background:#ffe2dd!important;color:#7d1c16!important}
+.ad-page .ad-action-restore{background:#e8f7ee!important;color:#17633a!important;border:1px solid #a8d9bb!important}
+.ad-page .ad-action-restore:hover{background:#d8f0e2!important;color:#104c2b!important}
+.ad-page .ad-action-neutral{background:#fff!important;color:#4d1768!important;border:1px solid #d9c7e2!important}
+.ad-page .ad-action-help{display:block;color:#75677d;font-size:10px;line-height:1.4}
+.ad-edit-page .page-heading{align-items:center;gap:15px}
+.ad-edit-card{max-width:980px;margin:18px auto;padding:clamp(16px,3vw,28px)}
+.ad-edit-campaign-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:15px;margin-bottom:20px;border:1px solid #eadfed;border-radius:12px;background:#faf7fc}
+.ad-edit-campaign-summary>div{display:grid;gap:5px;min-width:0}.ad-edit-campaign-summary strong{color:#351047;font-size:13px;overflow-wrap:anywhere}.ad-edit-campaign-summary small{color:#786a80;font-size:10px}
+.ad-edit-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.ad-edit-form>label,.ad-edit-upload>label{display:grid;gap:7px;color:#4d3b57;font-size:12px;font-weight:800;min-width:0}
+.ad-edit-form input,.ad-edit-form select,.ad-edit-form textarea{width:100%;min-width:0;border:1px solid #dcd1e2;border-radius:9px;padding:11px;background:#fff;color:#30233a;font:inherit;font-size:13px}
+.ad-edit-form small{display:block;color:#7d7184;font-size:10px;font-weight:500;line-height:1.5}
+.ad-edit-full{grid-column:1/-1}
+.ad-edit-upload{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,.8fr);gap:18px;align-items:center;padding:14px;border:1px solid #eee5f0;border-radius:12px;background:#fdfbfd}
+.ad-edit-upload>div{display:grid;gap:8px;min-width:0}.ad-edit-upload strong{font-size:12px;color:#4d3b57}.ad-edit-preview{display:block;width:min(100%,440px);max-height:150px;object-fit:contain;object-position:left center;border-radius:8px;background:#f4f0f6}
+.ad-edit-actions{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;margin-top:5px}
+.ad-edit-page .notice.info{background:#f2ecfa;color:#4d1768;border:1px solid #ddc9eb}
+@media(max-width:680px){.ad-edit-campaign-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.ad-edit-form{grid-template-columns:1fr}.ad-edit-upload{grid-template-columns:1fr}.ad-edit-full,.ad-edit-upload,.ad-edit-actions{grid-column:1}.ad-edit-actions>*{flex:1}.ad-page .ad-admin-actions{min-width:120px}}
+/* All secondary controls inside the white advertising admin workspace must remain readable. */
+.ad-page .btn.market-secondary{background:#f0e5f7!important;color:#4d1768!important;border:1px solid #cbaedb!important}
+.ad-page .btn.market-secondary:hover{background:#e5d3f0!important;color:#351047!important}
+
+/* High-contrast creative approval status and actions in admin advertising */
+.ad-page .ad-creative-cell{min-width:175px}.ad-page .ad-creative-status{display:inline-flex;align-items:center;justify-content:center;min-width:88px;padding:6px 11px;border:1px solid transparent;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.035em;line-height:1.2;text-transform:uppercase}.ad-page .ad-creative-status.is-pending{background:#fff3d6;color:#815000;border-color:#e8c77b}.ad-page .ad-creative-status.is-approved{background:#e5f6ec;color:#17633a;border-color:#a8d9bb}.ad-page .ad-creative-status.is-rejected{background:#fff0ed;color:#a52b22;border-color:#e8aaa2}.ad-page .ad-creative-cell .table-sub{margin-top:8px}.ad-page .ad-creative-cell form{margin-top:9px}.ad-page .ad-creative-cell .btn{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:8px 12px;border-radius:9px;font-size:11px;font-weight:850;line-height:1.25;white-space:normal}.ad-page .btn.ad-creative-approve{background:#17633a!important;color:#fff!important;border:1px solid #12512f!important}.ad-page .btn.ad-creative-approve:hover{background:#104c2b!important;color:#fff!important}.ad-page .btn.ad-creative-reject{background:#a52b22!important;color:#fff!important;border:1px solid #862019!important}.ad-page .btn.ad-creative-reject:hover{background:#862019!important;color:#fff!important}

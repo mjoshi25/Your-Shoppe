@@ -12,7 +12,7 @@ class TemplateResourcesTest {
                 "vendor/commissions.html", "vendor/product-form.html", "vendor/products.html",
                 "settings/index.html", "admin/vendor-detail.html", "vendor/pending.html", "order/tracking.html", "order/invoice.html",
                 "vendor/inventory.html", "vendor/reviews.html", "admin/reviews.html", "product/detail.html",
-                "vendor/advertising.html", "admin/advertising.html", "advertising/create.html", "advertising/payment.html", "advertising/slots.html",
+                "vendor/advertising.html", "admin/advertising.html", "admin/advertising-edit.html", "advertising/create.html", "advertising/payment.html", "advertising/slots.html",
                 "admin/reports.html", "admin/coupons.html", "admin/audit.html", "customer/wishlist.html",
                 "customer/recently-viewed.html", "customer/alerts.html", "customer/offers.html", "order/checkout.html"};
         for (String template : templates) {
@@ -29,6 +29,12 @@ class TemplateResourcesTest {
         assertTrue(payment.contains("name=\"utr\"") && payment.contains("name=\"proof\""), "UPI evidence must be collected");
         assertTrue(admin.contains("/payment/verify") && admin.contains("/approve"), "Admin must verify payment separately from creative approval");
         assertTrue(admin.contains("advertising/settings") && admin.contains("advertising/packages"), "Admin must configure UPI and fixed packages");
+        assertTrue(admin.contains("/admin/advertising/{id}/edit") || admin.contains("/admin/advertising/"), "Admin campaign edit action must be available");
+        assertTrue(admin.contains("Edit placement") && admin.contains("Edit package"), "Existing placements and packages must have visible edit actions");
+        String edit = new String(new ClassPathResource("templates/admin/advertising-edit.html").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        assertTrue(edit.contains("${campaign.title}") && edit.contains("${campaign.description}") && edit.contains("${campaign.targetPinCodesText}"), "Campaign edit form must be populated from the selected campaign");
+        assertTrue(admin.contains("Restore campaign") && admin.contains("Suspend campaign"), "Suspend and restore actions must be explicit and distinguishable");
+        assertTrue(admin.contains("ad-creative-status") && admin.contains("ad-creative-approve") && admin.contains("ad-creative-reject"), "Creative status and both creative actions must use clear visual styles");
     }
 
     @Test void checkoutSupportsDateSlotsAndDeferredUpiEvidence() throws Exception {

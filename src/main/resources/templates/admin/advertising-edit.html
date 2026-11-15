@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit advertisement · ASMJ Shoppe</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div th:replace="~{fragments/layout :: header}"></div>
+<main id="main-content" class="page-shell ad-page ad-edit-page">
+  <div class="page-heading">
+    <div><div class="eyebrow">ADMINISTRATION</div><h1>Edit advertisement</h1><p>Review and update the campaign creative and targeting details.</p></div>
+    <a class="btn secondary" th:href="@{/admin/advertising}">Back to advertising</a>
+  </div>
+  <div class="notice info">Changing the creative resets creative approval to Pending. Existing UPI payment verification, purchased price, placement and campaign dates are preserved. Re-approve the creative before it can display again.</div>
+  <section class="ad-admin-section ad-edit-card">
+    <div class="ad-edit-campaign-summary">
+      <div><strong th:text="${campaign.vendorName}">Vendor</strong><small>Vendor</small></div>
+      <div><strong th:text="${campaign.placementName}">Placement</strong><small>Placement</small></div>
+      <div><strong th:text="|₹${campaign.amount}|">₹0</strong><small>Paid campaign amount</small></div>
+      <div><strong th:text="|${campaign.startDate} – ${campaign.endDate}|">Dates</strong><small>Purchased campaign period</small></div>
+    </div>
+    <form method="post" enctype="multipart/form-data" th:action="@{/admin/advertising/{id}/edit(id=${campaign.id})}" class="ad-edit-form">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      <label>Advertisement title<input name="title" minlength="4" maxlength="90" required th:value="${campaign.title}"></label>
+      <label>Description<textarea name="description" maxlength="240" rows="3" th:text="${campaign.description}"></textarea></label>
+      <label>Call-to-action label<input name="callToAction" maxlength="24" th:value="${campaign.callToAction}"></label>
+      <label>Promoted vendor product<select name="productId"><option value="">No specific product</option><option th:each="p : ${products}" th:value="${p.id}" th:selected="${p.id == campaign.productId}" th:text="${p.name}"></option></select><small>Only active products are listed. A selected product sets the destination automatically.</small></label>
+      <label>Target category<select name="categoryId"><option value="">All categories</option><option th:each="c : ${categories}" th:value="${c.id}" th:selected="${c.id == campaign.categoryId}" th:text="${c.name}"></option></select></label>
+      <label class="ad-edit-full">Internal destination URL<input name="destinationUrl" th:value="${campaign.destinationUrl}" placeholder="/products"><small>Use an internal ASMJ Shoppe path only. Selecting a product or category can determine this automatically.</small></label>
+      <label class="ad-edit-full">Target PIN codes<input name="targetPinCodes" th:value="${campaign.targetPinCodesText}" placeholder="751001, 766001"><small>Leave blank to target all PIN codes.</small></label>
+      <div class="ad-edit-upload">
+        <div><strong>Current desktop banner</strong><img class="ad-edit-preview" th:src="${campaign.bannerUrl}" alt="Current desktop advertisement banner"></div>
+        <label>Replace desktop banner (optional)<input type="file" name="banner" accept="image/jpeg,image/png,image/webp"><small>Leave empty to retain the current banner.</small></label>
+      </div>
+      <div class="ad-edit-upload">
+        <div><strong>Current mobile banner</strong><img class="ad-edit-preview" th:if="${campaign.mobileBannerUrl != null}" th:src="${campaign.mobileBannerUrl}" alt="Current mobile advertisement banner"><span th:if="${campaign.mobileBannerUrl == null}" class="muted">No separate mobile banner uploaded.</span></div>
+        <label>Replace mobile banner (optional)<input type="file" name="mobileBanner" accept="image/jpeg,image/png,image/webp"><small>Leave empty to retain the current mobile banner.</small></label>
+      </div>
+      <div class="ad-edit-actions"><button class="btn market-primary" type="submit">Save advertisement changes</button><a class="btn ad-action-neutral" th:href="@{/admin/advertising}">Cancel</a></div>
+    </form>
+  </section>
+</main>
+<footer class="site-footer"><span>© ASMJ Shoppe</span><span>Shop · Sell · Grow Together</span></footer>
+</body></html>
