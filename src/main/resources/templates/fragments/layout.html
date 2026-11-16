@@ -56,9 +56,12 @@
       <a class="header-nav-link" th:href="@{/}">Home</a>
       <a class="header-nav-link" th:href="@{/products}">Shop all</a>
       <a class="header-nav-link" th:href="@{/rentals}">Rental vehicles</a>
+      <a class="header-nav-link" th:href="@{/services}">Services &amp; appointments</a>
       <a class="header-nav-link" th:href="@{/#contact-query}">Contact us</a>
       <a sec:authorize="isAnonymous()" class="header-nav-link" th:href="@{/guest-enquiries}">My enquiries</a>
       <a sec:authorize="isAnonymous()" class="header-nav-link" th:href="@{/register}">Become a seller</a>
+      <a sec:authorize="isAuthenticated()" class="header-nav-link" th:href="@{/provider/services}">Service provider workspace</a>
+      <a sec:authorize="isAnonymous()" class="header-nav-link" th:href="@{/login}">Become a service provider</a>
       <details sec:authorize="hasRole('VENDOR')" class="nav-menu workspace-menu">
         <summary class="nav-menu-trigger workspace-trigger"><span class="workspace-trigger-icon" aria-hidden="true">▦</span><span>Vendor workspace</span><span class="nav-chevron" aria-hidden="true">⌄</span></summary>
         <div class="nav-dropdown workspace-dropdown">
@@ -92,6 +95,7 @@
           <a th:href="@{/admin/coupons}">Coupons</a>
           <a th:href="@{/admin/advertising}">Advertising management</a>
           <a th:href="@{/admin/rentals}">Rental vehicle approvals</a>
+          <a th:href="@{/admin/services}">Services &amp; appointments</a>
         </div>
       </details>
     </nav>

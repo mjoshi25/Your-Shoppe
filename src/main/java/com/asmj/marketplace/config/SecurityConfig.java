@@ -46,6 +46,9 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/register", "/register/**", "/terms",
                         "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/api/products/**", "/chat/**", "/guest-enquiries", "/contact-queries", "/cart", "/cart/**", "/ads/**", "/error").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/services/*/book", "/customer/service-bookings/**").hasRole("CUSTOMER")
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/services", "/services/**").permitAll()
+                .requestMatchers("/service-provider/**", "/provider/services/**").authenticated()
                 .requestMatchers("/rentals/*/book", "/customer/rentals", "/customer/rentals/**", "/api/rentals/**").hasRole("CUSTOMER")
                 .requestMatchers("/rentals", "/rentals/**").permitAll()
                 .requestMatchers("/checkout", "/customer/**", "/coupon/apply", "/coupon/remove", "/api/delivery/**").hasRole("CUSTOMER")
