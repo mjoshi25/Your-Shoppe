@@ -46,7 +46,10 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/register", "/register/**", "/terms",
                         "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/api/products/**", "/chat/**", "/guest-enquiries", "/cart", "/cart/**", "/ads/**", "/error").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/rentals/*/book", "/customer/rentals", "/customer/rentals/**", "/api/rentals/**").hasRole("CUSTOMER")
+                .requestMatchers("/rentals", "/rentals/**").permitAll()
                 .requestMatchers("/checkout", "/customer/**", "/coupon/apply", "/coupon/remove", "/api/delivery/**").hasRole("CUSTOMER")
+                .requestMatchers("/vendor/rentals", "/vendor/rentals/**").access((Supplier<Authentication> authentication, RequestAuthorizationContext context) -> { Authentication current=authentication.get(); if(current==null||!current.isAuthenticated()) return new AuthorizationDecision(false); UserAccount account=users.findByEmailIgnoreCase(current.getName()).orElse(null); return new AuthorizationDecision(account!=null && account.getRole()==com.asmj.marketplace.model.Role.ROLE_VENDOR && account.getVendorStatus()==VendorStatus.APPROVED && account.isEnabled()); })
                 .requestMatchers("/vendor/orders", "/vendor/orders/**").access((Supplier<Authentication> authentication, RequestAuthorizationContext context) -> { Authentication current=authentication.get(); if(current==null||!current.isAuthenticated()) return new AuthorizationDecision(false); UserAccount account=users.findByEmailIgnoreCase(current.getName()).orElse(null); return new AuthorizationDecision(account!=null && account.getRole()==com.asmj.marketplace.model.Role.ROLE_VENDOR && account.getVendorStatus()==VendorStatus.APPROVED); })
                 .requestMatchers("/vendor/pending", "/vendor/application-chat").hasRole("VENDOR")
                 .requestMatchers("/vendor/**").access((Supplier<Authentication> authentication,
