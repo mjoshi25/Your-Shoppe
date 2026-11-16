@@ -56,6 +56,7 @@
       <a class="header-nav-link" th:href="@{/}">Home</a>
       <a class="header-nav-link" th:href="@{/products}">Shop all</a>
       <a class="header-nav-link" th:href="@{/rentals}">Rental vehicles</a>
+      <a class="header-nav-link" th:href="@{/#contact-query}">Contact us</a>
       <a sec:authorize="isAnonymous()" class="header-nav-link" th:href="@{/guest-enquiries}">My enquiries</a>
       <a sec:authorize="isAnonymous()" class="header-nav-link" th:href="@{/register}">Become a seller</a>
       <details sec:authorize="hasRole('VENDOR')" class="nav-menu workspace-menu">
