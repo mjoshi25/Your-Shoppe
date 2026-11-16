@@ -3,6 +3,7 @@
 <head><meta charset="UTF-8"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/favicon-192.png"><meta name="theme-color" content="#541477"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Discover products from independent vendors across India with ASMJ Shoppe."><title>ASMJ Shoppe | Shop · Sell · Grow Together</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
 <body class="landing-page"><header th:replace="~{fragments/layout :: header}"></header>
 <main id="main-content" tabindex="-1" class="home-redesign">
+  <div th:if="${successMessage != null}" class="alert alert-success" role="status" th:text="${successMessage}"></div><div th:if="${errorMessage != null}" class="alert alert-error" role="alert" th:text="${errorMessage}"></div>
   <section class="market-hero">
     <div class="market-hero-inner">
       <div class="market-hero-copy"><div class="eyebrow hero-kicker"><span class="live-dot"></span> THE MARKETPLACE THAT BRINGS BUSINESSES CLOSER</div>
@@ -21,5 +22,20 @@
     <div class="discovery-grid"><a class="discovery-card discovery-purple" th:href="@{/products}"><span class="discovery-icon">⌕</span><span class="discovery-copy"><b>Discover products</b><small>Explore the full catalogue</small></span><span class="discovery-arrow">↗</span></a><a class="discovery-card discovery-gold" th:href="@{/customer/offers}" sec:authorize="hasRole('CUSTOMER')"><span class="discovery-icon">%</span><span class="discovery-copy"><b>Offers for you</b><small>Explore available coupons</small></span><span class="discovery-arrow">↗</span></a><a class="discovery-card discovery-mint" th:href="@{/register}"><span class="discovery-icon">↗</span><span class="discovery-copy"><b>Become a seller</b><small>Bring your business online</small></span><span class="discovery-arrow">↗</span></a></div>
   </section>
   <section class="home-how"><div class="home-section-head centered"><div><div class="eyebrow">SIMPLE BY DESIGN</div><h2>A better way to shop and sell</h2><p>Everything you need to make marketplace connections work.</p></div></div><div class="how-grid"><article class="how-card"><span class="how-number">01</span><div class="how-icon">⌕</div><h3>Find your favourites</h3><p>Search products, compare options and explore participating vendors.</p></article><article class="how-card"><span class="how-number">02</span><div class="how-icon">♡</div><h3>Connect with sellers</h3><p>Ask questions, choose fulfilment options and place an order with confidence.</p></article><article class="how-card"><span class="how-number">03</span><div class="how-icon">✦</div><h3>Grow together</h3><p>Shop from independent businesses or join as a vendor and reach new customers.</p></article></div></section>
+  <section class="contact-query-section" id="contact-query">
+    <div class="contact-query-intro"><div class="eyebrow">WE ARE HERE TO HELP</div><h2>Connect with ASMJ Shoppe</h2><p>Have a question, suggestion, partnership proposal or need assistance? Send our team a query. You can include a supporting document or image.</p><div class="contact-query-note"><strong>One-way support request</strong><span>Your query and contact details will be received by the ASMJ Shoppe team. This form does not provide live chat or a reply inbox.</span></div></div>
+    <form class="contact-query-form" method="post" th:action="@{/contact-queries}" enctype="multipart/form-data">
+      <div class="contact-query-grid">
+        <label>Your name<input type="text" name="name" minlength="2" maxlength="100" autocomplete="name" required placeholder="Full name"></label>
+        <label>Email address<input type="email" name="email" maxlength="160" autocomplete="email" required placeholder="you@example.com"></label>
+        <label>Contact number<input type="tel" name="mobile" minlength="7" maxlength="20" autocomplete="tel" required placeholder="Mobile / phone number"></label>
+        <label>Subject<input type="text" name="subject" minlength="3" maxlength="120" required placeholder="What is your query about?"></label>
+        <label class="contact-query-full">Your query<textarea name="message" rows="5" minlength="10" maxlength="3000" required placeholder="Describe how we can help (10–3000 characters)"></textarea></label>
+        <label class="contact-query-full">Attachment <span class="contact-query-help">Optional · JPG, PNG, WEBP, PDF, DOC or DOCX · maximum 8 MB</span><input type="file" name="attachment" accept=".jpg,.jpeg,.png,.webp,.pdf,.doc,.docx,.txt"></label>
+        <label class="contact-query-honeypot" aria-hidden="true">Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+      <button class="btn contact-query-submit" type="submit">Submit query <span aria-hidden="true">→</span></button>
+    </form>
+  </section>
   <section class="seller-banner"><div><div class="eyebrow hero-kicker">FOR AMBITIOUS BUSINESSES</div><h2>Your products deserve<br>a bigger audience.</h2><p>Set up your vendor profile, list your products and grow with ASMJ Shoppe.</p></div><a class="btn seller-banner-btn" th:href="@{/register}">Become a seller <span>→</span></a><div class="seller-banner-mark">A</div></section>
 </main><footer class="site-footer"><span>© ASMJ Shoppe</span><span>Shop · Sell · Grow Together — a pan-India marketplace.</span></footer></body></html>

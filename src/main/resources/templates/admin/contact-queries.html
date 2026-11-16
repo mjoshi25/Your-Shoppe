@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Contact queries | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body><header th:replace="~{fragments/layout :: header}"></header>
+<main class="ad-page">
+  <div class="page-heading"><div><div class="eyebrow">CUSTOMER COMMUNICATION</div><h1>Contact queries</h1><p>One-way submissions received from the homepage contact form.</p></div><a class="btn market-secondary" th:href="@{/admin/dashboard}">Back to dashboard</a></div>
+  <div class="ad-info-panel"><strong th:text="${#lists.size(queries)} + ' submission(s)'">0 submissions</strong><p>Customers submit their contact details and query. There is no reply/chat function in this workflow; contact them using the details they provided.</p></div>
+  <div class="ad-admin-section" th:if="${#lists.isEmpty(queries)}"><h2>No contact queries yet</h2><p>New homepage submissions will appear here.</p></div>
+  <div class="ad-admin-section" th:unless="${#lists.isEmpty(queries)}"><div class="table-wrap"><table class="data-table"><thead><tr><th>Received</th><th>Contact</th><th>Subject / Query</th><th>Attachment</th></tr></thead><tbody>
+    <tr th:each="q : ${queries}"><td th:text="${#temporals.format(q.createdAt,'dd MMM yyyy HH:mm')}">Date</td><td><strong th:text="${q.name}">Name</strong><span class="table-sub" th:text="${q.email}">Email</span><span class="table-sub" th:text="${q.mobile}">Mobile</span></td><td><strong th:text="${q.subject}">Subject</strong><p style="white-space:pre-wrap;max-width:520px" th:text="${q.message}">Message</p></td><td><a th:if="${q.attachmentUrl != null}" th:href="${q.attachmentUrl}" target="_blank" rel="noopener" th:text="${q.attachmentName != null ? q.attachmentName : 'View attachment'}">View attachment</a><span th:unless="${q.attachmentUrl != null}">—</span></td></tr>
+  </tbody></table></div></div>
+</main></body></html>

@@ -13,7 +13,7 @@ class TemplateResourcesTest {
                 "settings/index.html", "admin/vendor-detail.html", "vendor/pending.html", "order/tracking.html", "order/invoice.html",
                 "vendor/inventory.html", "vendor/reviews.html", "admin/reviews.html", "product/detail.html",
                 "vendor/advertising.html", "admin/advertising.html", "admin/advertising-edit.html", "advertising/create.html", "advertising/payment.html", "advertising/slots.html",
-                "admin/reports.html", "admin/coupons.html", "admin/audit.html", "customer/wishlist.html",
+                "admin/reports.html", "admin/contact-queries.html", "admin/coupons.html", "admin/audit.html", "customer/wishlist.html",
                 "customer/recently-viewed.html", "customer/alerts.html", "customer/offers.html", "order/checkout.html",
                 "rental/list.html", "rental/book.html", "rental/customer-bookings.html", "vendor/rental/vehicles.html",
                 "vendor/rental/vehicle-form.html", "vendor/rental/bookings.html", "admin/rental/index.html"};
@@ -21,6 +21,14 @@ class TemplateResourcesTest {
             assertTrue(new ClassPathResource("templates/" + template).exists(),
                     "Missing Thymeleaf template: " + template);
         }
+    }
+
+
+    @Test void homepageHasOneWayContactQueryWithOptionalAttachment() throws Exception {
+        String home = new String(new ClassPathResource("templates/home.html").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        assertTrue(home.contains("id=\"contact-query\"") && home.contains("@{/contact-queries}"), "Homepage must expose the contact query form");
+        assertTrue(home.contains("name=\"email\"") && home.contains("name=\"mobile\"") && home.contains("name=\"attachment\""), "Contact details and optional attachment must be collected");
+        assertTrue(home.contains("One-way support request"), "The form must explain that it is one-way");
     }
 
     @Test void advertisingTemplatesKeepPaymentAndApprovalWorkflowsSeparate() throws Exception {

@@ -44,7 +44,7 @@ public class SecurityConfig {
         http.authenticationProvider(authenticationProvider)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/register", "/register/**", "/terms",
-                        "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/api/products/**", "/chat/**", "/guest-enquiries", "/cart", "/cart/**", "/ads/**", "/error").permitAll()
+                        "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/api/products/**", "/chat/**", "/guest-enquiries", "/contact-queries", "/cart", "/cart/**", "/ads/**", "/error").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/rentals/*/book", "/customer/rentals", "/customer/rentals/**", "/api/rentals/**").hasRole("CUSTOMER")
                 .requestMatchers("/rentals", "/rentals/**").permitAll()
