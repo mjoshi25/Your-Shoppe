@@ -14,7 +14,9 @@ class TemplateResourcesTest {
                 "vendor/inventory.html", "vendor/reviews.html", "admin/reviews.html", "product/detail.html",
                 "vendor/advertising.html", "admin/advertising.html", "admin/advertising-edit.html", "advertising/create.html", "advertising/payment.html", "advertising/slots.html",
                 "admin/reports.html", "admin/coupons.html", "admin/audit.html", "customer/wishlist.html",
-                "customer/recently-viewed.html", "customer/alerts.html", "customer/offers.html", "order/checkout.html"};
+                "customer/recently-viewed.html", "customer/alerts.html", "customer/offers.html", "order/checkout.html",
+                "rental/list.html", "rental/book.html", "rental/customer-bookings.html", "vendor/rental/vehicles.html",
+                "vendor/rental/vehicle-form.html", "vendor/rental/bookings.html", "admin/rental/index.html"};
         for (String template : templates) {
             assertTrue(new ClassPathResource("templates/" + template).exists(),
                     "Missing Thymeleaf template: " + template);
@@ -36,6 +38,16 @@ class TemplateResourcesTest {
         assertTrue(admin.contains("Restore campaign") && admin.contains("Suspend campaign"), "Suspend and restore actions must be explicit and distinguishable");
         assertTrue(admin.contains("ad-creative-status") && admin.contains("ad-creative-approve") && admin.contains("ad-creative-reject"), "Creative status and both creative actions must use clear visual styles");
         assertTrue(admin.contains("Campaign status") && admin.contains("ad-campaign-status") && admin.contains("${c.status}"), "Campaign lifecycle status must be shown separately from creative approval");
+    }
+
+
+    @Test void rentalTemplatesExposeQuotePaymentTripAndCommissionSteps() throws Exception {
+        String customer = new String(new ClassPathResource("templates/rental/customer-bookings.html").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        String vendor = new String(new ClassPathResource("templates/vendor/rental/bookings.html").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        String admin = new String(new ClassPathResource("templates/admin/rental/index.html").getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        assertTrue(customer.contains("quote/accept") && customer.contains("/cancel") && customer.contains("payment"), "Customer must accept quotes, submit payment and cancel eligible bookings");
+        assertTrue(vendor.contains("trip/start") && vendor.contains("trip/complete") && vendor.contains("payment/verify"), "Owner must verify payments and record trip lifecycle");
+        assertTrue(admin.contains("commissionRatePercent") && admin.contains("commission/{id}/verify"), "Admin must configure and verify separate rental commission");
     }
 
     @Test void checkoutSupportsDateSlotsAndDeferredUpiEvidence() throws Exception {

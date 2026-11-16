@@ -41,6 +41,20 @@ public class RentalBooking {
     private String ownerResponseNote;
     private String paymentMethod;
     private String paymentStatus = "PENDING";
+    private String paymentUtr;
+    private String paymentProofUrl;
+    private String paymentProofName;
+    private String paymentReviewNote;
+    private BigDecimal amountPaid = BigDecimal.ZERO;
+    private Integer startOdometerKm;
+    private Integer endOdometerKm;
+    private BigDecimal platformCommissionRate = new BigDecimal("5.00");
+    private BigDecimal platformCommissionAmount = BigDecimal.ZERO;
+    private String commissionStatus = "NOT_DUE";
+    private String commissionPaymentUtr;
+    private String commissionPaymentProofUrl;
+    private Instant completedAt;
+    private Instant cancelledAt;
     private Instant createdAt = Instant.now();
     private Instant updatedAt = Instant.now();
 
@@ -75,6 +89,20 @@ public class RentalBooking {
     public String getOwnerResponseNote(){return ownerResponseNote;} public void setOwnerResponseNote(String v){ownerResponseNote=v;}
     public String getPaymentMethod(){return paymentMethod;} public void setPaymentMethod(String v){paymentMethod=v;}
     public String getPaymentStatus(){return paymentStatus;} public void setPaymentStatus(String v){paymentStatus=v;}
+    public String getPaymentUtr(){return paymentUtr;} public void setPaymentUtr(String v){paymentUtr=v;}
+    public String getPaymentProofUrl(){return paymentProofUrl;} public void setPaymentProofUrl(String v){paymentProofUrl=v;}
+    public String getPaymentProofName(){return paymentProofName;} public void setPaymentProofName(String v){paymentProofName=v;}
+    public String getPaymentReviewNote(){return paymentReviewNote;} public void setPaymentReviewNote(String v){paymentReviewNote=v;}
+    public BigDecimal getAmountPaid(){return amountPaid;} public void setAmountPaid(BigDecimal v){amountPaid=v;}
+    public Integer getStartOdometerKm(){return startOdometerKm;} public void setStartOdometerKm(Integer v){startOdometerKm=v;}
+    public Integer getEndOdometerKm(){return endOdometerKm;} public void setEndOdometerKm(Integer v){endOdometerKm=v;}
+    public BigDecimal getPlatformCommissionRate(){return platformCommissionRate;} public void setPlatformCommissionRate(BigDecimal v){platformCommissionRate=v;}
+    public BigDecimal getPlatformCommissionAmount(){return platformCommissionAmount;} public void setPlatformCommissionAmount(BigDecimal v){platformCommissionAmount=v;}
+    public String getCommissionStatus(){return commissionStatus;} public void setCommissionStatus(String v){commissionStatus=v;}
+    public String getCommissionPaymentUtr(){return commissionPaymentUtr;} public void setCommissionPaymentUtr(String v){commissionPaymentUtr=v;}
+    public String getCommissionPaymentProofUrl(){return commissionPaymentProofUrl;} public void setCommissionPaymentProofUrl(String v){commissionPaymentProofUrl=v;}
+    public Instant getCompletedAt(){return completedAt;} public void setCompletedAt(Instant v){completedAt=v;}
+    public Instant getCancelledAt(){return cancelledAt;} public void setCancelledAt(Instant v){cancelledAt=v;}
     public Instant getCreatedAt(){return createdAt;} public void setCreatedAt(Instant v){createdAt=v;}
     public Instant getUpdatedAt(){return updatedAt;} public void setUpdatedAt(Instant v){updatedAt=v;}
 }

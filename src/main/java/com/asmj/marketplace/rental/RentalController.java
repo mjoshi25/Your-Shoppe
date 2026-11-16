@@ -1,6 +1,7 @@
 package com.asmj.marketplace.rental;
 
 import com.asmj.marketplace.delivery.GoogleRoutesService;
+import com.asmj.marketplace.audit.AuditService;
 import com.asmj.marketplace.model.Role;
 import com.asmj.marketplace.model.UserAccount;
 import com.asmj.marketplace.repository.UserAccountRepository;
@@ -29,11 +30,13 @@ public class RentalController {
     private final UserAccountRepository users;
     private final GoogleRoutesService routes;
     private final CloudinaryImageService imageUploads;
+    private final RentalSettingsRepository rentalSettings;
+    private final AuditService audit;
     @Value("${google.maps.browser-api-key:}") private String browserMapsKey;
 
     public RentalController(RentalVehicleRepository vehicles, RentalBookingRepository bookings,
-                            UserAccountRepository users, GoogleRoutesService routes, CloudinaryImageService imageUploads) {
-        this.vehicles=vehicles; this.bookings=bookings; this.users=users; this.routes=routes; this.imageUploads=imageUploads;
+                            UserAccountRepository users, GoogleRoutesService routes, CloudinaryImageService imageUploads, RentalSettingsRepository rentalSettings, AuditService audit) {
+        this.vehicles=vehicles; this.bookings=bookings; this.users=users; this.routes=routes; this.imageUploads=imageUploads; this.rentalSettings=rentalSettings; this.audit=audit;
     }
 
     @GetMapping("/rentals")
@@ -91,7 +94,7 @@ public class RentalController {
             b.setDropAddress(dropAddress.trim()); b.setDropPinCode(dropPinCode.trim()); b.setDropLatitude(dropLatitude); b.setDropLongitude(dropLongitude);
             b.setDistanceKm(distance); b.setPickupDate(pickupDate); b.setPickupTime(pickupTime); b.setReturnDate(returnDate); b.setReturnTime(returnTime);
             b.setPassengers(passengers); b.setCustomerNote(customerNote==null?"":customerNote.trim()); b.setEstimatedFare(estimate); b.setCreatedAt(Instant.now()); b.setUpdatedAt(Instant.now());
-            bookings.save(b); redirect.addFlashAttribute("successMessage","Rental request "+b.getBookingNumber()+" was sent to the vehicle owner. The owner must confirm availability and final fare.");
+            bookings.save(b); audit.record(customer.getEmail(),"CUSTOMER","RENTAL_BOOKING_REQUESTED","RENTAL_BOOKING",b.getId(),b.getBookingNumber()); redirect.addFlashAttribute("successMessage","Rental request "+b.getBookingNumber()+" was sent to the vehicle owner. The owner must confirm availability and final fare.");
             return "redirect:/customer/rentals";
         } catch(IllegalArgumentException|IllegalStateException ex) {
             redirect.addFlashAttribute("errorMessage",ex.getMessage()); return "redirect:/rentals/"+id+"/book";
@@ -120,10 +123,11 @@ public class RentalController {
             if(!java.util.Set.of("HATCHBACK","SEDAN","SUV","MUV","TEMPO_TRAVELLER","BUS").contains(vehicleCategory)) throw new IllegalArgumentException("Choose a supported vehicle category.");
             if(driverMobile==null||!driverMobile.matches("[0-9+ -]{10,16}")) throw new IllegalArgumentException("Enter a valid driver mobile number.");
             if(makeModel==null||makeModel.isBlank()||registrationNumber==null||registrationNumber.isBlank()||driverName==null||driverName.isBlank()||driverLicenceNumber==null||driverLicenceNumber.isBlank()) throw new IllegalArgumentException("Complete all required vehicle and driver details.");
+            if(vehicles.existsByRegistrationNumberIgnoreCase(registrationNumber.trim())) throw new IllegalArgumentException("This vehicle registration number is already registered.");
             if(seatingCapacity<1||seatingCapacity>60) throw new IllegalArgumentException("Enter a valid seating capacity between 1 and 60.");
             if(driverLicenceValidUntil==null||driverLicenceValidUntil.isBefore(LocalDate.now())||insuranceValidUntil==null||insuranceValidUntil.isBefore(LocalDate.now())) throw new IllegalArgumentException("Driver licence and vehicle insurance must be currently valid.");
             if(baseFare==null||perKmRate==null||baseFare.signum()<0||perKmRate.signum()<0||baseFare.compareTo(new BigDecimal("100000"))>0||perKmRate.compareTo(new BigDecimal("10000"))>0) throw new IllegalArgumentException("Enter valid base and per-kilometre rates.");
-            RentalVehicle v=new RentalVehicle(); v.setOwnerUserId(owner.getId()); v.setOwnerName(owner.getFullName()); v.setVehicleCategory(vehicleCategory); v.setMakeModel(makeModel.trim()); v.setRegistrationNumber(registrationNumber.trim().toUpperCase()); v.setSeatingCapacity(seatingCapacity); v.setDescription(description==null?"":description.trim()); if(vehiclePhoto!=null&&!vehiclePhoto.isEmpty()){var uploaded=imageUploads.uploadProductImage(vehiclePhoto);v.setImageUrl(String.valueOf(uploaded.get("secure_url")));} v.setDriverName(driverName.trim()); v.setDriverMobile(driverMobile.trim()); v.setDriverLicenceNumber(driverLicenceNumber.trim()); v.setDriverLicenceValidUntil(driverLicenceValidUntil); v.setInsuranceValidUntil(insuranceValidUntil); v.setBaseFare(baseFare); v.setPerKmRate(perKmRate); v.setStatus("PENDING"); v.setCreatedAt(Instant.now()); v.setUpdatedAt(Instant.now()); vehicles.save(v);
+            RentalVehicle v=new RentalVehicle(); v.setOwnerUserId(owner.getId()); v.setOwnerName(owner.getFullName()); v.setVehicleCategory(vehicleCategory); v.setMakeModel(makeModel.trim()); v.setRegistrationNumber(registrationNumber.trim().toUpperCase()); v.setSeatingCapacity(seatingCapacity); v.setDescription(description==null?"":description.trim()); if(vehiclePhoto!=null&&!vehiclePhoto.isEmpty()){var uploaded=imageUploads.uploadProductImage(vehiclePhoto);v.setImageUrl(String.valueOf(uploaded.get("secure_url")));} v.setDriverName(driverName.trim()); v.setDriverMobile(driverMobile.trim()); v.setDriverLicenceNumber(driverLicenceNumber.trim()); v.setDriverLicenceValidUntil(driverLicenceValidUntil); v.setInsuranceValidUntil(insuranceValidUntil); v.setBaseFare(baseFare); v.setPerKmRate(perKmRate); v.setStatus("PENDING"); v.setCreatedAt(Instant.now()); v.setUpdatedAt(Instant.now()); vehicles.save(v); audit.record(owner.getEmail(),"VENDOR","RENTAL_VEHICLE_SUBMITTED","RENTAL_VEHICLE",v.getId(),v.getRegistrationNumber());
             redirect.addFlashAttribute("successMessage","Vehicle submitted for admin verification. It will appear to customers after approval.");
         } catch(IllegalArgumentException|IllegalStateException ex){redirect.addFlashAttribute("errorMessage",ex.getMessage()); return "redirect:/vendor/rentals/new";}
         return "redirect:/vendor/rentals";
@@ -137,16 +141,94 @@ public class RentalController {
                                 Principal principal, RedirectAttributes redirect) {
         UserAccount owner=current(principal); RentalBooking b=bookings.findById(id).filter(x->x.getOwnerUserId().equals(owner.getId())).orElseThrow();
         if(!"REQUESTED".equals(b.getStatus())) {redirect.addFlashAttribute("errorMessage","Only new requests can be accepted or rejected."); return "redirect:/vendor/rentals/bookings";}
-        if("ACCEPT".equals(decision)){ if(ownerQuotedFare==null||ownerQuotedFare.signum()<0||ownerQuotedFare.compareTo(new BigDecimal("10000000"))>0) throw new IllegalArgumentException("Enter a valid final fare before accepting."); b.setOwnerQuotedFare(ownerQuotedFare.setScale(2,RoundingMode.HALF_UP)); b.setStatus("ACCEPTED"); } else if("REJECT".equals(decision)) b.setStatus("REJECTED"); else throw new IllegalArgumentException("Invalid booking decision.");
-        b.setOwnerResponseNote(note==null?"":note.trim()); b.setUpdatedAt(Instant.now()); bookings.save(b); redirect.addFlashAttribute("successMessage","Rental booking updated."); return "redirect:/vendor/rentals/bookings";
+        if("ACCEPT".equals(decision)){ if(ownerQuotedFare==null||ownerQuotedFare.signum()<=0||ownerQuotedFare.compareTo(new BigDecimal("10000000"))>0) throw new IllegalArgumentException("Enter a valid final fare before accepting."); if(hasConfirmedOverlap(b)) throw new IllegalArgumentException("This vehicle already has a confirmed booking for the selected date/time."); b.setOwnerQuotedFare(ownerQuotedFare.setScale(2,RoundingMode.HALF_UP)); b.setStatus("QUOTED"); } else if("REJECT".equals(decision)) b.setStatus("REJECTED"); else throw new IllegalArgumentException("Invalid booking decision.");
+        b.setOwnerResponseNote(note==null?"":note.trim()); b.setUpdatedAt(Instant.now()); bookings.save(b); audit.record(owner.getEmail(),"VENDOR","RENTAL_BOOKING_"+b.getStatus(),"RENTAL_BOOKING",b.getId(),b.getBookingNumber()); redirect.addFlashAttribute("successMessage","Rental booking updated."); return "redirect:/vendor/rentals/bookings";
     }
 
     @GetMapping("/admin/rentals")
-    public String adminRentals(Model model) { model.addAttribute("vehicles",vehicles.findAll()); model.addAttribute("bookings",bookings.findAll()); return "admin/rental/index"; }
+    public String adminRentals(Model model) { model.addAttribute("vehicles",vehicles.findAll()); model.addAttribute("bookings",bookings.findAll()); model.addAttribute("rentalSettings",rentalSettings.findById("default").orElseGet(RentalSettings::new)); return "admin/rental/index"; }
 
     @PostMapping("/admin/rentals/vehicles/{id}/decision")
     public String adminVehicleDecision(@PathVariable String id, @RequestParam String decision, @RequestParam(required=false) String note, RedirectAttributes redirect) {
-        RentalVehicle v=vehicles.findById(id).orElseThrow(); if("APPROVE".equals(decision)){v.setStatus("APPROVED");v.setAdminNote("");}else if("REJECT".equals(decision)){v.setStatus("REJECTED");v.setAdminNote(note==null?"Rejected by admin":note.trim());}else if("SUSPEND".equals(decision)){v.setStatus("SUSPENDED");v.setAdminNote(note==null?"Suspended by admin":note.trim());}else throw new IllegalArgumentException("Invalid vehicle decision."); v.setUpdatedAt(Instant.now()); vehicles.save(v); redirect.addFlashAttribute("successMessage","Rental vehicle status updated."); return "redirect:/admin/rentals";
+        RentalVehicle v=vehicles.findById(id).orElseThrow(); if("APPROVE".equals(decision)){v.setStatus("APPROVED");v.setAdminNote("");}else if("REJECT".equals(decision)){v.setStatus("REJECTED");v.setAdminNote(note==null?"Rejected by admin":note.trim());}else if("SUSPEND".equals(decision)){v.setStatus("SUSPENDED");v.setAdminNote(note==null?"Suspended by admin":note.trim());}else throw new IllegalArgumentException("Invalid vehicle decision."); v.setUpdatedAt(Instant.now()); vehicles.save(v); audit.record("admin","ADMIN","RENTAL_VEHICLE_"+v.getStatus(),"RENTAL_VEHICLE",id,v.getRegistrationNumber()); redirect.addFlashAttribute("successMessage","Rental vehicle status updated."); return "redirect:/admin/rentals";
+    }
+
+    @PostMapping("/customer/rentals/{id}/quote/accept")
+    public String acceptQuote(@PathVariable String id, Principal principal, RedirectAttributes ra) {
+        UserAccount customer=current(principal); RentalBooking b=bookings.findById(id).filter(x->x.getCustomerUserId().equals(customer.getId())).orElseThrow();
+        if(!"QUOTED".equals(b.getStatus())) { ra.addFlashAttribute("errorMessage","This booking has no pending owner quote."); return "redirect:/customer/rentals"; }
+        if(hasConfirmedOverlap(b)) { ra.addFlashAttribute("errorMessage","The vehicle is no longer available for this time. Please contact the owner."); return "redirect:/customer/rentals"; }
+        b.setStatus("CONFIRMED"); b.setUpdatedAt(Instant.now()); bookings.save(b); audit.record(customer.getEmail(),"CUSTOMER","RENTAL_QUOTE_ACCEPTED","RENTAL_BOOKING",id,b.getBookingNumber()); ra.addFlashAttribute("successMessage","Owner quote accepted. Your rental is confirmed; arrange payment with the vehicle owner."); return "redirect:/customer/rentals";
+    }
+
+    @PostMapping("/customer/rentals/{id}/cancel")
+    public String cancelCustomerBooking(@PathVariable String id, Principal principal, @RequestParam(required=false) String reason, RedirectAttributes ra) {
+        UserAccount customer=current(principal); RentalBooking b=bookings.findById(id).filter(x->x.getCustomerUserId().equals(customer.getId())).orElseThrow();
+        if(!java.util.Set.of("REQUESTED","QUOTED","CONFIRMED").contains(b.getStatus())) { ra.addFlashAttribute("errorMessage","This booking can no longer be cancelled online. Contact support."); return "redirect:/customer/rentals"; }
+        b.setStatus("CANCELLED"); b.setCancelledAt(Instant.now()); b.setOwnerResponseNote("Customer cancellation: "+(reason==null?"":reason.trim())); b.setUpdatedAt(Instant.now()); bookings.save(b); audit.record(customer.getEmail(),"CUSTOMER","RENTAL_BOOKING_CANCELLED","RENTAL_BOOKING",id,b.getBookingNumber()); ra.addFlashAttribute("successMessage","Rental booking cancelled."); return "redirect:/customer/rentals";
+    }
+
+    @PostMapping("/customer/rentals/{id}/payment")
+    public String submitRentalPayment(@PathVariable String id, Principal principal, @RequestParam String paymentMethod, @RequestParam(required=false) String utr, @RequestParam(required=false) BigDecimal amountPaid, @RequestParam(required=false) MultipartFile proof, RedirectAttributes ra) {
+        UserAccount customer=current(principal); RentalBooking b=bookings.findById(id).filter(x->x.getCustomerUserId().equals(customer.getId())).orElseThrow();
+        try { if(!"CONFIRMED".equals(b.getStatus())) throw new IllegalArgumentException("Payment can be submitted after the owner quote is accepted.");
+            if("UPI".equals(paymentMethod)){ if(amountPaid==null||amountPaid.signum()<=0||amountPaid.compareTo(b.getOwnerQuotedFare())!=0) throw new IllegalArgumentException("Enter the exact owner-confirmed fare amount."); b.setAmountPaid(amountPaid.setScale(2,RoundingMode.HALF_UP)); if(utr==null||!utr.trim().matches("[A-Za-z0-9]{8,30}")) throw new IllegalArgumentException("Enter a valid UPI UTR/reference."); if(bookings.findAll().stream().anyMatch(x->!x.getId().equals(id)&&utr.trim().equalsIgnoreCase(x.getPaymentUtr()))) throw new IllegalArgumentException("This UTR/reference has already been used for another rental booking."); if(proof==null||proof.isEmpty()) throw new IllegalArgumentException("Upload the UPI payment screenshot."); var f=imageUploads.uploadDocument(proof,"asmj-marketplace/rentals/payment-proofs"); b.setPaymentUtr(utr.trim()); b.setPaymentProofUrl(String.valueOf(f.get("secure_url"))); b.setPaymentProofName(proof.getOriginalFilename()); b.setPaymentStatus("PROOF_SUBMITTED"); }
+            else if("CASH".equals(paymentMethod)){ b.setPaymentMethod("CASH"); b.setPaymentStatus("PAY_ON_TRIP"); }
+            else throw new IllegalArgumentException("Choose UPI or cash."); b.setPaymentMethod(paymentMethod); b.setUpdatedAt(Instant.now()); bookings.save(b); audit.record(customer.getEmail(),"CUSTOMER","RENTAL_PAYMENT_SUBMITTED","RENTAL_BOOKING",id,paymentMethod); ra.addFlashAttribute("successMessage","Rental payment details submitted to the vehicle owner.");
+        } catch(IllegalArgumentException|IllegalStateException ex){ra.addFlashAttribute("errorMessage",ex.getMessage());} return "redirect:/customer/rentals";
+    }
+
+    @PostMapping("/vendor/rentals/bookings/{id}/payment/verify")
+    public String verifyRentalPayment(@PathVariable String id, Principal principal, @RequestParam String decision, @RequestParam(required=false) String note, RedirectAttributes ra) {
+        UserAccount owner=current(principal); RentalBooking b=bookings.findById(id).filter(x->x.getOwnerUserId().equals(owner.getId())).orElseThrow();
+        if(!"PROOF_SUBMITTED".equals(b.getPaymentStatus())) {ra.addFlashAttribute("errorMessage","No UPI proof is awaiting verification.");return "redirect:/vendor/rentals/bookings";}
+        if("VERIFY".equals(decision)) b.setPaymentStatus("VERIFIED"); else if("REJECT".equals(decision)){b.setPaymentStatus("REJECTED");b.setPaymentReviewNote(note==null?"Payment not verified":note.trim());} else throw new IllegalArgumentException("Invalid payment decision.");
+        b.setUpdatedAt(Instant.now()); bookings.save(b); audit.record(owner.getEmail(),"VENDOR","RENTAL_PAYMENT_"+b.getPaymentStatus(),"RENTAL_BOOKING",id,b.getBookingNumber()); ra.addFlashAttribute("successMessage","Rental payment review updated."); return "redirect:/vendor/rentals/bookings";
+    }
+
+    @PostMapping("/vendor/rentals/bookings/{id}/trip/start")
+    public String startRentalTrip(@PathVariable String id, Principal principal, @RequestParam int startOdometerKm, RedirectAttributes ra) {
+        UserAccount owner=current(principal); RentalBooking b=bookings.findById(id).filter(x->x.getOwnerUserId().equals(owner.getId())).orElseThrow();
+        if(!"CONFIRMED".equals(b.getStatus())) throw new IllegalArgumentException("Only confirmed bookings can be started.");
+        if(startOdometerKm<1) throw new IllegalArgumentException("Enter a valid starting odometer reading.");
+        if("UPI".equals(b.getPaymentMethod())&& !"VERIFIED".equals(b.getPaymentStatus())) throw new IllegalArgumentException("Verify the UPI payment before starting the trip.");
+        b.setStartOdometerKm(startOdometerKm); b.setStatus("IN_PROGRESS"); b.setUpdatedAt(Instant.now()); bookings.save(b); audit.record(owner.getEmail(),"VENDOR","RENTAL_TRIP_STARTED","RENTAL_BOOKING",id,"Start odometer: "+startOdometerKm); ra.addFlashAttribute("successMessage","Rental trip started."); return "redirect:/vendor/rentals/bookings";
+    }
+
+    @PostMapping("/vendor/rentals/bookings/{id}/trip/complete")
+    public String completeRentalTrip(@PathVariable String id, Principal principal, @RequestParam int endOdometerKm, @RequestParam(required=false) BigDecimal cashReceived, RedirectAttributes ra) {
+        UserAccount owner=current(principal); RentalBooking b=bookings.findById(id).filter(x->x.getOwnerUserId().equals(owner.getId())).orElseThrow();
+        if(!"IN_PROGRESS".equals(b.getStatus())||b.getStartOdometerKm()==null||endOdometerKm<=b.getStartOdometerKm()) throw new IllegalArgumentException("Final odometer must be greater than the starting reading.");
+        if("CASH".equals(b.getPaymentMethod())) { if(cashReceived==null||cashReceived.signum()<=0||b.getOwnerQuotedFare()==null||cashReceived.compareTo(b.getOwnerQuotedFare())!=0) throw new IllegalArgumentException("Enter the exact owner-confirmed fare collected in cash."); b.setAmountPaid(cashReceived.setScale(2,RoundingMode.HALF_UP)); b.setPaymentStatus("VERIFIED"); }
+        if(!"VERIFIED".equals(b.getPaymentStatus())) throw new IllegalArgumentException("Verify full rental payment before completing the trip.");
+        b.setEndOdometerKm(endOdometerKm); b.setStatus("COMPLETED"); b.setCompletedAt(Instant.now());
+        RentalSettings settings=rentalSettings.findById("default").orElseGet(RentalSettings::new); BigDecimal rate=settings.getCommissionRatePercent()==null?new BigDecimal("5.00"):settings.getCommissionRatePercent();
+        BigDecimal paid=b.getAmountPaid()==null?BigDecimal.ZERO:b.getAmountPaid(); b.setPlatformCommissionRate(rate); b.setPlatformCommissionAmount(paid.multiply(rate).divide(new BigDecimal("100"),2,RoundingMode.HALF_UP)); b.setCommissionStatus(b.getPlatformCommissionAmount().signum()>0?"DUE":"NOT_DUE");
+        b.setUpdatedAt(Instant.now()); bookings.save(b); audit.record(owner.getEmail(),"VENDOR","RENTAL_TRIP_COMPLETED","RENTAL_BOOKING",id,"Odometer "+b.getStartOdometerKm()+" to "+endOdometerKm+"; commission ₹"+b.getPlatformCommissionAmount()); ra.addFlashAttribute("successMessage","Trip completed. Rental commission has been added to the separate rental settlement ledger."); return "redirect:/vendor/rentals/bookings";
+    }
+
+    @PostMapping("/admin/rentals/settings")
+    public String saveRentalSettings(@RequestParam BigDecimal commissionRatePercent, Principal principal, RedirectAttributes ra) {
+        if(commissionRatePercent==null||commissionRatePercent.signum()<0||commissionRatePercent.compareTo(new BigDecimal("30"))>0) throw new IllegalArgumentException("Rental commission must be between 0 and 30 percent.");
+        RentalSettings s=rentalSettings.findById("default").orElseGet(RentalSettings::new); s.setCommissionRatePercent(commissionRatePercent.setScale(2,RoundingMode.HALF_UP)); rentalSettings.save(s); audit.record(principal.getName(),"ADMIN","RENTAL_COMMISSION_RATE_UPDATED","RENTAL_SETTINGS","default",s.getCommissionRatePercent().toString()); ra.addFlashAttribute("successMessage","Rental commission rate saved. It applies to trips completed after this change."); return "redirect:/admin/rentals";
+    }
+
+    @PostMapping("/vendor/rentals/commission/{id}/submit")
+    public String submitRentalCommission(@PathVariable String id, Principal principal, @RequestParam String utr, @RequestParam MultipartFile proof, RedirectAttributes ra) {
+        UserAccount owner=current(principal); RentalBooking b=bookings.findById(id).filter(x->x.getOwnerUserId().equals(owner.getId())).orElseThrow();
+        if(!"DUE".equals(b.getCommissionStatus())) throw new IllegalArgumentException("No rental commission is due for this booking.");
+        if(utr==null||!utr.trim().matches("[A-Za-z0-9]{8,30}")) throw new IllegalArgumentException("Enter a valid UTR/reference."); var f=imageUploads.uploadDocument(proof,"asmj-marketplace/rentals/commission-proofs"); b.setCommissionPaymentUtr(utr.trim()); b.setCommissionPaymentProofUrl(String.valueOf(f.get("secure_url"))); b.setCommissionStatus("SUBMITTED"); b.setUpdatedAt(Instant.now()); bookings.save(b); audit.record(owner.getEmail(),"VENDOR","RENTAL_COMMISSION_SUBMITTED","RENTAL_BOOKING",id,utr); ra.addFlashAttribute("successMessage","Rental commission proof submitted for admin verification."); return "redirect:/vendor/rentals/bookings";
+    }
+
+    @PostMapping("/admin/rentals/commission/{id}/verify")
+    public String verifyRentalCommission(@PathVariable String id, Principal principal, RedirectAttributes ra) {
+        RentalBooking b=bookings.findById(id).orElseThrow(); if(!"SUBMITTED".equals(b.getCommissionStatus())) throw new IllegalArgumentException("No rental commission payment is awaiting verification."); b.setCommissionStatus("PAID"); b.setUpdatedAt(Instant.now()); bookings.save(b); audit.record(principal.getName(),"ADMIN","RENTAL_COMMISSION_VERIFIED","RENTAL_BOOKING",id,b.getCommissionPaymentUtr()); ra.addFlashAttribute("successMessage","Rental commission payment verified."); return "redirect:/admin/rentals";
+    }
+
+    private boolean hasConfirmedOverlap(RentalBooking candidate) {
+        return bookings.findByVehicleIdOrderByCreatedAtDesc(candidate.getVehicleId()).stream().filter(b->!b.getId().equals(candidate.getId()))
+            .filter(b->java.util.Set.of("CONFIRMED","IN_PROGRESS").contains(b.getStatus()))
+            .anyMatch(b->{LocalDate aStart=candidate.getPickupDate(), aEnd=candidate.getReturnDate()==null?candidate.getPickupDate():candidate.getReturnDate(); LocalDate bStart=b.getPickupDate(), bEnd=b.getReturnDate()==null?b.getPickupDate():b.getReturnDate(); return aStart!=null&&aEnd!=null&&bStart!=null&&bEnd!=null&&!aStart.isAfter(bEnd)&&!bStart.isAfter(aEnd);});
     }
 
     @GetMapping("/api/rentals/quote") @ResponseBody
