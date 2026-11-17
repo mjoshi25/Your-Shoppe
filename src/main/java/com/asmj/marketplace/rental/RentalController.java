@@ -6,6 +6,9 @@ import com.asmj.marketplace.model.Role;
 import com.asmj.marketplace.model.UserAccount;
 import com.asmj.marketplace.repository.UserAccountRepository;
 import com.asmj.marketplace.service.CloudinaryImageService;
+import com.asmj.marketplace.discovery.MarketplaceModuleCategory;
+import com.asmj.marketplace.discovery.MarketplaceModuleCategoryRepository;
+import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -32,11 +35,12 @@ public class RentalController {
     private final CloudinaryImageService imageUploads;
     private final RentalSettingsRepository rentalSettings;
     private final AuditService audit;
+    private final MarketplaceModuleCategoryRepository moduleCategories;
     @Value("${google.maps.browser-api-key:}") private String browserMapsKey;
 
     public RentalController(RentalVehicleRepository vehicles, RentalBookingRepository bookings,
-                            UserAccountRepository users, GoogleRoutesService routes, CloudinaryImageService imageUploads, RentalSettingsRepository rentalSettings, AuditService audit) {
-        this.vehicles=vehicles; this.bookings=bookings; this.users=users; this.routes=routes; this.imageUploads=imageUploads; this.rentalSettings=rentalSettings; this.audit=audit;
+                            UserAccountRepository users, GoogleRoutesService routes, CloudinaryImageService imageUploads, RentalSettingsRepository rentalSettings, AuditService audit, MarketplaceModuleCategoryRepository moduleCategories) {
+        this.vehicles=vehicles; this.bookings=bookings; this.users=users; this.routes=routes; this.imageUploads=imageUploads; this.rentalSettings=rentalSettings; this.audit=audit; this.moduleCategories=moduleCategories;
     }
 
     @GetMapping("/rentals")
@@ -46,6 +50,7 @@ public class RentalController {
                 .filter(v -> category==null || category.isBlank() || category.equals(v.getVehicleCategory()))
                 .toList();
         model.addAttribute("vehicles",list); model.addAttribute("selectedCategory",category==null?"":category);
+        model.addAttribute("vehicleCategories",moduleCategories.findByTypeAndActiveTrueOrderByNameAsc("RENTAL"));
         return "rental/list";
     }
 
@@ -89,7 +94,7 @@ public class RentalController {
             BigDecimal estimate=vehicle.getBaseFare().add(vehicle.getPerKmRate().multiply(distance).multiply(multiplier)).setScale(2,RoundingMode.HALF_UP);
             RentalBooking b=new RentalBooking(); b.setBookingNumber("RNT-"+UUID.randomUUID().toString().substring(0,8).toUpperCase());
             b.setCustomerUserId(customer.getId()); b.setCustomerName(customer.getFullName()); b.setCustomerMobile(customer.getMobile());
-            b.setOwnerUserId(vehicle.getOwnerUserId()); b.setVehicleId(vehicle.getId()); b.setVehicleName(vehicle.getMakeModel()); b.setVehicleCategory(vehicle.getVehicleCategory());
+            b.setOwnerUserId(vehicle.getOwnerUserId()); b.setVehicleId(vehicle.getId()); b.setVehicleName(vehicle.getMakeModel()); b.setVehicleCategory(vehicle.getVehicleCategory()); b.setVehicleSubcategory(vehicle.getVehicleSubcategory());
             b.setTripType(tripType); b.setPickupAddress(pickupAddress.trim()); b.setPickupPinCode(pickupPinCode.trim()); b.setPickupLatitude(pickupLatitude); b.setPickupLongitude(pickupLongitude);
             b.setDropAddress(dropAddress.trim()); b.setDropPinCode(dropPinCode.trim()); b.setDropLatitude(dropLatitude); b.setDropLongitude(dropLongitude);
             b.setDistanceKm(distance); b.setPickupDate(pickupDate); b.setPickupTime(pickupTime); b.setReturnDate(returnDate); b.setReturnTime(returnTime);
@@ -108,10 +113,13 @@ public class RentalController {
     public String ownerVehicles(Principal principal, Model model) { UserAccount u=current(principal); model.addAttribute("vehicles",vehicles.findByOwnerUserIdOrderByCreatedAtDesc(u.getId())); return "vendor/rental/vehicles"; }
 
     @GetMapping("/vendor/rentals/new")
-    public String newVehicle() { return "vendor/rental/vehicle-form"; }
+    public String newVehicle(Model model) { model.addAttribute("vehicleCategories",moduleCategories.findByTypeAndActiveTrueOrderByNameAsc("RENTAL")); return "vendor/rental/vehicle-form"; }
+
+    @GetMapping("/api/rentals/categories") @ResponseBody
+    public List<Map<String,Object>> rentalCategories() { return moduleCategories.findByTypeAndActiveTrueOrderByNameAsc("RENTAL").stream().map(c -> Map.<String,Object>of("id",c.getId(),"name",c.getName(),"subcategories",c.getSubcategories())).toList(); }
 
     @PostMapping("/vendor/rentals")
-    public String saveVehicle(Principal principal, @RequestParam String vehicleCategory, @RequestParam String makeModel,
+    public String saveVehicle(Principal principal, @RequestParam String categoryId, @RequestParam String vehicleSubcategory, @RequestParam String makeModel,
             @RequestParam String registrationNumber, @RequestParam int seatingCapacity, @RequestParam(required=false) String description, @RequestParam(required=false) MultipartFile vehiclePhoto,
             @RequestParam String driverName, @RequestParam String driverMobile, @RequestParam String driverLicenceNumber,
             @RequestParam @DateTimeFormat(iso=DateTimeFormat.ISO.DATE) LocalDate driverLicenceValidUntil,
@@ -120,14 +128,15 @@ public class RentalController {
         UserAccount owner=current(principal);
         try {
             if(owner.getRole()!=Role.ROLE_VENDOR) throw new IllegalArgumentException("An approved ASMJ Shoppe seller account is required to register a rental vehicle.");
-            if(!java.util.Set.of("HATCHBACK","SEDAN","SUV","MUV","TEMPO_TRAVELLER","BUS").contains(vehicleCategory)) throw new IllegalArgumentException("Choose a supported vehicle category.");
+            MarketplaceModuleCategory selectedCategory=moduleCategories.findById(categoryId).filter(c -> "RENTAL".equals(c.getType()) && c.isActive()).orElseThrow(() -> new IllegalArgumentException("Choose an active vehicle category."));
+            if(vehicleSubcategory==null || vehicleSubcategory.isBlank() || selectedCategory.getSubcategories().stream().noneMatch(x -> x.equalsIgnoreCase(vehicleSubcategory.trim()))) throw new IllegalArgumentException("Choose a valid subcategory for the selected vehicle category.");
             if(driverMobile==null||!driverMobile.matches("[0-9+ -]{10,16}")) throw new IllegalArgumentException("Enter a valid driver mobile number.");
             if(makeModel==null||makeModel.isBlank()||registrationNumber==null||registrationNumber.isBlank()||driverName==null||driverName.isBlank()||driverLicenceNumber==null||driverLicenceNumber.isBlank()) throw new IllegalArgumentException("Complete all required vehicle and driver details.");
             if(vehicles.existsByRegistrationNumberIgnoreCase(registrationNumber.trim())) throw new IllegalArgumentException("This vehicle registration number is already registered.");
             if(seatingCapacity<1||seatingCapacity>60) throw new IllegalArgumentException("Enter a valid seating capacity between 1 and 60.");
             if(driverLicenceValidUntil==null||driverLicenceValidUntil.isBefore(LocalDate.now())||insuranceValidUntil==null||insuranceValidUntil.isBefore(LocalDate.now())) throw new IllegalArgumentException("Driver licence and vehicle insurance must be currently valid.");
             if(baseFare==null||perKmRate==null||baseFare.signum()<0||perKmRate.signum()<0||baseFare.compareTo(new BigDecimal("100000"))>0||perKmRate.compareTo(new BigDecimal("10000"))>0) throw new IllegalArgumentException("Enter valid base and per-kilometre rates.");
-            RentalVehicle v=new RentalVehicle(); v.setOwnerUserId(owner.getId()); v.setOwnerName(owner.getFullName()); v.setVehicleCategory(vehicleCategory); v.setMakeModel(makeModel.trim()); v.setRegistrationNumber(registrationNumber.trim().toUpperCase()); v.setSeatingCapacity(seatingCapacity); v.setDescription(description==null?"":description.trim()); if(vehiclePhoto!=null&&!vehiclePhoto.isEmpty()){var uploaded=imageUploads.uploadProductImage(vehiclePhoto);v.setImageUrl(String.valueOf(uploaded.get("secure_url")));} v.setDriverName(driverName.trim()); v.setDriverMobile(driverMobile.trim()); v.setDriverLicenceNumber(driverLicenceNumber.trim()); v.setDriverLicenceValidUntil(driverLicenceValidUntil); v.setInsuranceValidUntil(insuranceValidUntil); v.setBaseFare(baseFare); v.setPerKmRate(perKmRate); v.setStatus("PENDING"); v.setCreatedAt(Instant.now()); v.setUpdatedAt(Instant.now()); vehicles.save(v); audit.record(owner.getEmail(),"VENDOR","RENTAL_VEHICLE_SUBMITTED","RENTAL_VEHICLE",v.getId(),v.getRegistrationNumber());
+            RentalVehicle v=new RentalVehicle(); v.setOwnerUserId(owner.getId()); v.setOwnerName(owner.getFullName()); v.setVehicleCategory(selectedCategory.getName()); v.setVehicleSubcategory(vehicleSubcategory.trim()); v.setMakeModel(makeModel.trim()); v.setRegistrationNumber(registrationNumber.trim().toUpperCase()); v.setSeatingCapacity(seatingCapacity); v.setDescription(description==null?"":description.trim()); if(vehiclePhoto!=null&&!vehiclePhoto.isEmpty()){var uploaded=imageUploads.uploadProductImage(vehiclePhoto);v.setImageUrl(String.valueOf(uploaded.get("secure_url")));} v.setDriverName(driverName.trim()); v.setDriverMobile(driverMobile.trim()); v.setDriverLicenceNumber(driverLicenceNumber.trim()); v.setDriverLicenceValidUntil(driverLicenceValidUntil); v.setInsuranceValidUntil(insuranceValidUntil); v.setBaseFare(baseFare); v.setPerKmRate(perKmRate); v.setStatus("PENDING"); v.setCreatedAt(Instant.now()); v.setUpdatedAt(Instant.now()); vehicles.save(v); audit.record(owner.getEmail(),"VENDOR","RENTAL_VEHICLE_SUBMITTED","RENTAL_VEHICLE",v.getId(),v.getRegistrationNumber());
             redirect.addFlashAttribute("successMessage","Vehicle submitted for admin verification. It will appear to customers after approval.");
         } catch(IllegalArgumentException|IllegalStateException ex){redirect.addFlashAttribute("errorMessage",ex.getMessage()); return "redirect:/vendor/rentals/new";}
         return "redirect:/vendor/rentals";

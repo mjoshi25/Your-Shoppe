@@ -13,6 +13,7 @@ public class RentalVehicle {
     @Indexed private String ownerUserId;
     private String ownerName;
     private String vehicleCategory;
+    private String vehicleSubcategory;
     private String makeModel;
     private String registrationNumber;
     private int seatingCapacity;
@@ -34,6 +35,7 @@ public class RentalVehicle {
     public String getOwnerUserId(){return ownerUserId;} public void setOwnerUserId(String v){ownerUserId=v;}
     public String getOwnerName(){return ownerName;} public void setOwnerName(String v){ownerName=v;}
     public String getVehicleCategory(){return vehicleCategory;} public void setVehicleCategory(String v){vehicleCategory=v;}
+    public String getVehicleSubcategory(){return vehicleSubcategory;} public void setVehicleSubcategory(String v){vehicleSubcategory=v;}
     public String getMakeModel(){return makeModel;} public void setMakeModel(String v){makeModel=v;}
     public String getRegistrationNumber(){return registrationNumber;} public void setRegistrationNumber(String v){registrationNumber=v;}
     public int getSeatingCapacity(){return seatingCapacity;} public void setSeatingCapacity(int v){seatingCapacity=v;}

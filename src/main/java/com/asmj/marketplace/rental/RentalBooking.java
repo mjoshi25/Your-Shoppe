@@ -19,6 +19,7 @@ public class RentalBooking {
     private String customerMobile;
     private String vehicleName;
     private String vehicleCategory;
+    private String vehicleSubcategory;
     private String tripType;
     private String pickupAddress;
     private String pickupPinCode;
@@ -67,6 +68,7 @@ public class RentalBooking {
     public String getCustomerMobile(){return customerMobile;} public void setCustomerMobile(String v){customerMobile=v;}
     public String getVehicleName(){return vehicleName;} public void setVehicleName(String v){vehicleName=v;}
     public String getVehicleCategory(){return vehicleCategory;} public void setVehicleCategory(String v){vehicleCategory=v;}
+    public String getVehicleSubcategory(){return vehicleSubcategory;} public void setVehicleSubcategory(String v){vehicleSubcategory=v;}
     public String getTripType(){return tripType;} public void setTripType(String v){tripType=v;}
     public String getPickupAddress(){return pickupAddress;} public void setPickupAddress(String v){pickupAddress=v;}
     public String getPickupPinCode(){return pickupPinCode;} public void setPickupPinCode(String v){pickupPinCode=v;}

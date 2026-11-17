@@ -9,7 +9,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/admin/marketplace-categories")
 public class MarketplaceModuleCategoryAdminController {
-    private static final Map<String,String> TYPES=Map.of("EVENT","Events","COURSE","Courses","WHOLESALE","Wholesale","DELIVERY","Delivery","FREELANCE","Freelance","BUSINESS","Business Directory","CLASSIFIED","Classifieds");
+    private static final Map<String,String> TYPES=Map.of("EVENT","Events","COURSE","Courses","WHOLESALE","Wholesale","DELIVERY","Delivery","FREELANCE","Freelance","BUSINESS","Business Directory","CLASSIFIED","Classifieds","RENTAL","Vehicle Rentals");
     private final MarketplaceModuleCategoryRepository categories;
     public MarketplaceModuleCategoryAdminController(MarketplaceModuleCategoryRepository categories){this.categories=categories;}
     @GetMapping public String index(@RequestParam(required=false) String type, Model model){
