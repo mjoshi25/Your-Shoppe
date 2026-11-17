@@ -35,6 +35,16 @@ public class CloudinaryImageService {
         return upload(file, "asmj-marketplace/profile-photos", "image");
     }
 
+    /** Uploads images attached to Events, Courses, Wholesale, Delivery and Freelance listings. */
+    public Map<String,Object> uploadMarketplaceImage(MultipartFile file, String module) {
+        validate(file, 5L * 1024 * 1024);
+        String type=contentType(file);
+        if (!type.equals("image/jpeg") && !type.equals("image/png") && !type.equals("image/webp"))
+            throw new IllegalArgumentException("Only JPG, PNG or WEBP images are supported.");
+        if(module==null || !module.matches("[a-z]+")) throw new IllegalArgumentException("Invalid upload module.");
+        return upload(file, "asmj-marketplace/"+module, "image");
+    }
+
     /** Uploads marketplace advertising banners (JPG, PNG or WEBP), maximum 5 MB. */
     public Map<String,Object> uploadAdvertisementBanner(MultipartFile file) {
         validate(file, 5L * 1024 * 1024);

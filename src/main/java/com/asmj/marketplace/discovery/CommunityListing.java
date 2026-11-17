@@ -11,6 +11,7 @@ public class CommunityListing {
  private String ownerUserId;
  private String title;
  private String category;
+ private String subcategory;
  private String description;
  private String contactName;
  private String contactEmail;
@@ -31,6 +32,7 @@ public class CommunityListing {
  public String getOwnerUserId(){return ownerUserId;} public void setOwnerUserId(String v){ownerUserId=v;}
  public String getTitle(){return title;} public void setTitle(String v){title=v;}
  public String getCategory(){return category;} public void setCategory(String v){category=v;}
+ public String getSubcategory(){return subcategory;} public void setSubcategory(String v){subcategory=v;}
  public String getDescription(){return description;} public void setDescription(String v){description=v;}
  public String getContactName(){return contactName;} public void setContactName(String v){contactName=v;}
  public String getContactEmail(){return contactEmail;} public void setContactEmail(String v){contactEmail=v;}
