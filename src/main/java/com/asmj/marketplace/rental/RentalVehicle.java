@@ -30,6 +30,10 @@ public class RentalVehicle {
     private String adminNote;
     private Instant createdAt = Instant.now();
     private Instant updatedAt = Instant.now();
+    /** Marks records created by the opt-in rental sample-data seeder. */
+    private boolean seededTestData = false;
+    private String seedBatchId;
+    private String seedKey;
 
     public String getId(){return id;} public void setId(String v){id=v;}
     public String getOwnerUserId(){return ownerUserId;} public void setOwnerUserId(String v){ownerUserId=v;}
@@ -52,5 +56,8 @@ public class RentalVehicle {
     public String getAdminNote(){return adminNote;} public void setAdminNote(String v){adminNote=v;}
     public Instant getCreatedAt(){return createdAt;} public void setCreatedAt(Instant v){createdAt=v;}
     public Instant getUpdatedAt(){return updatedAt;} public void setUpdatedAt(Instant v){updatedAt=v;}
+    public boolean isSeededTestData(){return seededTestData;} public void setSeededTestData(boolean v){seededTestData=v;}
+    public String getSeedBatchId(){return seedBatchId;} public void setSeedBatchId(String v){seedBatchId=v;}
+    public String getSeedKey(){return seedKey;} public void setSeedKey(String v){seedKey=v;}
     public boolean isEligible(){return "APPROVED".equals(status) && driverLicenceValidUntil!=null && !driverLicenceValidUntil.isBefore(LocalDate.now()) && insuranceValidUntil!=null && !insuranceValidUntil.isBefore(LocalDate.now());}
 }

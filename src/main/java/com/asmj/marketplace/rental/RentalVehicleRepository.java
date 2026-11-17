@@ -5,4 +5,6 @@ public interface RentalVehicleRepository extends MongoRepository<RentalVehicle,S
  List<RentalVehicle> findByStatusOrderByCreatedAtDesc(String status);
  List<RentalVehicle> findByOwnerUserIdOrderByCreatedAtDesc(String ownerUserId);
  boolean existsByRegistrationNumberIgnoreCase(String registrationNumber);
+ boolean existsBySeedKey(String seedKey);
+ List<RentalVehicle> findBySeedBatchIdOrderByCreatedAtDesc(String seedBatchId);
 }
