@@ -37,6 +37,7 @@ public class RentalController {
     private final AuditService audit;
     private final MarketplaceModuleCategoryRepository moduleCategories;
     @Value("${google.maps.browser-api-key:}") private String browserMapsKey;
+    @Value("${google.maps.map-id:DEMO_MAP_ID}") private String browserMapsMapId;
 
     public RentalController(RentalVehicleRepository vehicles, RentalBookingRepository bookings,
                             UserAccountRepository users, GoogleRoutesService routes, CloudinaryImageService imageUploads, RentalSettingsRepository rentalSettings, AuditService audit, MarketplaceModuleCategoryRepository moduleCategories) {
@@ -61,6 +62,7 @@ public class RentalController {
         RentalVehicle vehicle=vehicles.findById(id).filter(RentalVehicle::isEligible).orElseThrow(() -> new IllegalArgumentException("This vehicle is not currently available for booking."));
         model.addAttribute("vehicle",vehicle); model.addAttribute("customer",customer);
         model.addAttribute("googleMapsBrowserKey",browserMapsKey);
+        model.addAttribute("googleMapsMapId",browserMapsMapId);
         model.addAttribute("minimumDate",LocalDate.now().plusDays(1));
         return "rental/book";
     }
