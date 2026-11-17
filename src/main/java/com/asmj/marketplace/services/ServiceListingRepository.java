@@ -6,4 +6,5 @@ public interface ServiceListingRepository extends MongoRepository<ServiceListing
  List<ServiceListing> findByProviderIdOrderByCreatedAtDesc(String providerId);
  List<ServiceListing> findByStatusAndActiveTrueAndTitleContainingIgnoreCaseOrderByCreatedAtDesc(String status,String q);
  List<ServiceListing> findByStatusAndActiveTrueAndCategoryIdOrderByCreatedAtDesc(String status,String categoryId);
+ List<ServiceListing> findByStatusAndActiveTrueAndCategoryIdInOrderByCreatedAtDesc(String status,Collection<String> categoryIds);
 }

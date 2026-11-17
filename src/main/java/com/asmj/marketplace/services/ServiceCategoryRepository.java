@@ -5,4 +5,5 @@ public interface ServiceCategoryRepository extends MongoRepository<ServiceCatego
  List<ServiceCategory> findByParentIdIsNullAndActiveTrueOrderByNameAsc();
  List<ServiceCategory> findByParentIdAndActiveTrueOrderByNameAsc(String parentId);
  List<ServiceCategory> findByActiveTrueOrderByNameAsc();
+ java.util.Optional<ServiceCategory> findByNameIgnoreCaseAndParentIdIsNullAndActiveTrue(String name);
 }

@@ -35,14 +35,25 @@ public class ServiceMarketplaceController {
  private ServiceBooking ownedBooking(String id, Authentication a){ServiceBooking b=bookings.findById(id).orElse(null); if(b==null) return null; ServiceProvider p=ownProvider(a); return b.getCustomerEmail().equalsIgnoreCase(email(a)) || (p!=null && p.getId().equals(b.getProviderId())) ? b : null;}
 
  @GetMapping("/services") public String browse(@RequestParam(required=false) String q,@RequestParam(required=false) String category,
-   @RequestParam(required=false) String pin, Model model){
+   @RequestParam(required=false) String categoryName,@RequestParam(required=false) String pin, Model model){
   List<ServiceListing> all;
-  if(category!=null&&!category.isBlank()) all=listings.findByStatusAndActiveTrueAndCategoryIdOrderByCreatedAtDesc("APPROVED",category);
+  String selectedCategory=category;
+  if(categoryName!=null&&!categoryName.isBlank()){
+   ServiceCategory parent=categories.findByNameIgnoreCaseAndParentIdIsNullAndActiveTrue(categoryName.trim()).orElse(null);
+   if(parent==null){all=new ArrayList<>();}
+   else {
+    List<String> categoryIds=new ArrayList<>();categoryIds.add(parent.getId());
+    categories.findByParentIdAndActiveTrueOrderByNameAsc(parent.getId()).forEach(child->categoryIds.add(child.getId()));
+    all=listings.findByStatusAndActiveTrueAndCategoryIdInOrderByCreatedAtDesc("APPROVED",categoryIds);
+    selectedCategory=parent.getId();
+   }
+  } else if(category!=null&&!category.isBlank()) all=listings.findByStatusAndActiveTrueAndCategoryIdOrderByCreatedAtDesc("APPROVED",category);
   else if(q!=null&&!q.isBlank()) all=listings.findByStatusAndActiveTrueAndTitleContainingIgnoreCaseOrderByCreatedAtDesc("APPROVED",q.trim());
   else all=listings.findByStatusAndActiveTrueOrderByCreatedAtDesc("APPROVED");
   all.removeIf(x -> !approved(providers.findById(x.getProviderId()).orElse(null)));
   if(pin!=null&&!pin.isBlank()) all.removeIf(x->x.getServicePinCodes()==null||!Arrays.stream(x.getServicePinCodes().split("[,\\s]+" )).anyMatch(pin.trim()::equals));
-  model.addAttribute("services",all); model.addAttribute("categories",categories.findByActiveTrueOrderByNameAsc()); model.addAttribute("q",q); model.addAttribute("selectedCategory",category); model.addAttribute("pin",pin);
+  model.addAttribute("services",all); model.addAttribute("categories",categories.findByActiveTrueOrderByNameAsc()); model.addAttribute("q",q); model.addAttribute("selectedCategory",selectedCategory); model.addAttribute("pin",pin);
+  model.addAttribute("selectedCategoryName",categoryName);
   return "services/catalog";
  }
  @GetMapping("/services/{id}") public String detail(@PathVariable String id,Model model){

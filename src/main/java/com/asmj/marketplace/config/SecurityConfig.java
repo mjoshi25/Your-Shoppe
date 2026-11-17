@@ -44,8 +44,10 @@ public class SecurityConfig {
         http.authenticationProvider(authenticationProvider)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/register", "/register/**", "/terms",
-                        "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/api/products/**", "/chat/**", "/guest-enquiries", "/contact-queries", "/cart", "/cart/**", "/ads/**", "/error").permitAll()
+                        "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/api/products/**", "/chat/**", "/guest-enquiries", "/contact-queries", "/cart", "/cart/**", "/ads/**", "/jobs", "/jobs/*", "/error").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/jobs/*/apply", "/candidate/job-applications").hasRole("CUSTOMER")
+                .requestMatchers("/employer/**").authenticated()
                 .requestMatchers("/services/*/book", "/customer/service-bookings/**").hasRole("CUSTOMER")
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/services", "/services/**").permitAll()
                 .requestMatchers("/service-provider/**", "/provider/services/**").authenticated()
