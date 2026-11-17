@@ -1,6 +1,6 @@
-# ASMJ Shoppe — Current project baseline (Phase 27 + UI Phase 28)
+# ASMJ Shoppe — Combined release through homepage Phases 50–54
 
-This project ZIP is based on the Phase 27 Vendor Coupons Menu Fix release. Phase 28 adds a responsive shared marketplace header, global product search, shared visual tokens and accessibility foundations. See `PHASE28-UI-FOUNDATION.md` and `UI-REDESIGN-ROADMAP.md` for the current redesign scope and remaining milestones.
+This development ZIP includes the combined Phase 47.1 / 47 / 48 / 49 work plus the Phase 50–54 homepage modules. See `PHASE47-49-RELEASE-NOTES.md` and `PHASE50-54-HOMEPAGE-MODULES.md` for scope, limitations and the pre-deployment test checklist. The package is not deployed to production.
 
 **Deployment safety:** This is a development ZIP only. It has not been deployed. Do not replace the production repository or Render service until the owner has reviewed, tested and explicitly approved the release.
 

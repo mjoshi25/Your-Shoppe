@@ -45,8 +45,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/register", "/register/**", "/terms",
                         "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/api/products/**", "/chat/**", "/guest-enquiries", "/contact-queries", "/cart", "/cart/**", "/ads/**", "/jobs", "/jobs/*", "/businesses", "/classifieds", "/error").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/events", "/courses", "/wholesale", "/delivery", "/freelancers").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/community-listings/save", "/businesses/**", "/classifieds/**", "/my-community-listings").authenticated()
+                .requestMatchers("/marketplace/new/**", "/marketplace/save", "/marketplace/*/request", "/my-marketplace-listings", "/marketplace-extension-requests").authenticated()
                 .requestMatchers("/jobs/*/apply", "/candidate/job-applications").hasRole("CUSTOMER")
                 .requestMatchers("/employer/**").authenticated()
                 .requestMatchers("/services/*/book", "/customer/service-bookings/**").hasRole("CUSTOMER")
