@@ -18,8 +18,40 @@
   <div th:replace="~{advertising/slots :: banners(${adsByPlacement['HOME_HERO']})}"></div>
   <div th:replace="~{advertising/slots :: banners(${adsByPlacement['HOME_CARD']})}"></div>
   <form class="ad-pin-filter" method="get" th:action="@{/ads/target-pin}"><label for="adTargetPin">See local promotions</label><input id="adTargetPin" name="pinCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="Enter PIN code" th:value="${adTargetPin}"><button class="btn btn-small ad-pin-apply" type="submit">Apply PIN</button></form>
-  <section class="home-discovery"><div class="home-section-head"><div><div class="eyebrow">YOUR NEXT GREAT FIND</div><h2>Explore the marketplace</h2><p>Browse a growing collection from participating vendors.</p></div><a class="home-text-link" th:href="@{/products}">Shop all products <span>→</span></a></div>
-    <div class="discovery-grid"><a class="discovery-card discovery-purple" th:href="@{/products}"><span class="discovery-icon">⌕</span><span class="discovery-copy"><b>Discover products</b><small>Explore the full catalogue</small></span><span class="discovery-arrow">↗</span></a><a class="discovery-card discovery-gold" th:href="@{/customer/offers}" sec:authorize="hasRole('CUSTOMER')"><span class="discovery-icon">%</span><span class="discovery-copy"><b>Offers for you</b><small>Explore available coupons</small></span><span class="discovery-arrow">↗</span></a><a class="discovery-card discovery-mint" th:href="@{/register}"><span class="discovery-icon">↗</span><span class="discovery-copy"><b>Become a seller</b><small>Bring your business online</small></span><span class="discovery-arrow">↗</span></a></div>
+  <section class="home-discovery superapp-discovery" id="explore">
+    <div class="home-section-head">
+      <div><div class="eyebrow">ONE PLATFORM, MANY POSSIBILITIES</div><h2>Explore ASMJ Shoppe</h2><p>Shop, find local professionals, discover opportunities and connect with businesses.</p></div>
+      <a class="home-text-link" th:href="@{/products}">Explore products <span>→</span></a>
+    </div>
+    <div class="superapp-grid">
+      <a class="superapp-card superapp-live superapp-purple" th:href="@{/products}">
+        <span class="superapp-icon" aria-hidden="true">🛍️</span><span class="superapp-card-copy"><strong>Shop Products</strong><small>Discover products from participating sellers</small></span><span class="superapp-status">Explore now</span>
+      </a>
+      <a class="superapp-card superapp-live superapp-teal" th:href="@{/services}">
+        <span class="superapp-icon" aria-hidden="true">🔧</span><span class="superapp-card-copy"><strong>Book Services</strong><small>Electricians, plumbers, healthcare, beauty and more</small></span><span class="superapp-status">Explore now</span>
+      </a>
+      <a class="superapp-card superapp-live superapp-orange" th:href="@{/rentals}">
+        <span class="superapp-icon" aria-hidden="true">🚗</span><span class="superapp-card-copy"><strong>Rent Vehicles</strong><small>Find vehicles with drivers for your journey</small></span><span class="superapp-status">Explore now</span>
+      </a>
+      <article class="superapp-card superapp-upcoming superapp-blue">
+        <span class="superapp-icon" aria-hidden="true">💼</span><span class="superapp-card-copy"><strong>Find Jobs</strong><small>Discover openings and track your applications</small></span><span class="superapp-status">Coming soon · First priority</span>
+      </article>
+      <article class="superapp-card superapp-upcoming superapp-pink">
+        <span class="superapp-icon" aria-hidden="true">👥</span><span class="superapp-card-copy"><strong>Hire Candidates</strong><small>Employers and recruiters connect with talent</small></span><span class="superapp-status">Coming soon</span>
+      </article>
+      <article class="superapp-card superapp-upcoming superapp-green">
+        <span class="superapp-icon" aria-hidden="true">🏪</span><span class="superapp-card-copy"><strong>Local Businesses</strong><small>Find shops, offices and businesses by location</small></span><span class="superapp-status">Coming soon</span>
+      </article>
+      <article class="superapp-card superapp-upcoming superapp-gold">
+        <span class="superapp-icon" aria-hidden="true">♻️</span><span class="superapp-card-copy"><strong>Buy &amp; Sell Used Items</strong><small>Explore second-hand products and local listings</small></span><span class="superapp-status">Coming soon</span>
+      </article>
+      <article class="superapp-card superapp-upcoming superapp-violet">
+        <span class="superapp-icon" aria-hidden="true">🎟️</span><span class="superapp-card-copy"><strong>Events &amp; Courses</strong><small>Discover events, workshops and training</small></span><span class="superapp-status">Coming soon</span>
+      </article>
+      <article class="superapp-card superapp-upcoming superapp-slate">
+        <span class="superapp-icon" aria-hidden="true">📦</span><span class="superapp-card-copy"><strong>Wholesale &amp; Suppliers</strong><small>Connect with manufacturers and bulk suppliers</small></span><span class="superapp-status">Coming soon</span>
+      </article>
+    </div>
   </section>
   <section class="home-services-section"><div class="home-section-head"><div><div class="eyebrow">LOCAL PROFESSIONALS, ONE PLACE</div><h2>Services &amp; appointments</h2><p>Find trusted professionals for home repairs, healthcare appointments, beauty, learning and more.</p></div><a class="home-text-link" th:href="@{/services}">Explore services →</a></div><div class="service-category-tiles"><a th:href="@{/services}" class="service-category-tile"><span>🔧</span><strong>Home repair</strong><small>Electrician · Plumber · AC</small></a><a th:href="@{/services}" class="service-category-tile"><span>🩺</span><strong>Healthcare</strong><small>Doctors · Dental · Physio</small></a><a th:href="@{/services}" class="service-category-tile"><span>💇</span><strong>Beauty &amp; salon</strong><small>Home salon · Makeup</small></a><a th:href="@{/services}" class="service-category-tile"><span>📚</span><strong>Education</strong><small>Tutors · Training</small></a><a th:href="@{/services}" class="service-category-tile"><span>📸</span><strong>Events</strong><small>Photography · Catering</small></a><a th:href="@{/service-provider/register}" class="service-category-tile service-provider-tile"><span>＋</span><strong>Join as a provider</strong><small>Individuals &amp; businesses</small></a></div></section>
   <section class="home-how"><div class="home-section-head centered"><div><div class="eyebrow">SIMPLE BY DESIGN</div><h2>A better way to shop and sell</h2><p>Everything you need to make marketplace connections work.</p></div></div><div class="how-grid"><article class="how-card"><span class="how-number">01</span><div class="how-icon">⌕</div><h3>Find your favourites</h3><p>Search products, compare options and explore participating vendors.</p></article><article class="how-card"><span class="how-number">02</span><div class="how-icon">♡</div><h3>Connect with sellers</h3><p>Ask questions, choose fulfilment options and place an order with confidence.</p></article><article class="how-card"><span class="how-number">03</span><div class="how-icon">✦</div><h3>Grow together</h3><p>Shop from independent businesses or join as a vendor and reach new customers.</p></article></div></section>
