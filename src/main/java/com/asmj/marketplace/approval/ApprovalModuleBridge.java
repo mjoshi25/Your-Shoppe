@@ -25,6 +25,7 @@ public class ApprovalModuleBridge {
   case "RENTAL" -> new Link("rental_vehicles","ownerUserId","makeModel","RENTAL");
   case "SERVICE_PROVIDER" -> new Link("service_providers","email","displayName","SERVICE_PROVIDER");
   case "SERVICE_LISTING" -> new Link("service_listings","providerId","title","SERVICE_LISTING");
+  case "EMERGENCY_PROVIDER" -> new Link("emergency_providers","ownerUserId","providerName","EMERGENCY_PROVIDER");
   case "EMPLOYER" -> new Link("job_employer_profiles","userId","organisationName","EMPLOYER");
   case "JOB" -> new Link("job_postings","employerUserId","title","JOB");
   case "EVENT","COURSE","WHOLESALE","DELIVERY","FREELANCER" -> new Link("marketplace_extension_listings","ownerUserId","title",module.toUpperCase(Locale.ROOT));
@@ -43,6 +44,7 @@ public class ApprovalModuleBridge {
   Query q=Query.query(Criteria.where("_id").is(c.getSubjectId()));Update u=new Update().set(field,target);
   if(Set.of("RENTAL","SERVICE_PROVIDER","SERVICE_LISTING","EMPLOYER","JOB").contains(l.module()))u.set("adminNote",note==null?"":note);
   if("RENTAL".equals(l.module()))u.set("updatedAt",Instant.now());
+  if("EMERGENCY_PROVIDER".equals(l.module())){u.set("updatedAt",Instant.now());if("APPROVED".equals(decision))u.set("approvedAt",Instant.now());}
   if("SERVICE_PROVIDER".equals(l.module())||"SERVICE_LISTING".equals(l.module()))if("APPROVED".equals(decision))u.set("approvedAt",Instant.now());
   if("EMPLOYER".equals(l.module()))u.set("reviewedAt",Instant.now());
   if("JOB".equals(l.module()))u.set("updatedAt",Instant.now());

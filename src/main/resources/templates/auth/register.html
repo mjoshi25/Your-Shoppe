@@ -34,9 +34,9 @@
         <label class="field full-field">Shop / business name<input th:field="*{businessName}" maxlength="120"></label>
         <label class="field full-field">Business description<textarea th:field="*{businessDescription}" rows="3" maxlength="500"></textarea></label>
         <label class="field full-field">Address<input th:field="*{addressLine}" maxlength="200"></label>
-        <label class="field">State<select id="registrationState" th:field="*{state}" data-master-group="INDIA_STATE" data-placeholder="Select state"><option value="">Loading states…</option></select></label>
-        <label class="field">City<select id="registrationCity" th:field="*{city}" data-master-group="INDIA_CITY" data-parent-select="#registrationState" data-placeholder="Select state first"><option value="">Select state first</option></select></label>
-        <label class="field">PIN code<select id="registrationPin" th:field="*{pinCode}" data-master-group="INDIA_PINCODE" data-parent-select="#registrationCity" data-placeholder="Select city first"><option value="">Select city first</option></select></label>
+        <label class="field">City<input th:field="*{city}" maxlength="80"></label>
+        <label class="field">State<input th:field="*{state}" maxlength="80"></label>
+        <label class="field">PIN code<input th:field="*{pinCode}" maxlength="10" inputmode="numeric"></label>
       </div>
       <p class="muted tiny">These business details are required only when you select Apply as vendor.</p>
     </div>
@@ -50,4 +50,4 @@
   </form>
   <p class="form-foot">Already registered? <a th:href="@{/login}">Sign in</a></p>
 </main>
-<script th:src="@{/js/master-data-dropdowns.js}"></script></body></html>
+</body></html>

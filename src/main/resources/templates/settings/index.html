@@ -39,9 +39,9 @@
         <h3>Delivery address</h3>
         <label class="field">Search delivery location<div class="place-search" data-target="customerAddress" data-city-target="customerCity" data-state-target="customerState" data-pin-target="customerPin" data-lat-target="customerLatitude" data-lng-target="customerLongitude"><span class="muted">Search for an address, then select a suggestion.</span></div><div id="customerMap" class="location-map" data-lat="" data-lng=""></div><input type="hidden" id="customerLatitude" name="customerLatitude" th:value="${currentUser.latitude}"><input type="hidden" id="customerLongitude" name="customerLongitude" th:value="${currentUser.longitude}"><input id="customerAddress" name="addressLine" maxlength="250" th:value="${currentUser.addressLine}"></label>
         <div class="form-grid">
-          <label class="field">State<select id="customerState" name="state" data-master-group="INDIA_STATE" data-placeholder="Select state" th:attr="data-selected=${currentUser.state}"><option value="">Loading states…</option></select></label>
-          <label class="field">City<select id="customerCity" name="city" data-master-group="INDIA_CITY" data-parent-select="#customerState" data-placeholder="Select state first" th:attr="data-selected=${currentUser.city}"><option value="">Select state first</option></select></label>
-          <label class="field">PIN code<select id="customerPin" name="pinCode" data-master-group="INDIA_PINCODE" data-parent-select="#customerCity" data-placeholder="Select city first" th:attr="data-selected=${currentUser.pinCode}"><option value="">Select city first</option></select></label>
+          <label class="field">City<input id="customerCity" name="city" maxlength="80" th:value="${currentUser.city}"></label>
+          <label class="field">State<input id="customerState" name="state" maxlength="80" th:value="${currentUser.state}"></label>
+          <label class="field">PIN code<input id="customerPin" name="pinCode" maxlength="10" th:value="${currentUser.pinCode}"></label>
         </div>
       </div>
 
@@ -97,4 +97,4 @@
  }catch(e){console.error('Google Maps location picker failed',e);document.querySelectorAll('.location-map').forEach(m=>m.textContent=mapsMessage);}
 })();
 </script>
-<script th:src="@{/js/master-data-dropdowns.js}"></script></body></html>
+</body></html>

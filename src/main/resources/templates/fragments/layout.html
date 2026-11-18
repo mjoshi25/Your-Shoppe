@@ -16,6 +16,10 @@
     </form>
 
     <div class="header-utilities">
+      <a sec:authorize="isAuthenticated()" class="notification-bell" th:href="@{/notifications}" aria-label="Notifications" title="Notifications">
+        <span aria-hidden="true">🔔</span><span class="notification-bell-label">Notifications</span>
+        <span class="notification-count" th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}">0</span>
+      </a>
       <a class="header-cart" th:href="@{/cart}" aria-label="Shopping cart">
         <span class="header-cart-icon" aria-hidden="true">🛒</span>
         <span>Cart</span>
@@ -59,6 +63,7 @@
       <a class="header-nav-link" th:href="@{/products}">Shop</a>
       <a class="header-nav-link" th:href="@{/rentals}">Rentals</a>
       <a class="header-nav-link" th:href="@{/services}">Services</a>
+      <a class="header-nav-link" th:href="@{/emergency}">Emergency help</a>
       <a class="header-nav-link" th:href="@{/jobs}">Find jobs</a>
       <details class="nav-menu workspace-menu">
         <summary class="nav-menu-trigger workspace-trigger"><span>More</span><span class="nav-chevron" aria-hidden="true">⌄</span></summary>
@@ -82,13 +87,13 @@
       <details sec:authorize="hasRole('VENDOR')" class="nav-menu workspace-menu">
         <summary class="nav-menu-trigger workspace-trigger"><span class="workspace-trigger-icon" aria-hidden="true">▦</span><span>Vendor workspace</span><span class="nav-chevron" aria-hidden="true">⌄</span></summary>
         <div class="nav-dropdown workspace-dropdown">
-          <a th:href="@{/vendor/products}">My products</a><a th:href="@{/vendor/rentals}">My rental vehicles</a><a th:href="@{/vendor/rentals/bookings}">Rental bookings</a><a th:href="@{/vendor/enquiries}">Buyer enquiries</a><a th:href="@{/vendor/orders}">Orders</a><a th:href="@{/vendor/inventory}">Inventory</a><a th:href="@{/vendor/reviews}">Product reviews</a><a th:href="@{/vendor/commissions}">Commission statement</a><a th:href="@{/vendor/rewards}">Seller rewards</a><a th:href="@{/vendor/coupons}">Vendor coupons</a><a th:href="@{/vendor/advertising}">Paid advertising</a>
+          <a th:href="@{/vendor/products}">My products</a><a th:href="@{/vendor/rentals}">My rental vehicles</a><a th:href="@{/vendor/rentals/bookings}">Rental bookings</a><a th:href="@{/vendor/enquiries}">Buyer enquiries</a><a th:href="@{/vendor/orders}">Orders</a><a th:href="@{/vendor/inventory}">Inventory</a><a th:href="@{/vendor/reviews}">Product reviews</a><a th:href="@{/vendor/commissions}">Commission statement</a><a th:href="@{/vendor/rewards}">Seller rewards</a><a th:href="@{/vendor/coupons}">Vendor coupons</a><a th:href="@{/vendor/advertising}">Paid advertising</a><a th:href="@{/emergency/providers/register}">Emergency provider profile</a>
         </div>
       </details>
       <details sec:authorize="hasRole('ADMIN')" class="nav-menu workspace-menu">
         <summary class="nav-menu-trigger workspace-trigger"><span class="workspace-trigger-icon" aria-hidden="true">▦</span><span>Admin</span><span class="nav-chevron" aria-hidden="true">⌄</span></summary>
         <div class="nav-dropdown workspace-dropdown">
-          <a th:href="@{/admin/dashboard}">Dashboard</a><a th:href="@{/admin/approval-center}">Approval centre</a><a th:href="@{/admin/parameters}">Marketplace parameters</a><a th:href="@{/admin/master-data}">Master data management</a><a th:href="@{/admin/vendors}">Manage vendors</a><a th:href="@{/admin/products}">Product moderation</a><a th:href="@{/admin/categories}">Categories</a><a th:href="@{/admin/enquiries}">Product enquiries</a><a th:href="@{/admin/contact-queries}">Contact queries</a><a th:href="@{/admin/orders}">Orders</a><a th:href="@{/admin/reviews}">Review moderation</a><a th:href="@{/admin/commissions}">Commissions</a><a th:href="@{/admin/reports}">Reports &amp; exports</a><a th:href="@{/admin/seller-rewards}">Seller rewards</a><a th:href="@{/admin/audit}">Audit log</a><a th:href="@{/admin/coupons}">Coupons</a><a th:href="@{/admin/advertising}">Advertising</a><a th:href="@{/admin/rentals}">Rental approvals</a><a th:href="@{/admin/services}">Services &amp; appointments</a><a th:href="@{/admin/jobs}">Jobs administration</a><a th:href="@{/admin/community-listings}">Directory &amp; classifieds</a><a th:href="@{/admin/marketplace-extensions}">Events, courses, B2B &amp; delivery</a>
+          <a th:href="@{/admin/dashboard}">Dashboard</a><a th:href="@{/admin/approval-center}">Approval centre</a><a th:href="@{/admin/parameters}">Marketplace parameters</a><a th:href="@{/admin/master-data}">Master data management</a><a th:href="@{/admin/vendors}">Manage vendors</a><a th:href="@{/admin/products}">Product moderation</a><a th:href="@{/admin/categories}">Categories</a><a th:href="@{/admin/enquiries}">Product enquiries</a><a th:href="@{/admin/contact-queries}">Contact queries</a><a th:href="@{/admin/orders}">Orders</a><a th:href="@{/admin/reviews}">Review moderation</a><a th:href="@{/admin/commissions}">Commissions</a><a th:href="@{/admin/reports}">Reports &amp; exports</a><a th:href="@{/admin/seller-rewards}">Seller rewards</a><a th:href="@{/admin/audit}">Audit log</a><a th:href="@{/admin/coupons}">Coupons</a><a th:href="@{/admin/advertising}">Advertising</a><a th:href="@{/admin/rentals}">Rental approvals</a><a th:href="@{/admin/services}">Services &amp; appointments</a><a th:href="@{/admin/jobs}">Jobs administration</a><a th:href="@{/admin/community-listings}">Directory &amp; classifieds</a><a th:href="@{/emergency}">Emergency services directory</a><a th:href="@{/admin/marketplace-extensions}">Events, courses, B2B &amp; delivery</a>
         </div>
       </details>
     </nav>
