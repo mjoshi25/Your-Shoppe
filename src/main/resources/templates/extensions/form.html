@@ -29,8 +29,8 @@
 <label>Organisation / provider<input name="organisation" maxlength="160"></label>
 <label>Contact person<input name="contactName" maxlength="100"></label>
 <label>Contact mobile<input name="contactMobile" maxlength="20"></label>
-<label>City<input name="city" maxlength="80" required></label><label>State<input name="state" maxlength="80"></label>
-<label>PIN code<input name="pinCode" maxlength="10"></label><label>Address / venue<input name="address" maxlength="300"></label>
+<label>State<select id="extensionState" name="state" data-master-group="INDIA_STATE" data-placeholder="Select state" required><option value="">Loading states…</option></select></label><label>City<select id="extensionCity" name="city" data-master-group="INDIA_CITY" data-parent-select="#extensionState" data-placeholder="Select state first" required><option value="">Select state first</option></select></label>
+<label>PIN code<select id="extensionPin" name="pinCode" data-master-group="INDIA_PINCODE" data-parent-select="#extensionCity" data-placeholder="Select city first"><option value="">Select city first</option></select></label><label>Address / venue<input name="address" maxlength="300"></label>
 <label>Website<input name="website" type="url" maxlength="300"></label>
 <label class="full">Listing image
 <div class="image-upload"><input id="imageFile" type="file" name="imageFile" accept="image/jpeg,image/png,image/webp"><small class="field-help">Upload JPG, PNG or WEBP. Maximum 5 MB. The image is stored in Cloudinary.</small><img id="imagePreview" class="image-preview" alt="Selected image preview"></div>
@@ -51,4 +51,4 @@ category.addEventListener('change',()=>{reset(subcategory,'Select subcategory (o
 const file=document.getElementById('imageFile'),preview=document.getElementById('imagePreview');file.addEventListener('change',()=>{const f=file.files&&file.files[0];if(!f){preview.removeAttribute('src');preview.style.display='none';return}if(!['image/jpeg','image/png','image/webp'].includes(f.type)||f.size>5*1024*1024){alert('Please choose a JPG, PNG or WEBP image up to 5 MB.');file.value='';preview.style.display='none';return}preview.src=URL.createObjectURL(f);preview.style.display='block'});form.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity())return;const button=form.querySelector('button[type=submit]'),wrap=document.getElementById('uploadProgressWrap'),bar=document.getElementById('uploadProgress'),label=document.getElementById('uploadProgressText');button.disabled=true;wrap.hidden=false;const xhr=new XMLHttpRequest();xhr.open('POST',form.action);xhr.upload.addEventListener('progress',ev=>{if(ev.lengthComputable){const pct=Math.round(ev.loaded/ev.total*100);bar.value=pct;label.textContent='Uploading listing and image… '+pct+'%'}});xhr.addEventListener('load',()=>{if(xhr.status>=200&&xhr.status<400){window.location.href=xhr.responseURL||'/my-marketplace-listings'}else{button.disabled=false;label.textContent='Upload failed. Please try again.';alert('Unable to submit the listing. Please try again.')}});xhr.addEventListener('error',()=>{button.disabled=false;label.textContent='Network error. Please try again.';alert('Network error while submitting the listing.')});xhr.send(new FormData(form));});
 })();
 </script>
-</body></html>
+<script th:src="@{/js/master-data-dropdowns.js}"></script></body></html>
