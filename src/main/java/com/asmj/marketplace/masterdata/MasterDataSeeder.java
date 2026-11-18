@@ -11,6 +11,7 @@ public class MasterDataSeeder implements CommandLineRunner {
   for(String s:new String[]{"Business registration certificate","GST certificate","Identity proof","Address proof","Vehicle registration certificate","Vehicle insurance certificate","Driving licence","Educational certificate","Professional qualification","Other supporting document"})seed("APPROVAL_DOCUMENT_TYPE",s.toUpperCase(Locale.ROOT).replace(' ','_'),s);
   for(String s:new String[]{"Full-time","Part-time","Contract","Temporary","Internship","Freelance"})seed("JOB_EMPLOYMENT_TYPE",s.toUpperCase(Locale.ROOT).replace('-','_'),s);
   seed("EMPLOYER_ORGANISATION_TYPE","COMPANY","Company / Business");seed("EMPLOYER_ORGANISATION_TYPE","RECRUITMENT_CONSULTANCY","Recruitment consultancy");seed("EMPLOYER_ORGANISATION_TYPE","STARTUP","Startup");seed("EMPLOYER_ORGANISATION_TYPE","OTHER","Other");
+  for(String s:new String[]{"10th Pass","12th Pass","ITI","Diploma","Undergraduate","Bachelor’s Degree","Any Graduate","Postgraduate","Master’s Degree","Doctorate / PhD","Professional Certification","Any Qualification","Other"})seed("JOB_QUALIFICATION",s.toUpperCase(Locale.ROOT).replaceAll("[^A-Z0-9]+","_"),s);
   for(String s:new String[]{"Petrol","Diesel","CNG","Electric","Hybrid","Other"})seed("RENTAL_FUEL_TYPE",s.toUpperCase(Locale.ROOT),s);
   for(String s:new String[]{"Manual","Automatic","CVT","AMT","Not applicable"})seed("RENTAL_TRANSMISSION",s.toUpperCase(Locale.ROOT).replace(' ','_'),s);
  }

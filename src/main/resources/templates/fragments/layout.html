@@ -16,10 +16,6 @@
     </form>
 
     <div class="header-utilities">
-      <a sec:authorize="isAuthenticated()" class="notification-bell" th:href="@{/notifications}" aria-label="Notifications" title="Notifications">
-        <span aria-hidden="true">🔔</span><span class="notification-bell-label">Notifications</span>
-        <span class="notification-count" th:if="${unreadNotificationCount != null and unreadNotificationCount > 0}" th:text="${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}">0</span>
-      </a>
       <a class="header-cart" th:href="@{/cart}" aria-label="Shopping cart">
         <span class="header-cart-icon" aria-hidden="true">🛒</span>
         <span>Cart</span>
