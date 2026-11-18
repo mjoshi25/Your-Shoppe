@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head><meta charset="UTF-8"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/favicon-192.png"><meta name="theme-color" content="#541477"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Discover products from independent vendors across India with ASMJ Shoppe."><title>ASMJ Shoppe | Shop · Sell · Grow Together</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<head>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=2">
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
+<link rel="manifest" href="/manifest.webmanifest?v=2">
+<meta name="theme-color" content="#421064">
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Discover products from independent vendors across India with ASMJ Shoppe."><title>ASMJ Shoppe | One Platform. Many Possibilities.</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
 <body class="landing-page"><header th:replace="~{fragments/layout :: header}"></header>
 <main id="main-content" tabindex="-1" class="home-redesign">
   <div th:if="${successMessage != null}" class="alert alert-success" role="status" th:text="${successMessage}"></div><div th:if="${errorMessage != null}" class="alert alert-error" role="alert" th:text="${errorMessage}"></div>
@@ -80,4 +88,4 @@
     </form>
   </section>
   <section class="seller-banner"><div><div class="eyebrow hero-kicker">FOR AMBITIOUS BUSINESSES</div><h2>Your products deserve<br>a bigger audience.</h2><p>Set up your vendor profile, list your products and grow with ASMJ Shoppe.</p></div><a class="btn seller-banner-btn" th:href="@{/register}">Become a seller <span>→</span></a><div class="seller-banner-mark">A</div></section>
-</main><footer class="site-footer"><span>© ASMJ Shoppe</span><span>Shop · Sell · Grow Together — a pan-India marketplace.</span></footer></body></html>
+</main><footer class="site-footer"><span>© ASMJ Shoppe</span><span>One Platform. Many Possibilities. — a pan-India marketplace.</span></footer></body></html>

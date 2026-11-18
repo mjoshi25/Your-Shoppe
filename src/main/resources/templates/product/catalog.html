@@ -1,5 +1,13 @@
-<!DOCTYPE html><html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head><meta charset="UTF-8"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="theme-color" content="#541477"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Explore products | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css}"></head><body class="catalog-page"><header th:replace="~{fragments/layout :: header}"></header><main class="dashboard-wrap catalog-wrap" id="main-content" tabindex="-1">
-  <div class="catalog-heading"><div><div class="eyebrow">THE ASMJ MARKETPLACE</div><h1>Find something you’ll love.</h1><p class="muted">Explore products from participating vendors across India.</p></div><div class="catalog-count-note"><span class="catalog-count-icon">✦</span><span>Shop · Sell · Grow Together</span></div></div>
+<!DOCTYPE html><html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=2">
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
+<link rel="manifest" href="/manifest.webmanifest?v=2">
+<meta name="theme-color" content="#421064">
+
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Explore products | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css}"></head><body class="catalog-page"><header th:replace="~{fragments/layout :: header}"></header><main class="dashboard-wrap catalog-wrap" id="main-content" tabindex="-1">
+  <div class="catalog-heading"><div><div class="eyebrow">THE ASMJ MARKETPLACE</div><h1>Find something you’ll love.</h1><p class="muted">Explore products from participating vendors across India.</p></div><div class="catalog-count-note"><span class="catalog-count-icon">✦</span><span>One Platform. Many Possibilities.</span></div></div>
   <div th:replace="~{advertising/slots :: banners(${adsByPlacement['CATEGORY_BANNER']})}"></div>
   <div th:replace="~{advertising/slots :: banners(${adsByPlacement['SEARCH_SPONSORED']})}"></div>
   <form class="ad-pin-filter" method="get" th:action="@{/ads/target-pin}"><label for="catalogAdTargetPin">Local promotions</label><input id="catalogAdTargetPin" name="pinCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit PIN" th:value="${adTargetPin}"><button class="btn btn-small ad-pin-apply" type="submit">Apply PIN</button></form>
