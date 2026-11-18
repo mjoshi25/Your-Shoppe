@@ -457,3 +457,6 @@ Use the existing `GOOGLE_MAPS_BROWSER_API_KEY` (Maps JavaScript API + Places API
 ## Phases 41–46 — Services & Appointments
 
 The integrated service marketplace module adds individual/business provider applications, admin provider and listing approval, public service discovery, PIN-code coverage, provider-configured weekly hours and slot intervals, appointment requests with provider acceptance, service start/completion confirmation, direct customer-to-provider UPI/cash records, provider payment verification, 5% default configurable service commission, weekly commission periods, overdue booking restrictions, reviews and complaints. See `PHASE41-46-SERVICES-APPOINTMENTS.md` for scope, test sequence and production limitations.
+
+## Stage 3 & 4 — Approval integration and marketplace parameters
+See `STAGE3-4-IMPLEMENTATION.md` for supported approval-linked modules, decision behaviour, parameter administration, migration notes and production security limitations.

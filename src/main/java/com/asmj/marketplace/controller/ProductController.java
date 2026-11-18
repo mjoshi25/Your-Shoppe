@@ -12,12 +12,12 @@ import com.asmj.marketplace.repository.UserAccountRepository;
 import com.asmj.marketplace.repository.CategoryRepository;
 import com.asmj.marketplace.repository.VendorProfileRepository;
 import com.asmj.marketplace.service.CloudinaryImageService;
+import com.asmj.marketplace.parameters.MarketplaceParameterService;
 import com.asmj.marketplace.order.MarketplaceOrderRepository;
 import com.asmj.marketplace.order.MarketplaceOrder;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,12 +27,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ProductController {
     private final ProductRepository products; private final UserAccountRepository users; private final CloudinaryImageService images;
-    private final CategoryRepository categories; private final VendorProfileRepository vendorProfiles; private final MarketplaceOrderRepository orders; private final AuditService audit;
-    @Value("${app.products.require-approval:true}") private boolean requireApproval;
+    private final CategoryRepository categories; private final VendorProfileRepository vendorProfiles; private final MarketplaceOrderRepository orders; private final AuditService audit; private final MarketplaceParameterService parameters;
     public ProductController(ProductRepository products, UserAccountRepository users, CloudinaryImageService images,
-                             CategoryRepository categories, VendorProfileRepository vendorProfiles, MarketplaceOrderRepository orders, AuditService audit){
-        this.products=products;this.users=users;this.images=images;this.categories=categories;this.vendorProfiles=vendorProfiles;this.orders=orders;this.audit=audit;
+                             CategoryRepository categories, VendorProfileRepository vendorProfiles, MarketplaceOrderRepository orders, AuditService audit, MarketplaceParameterService parameters){
+        this.products=products;this.users=users;this.images=images;this.categories=categories;this.vendorProfiles=vendorProfiles;this.orders=orders;this.audit=audit;this.parameters=parameters;
     }
+
+    private boolean requireApproval(){ return parameters.getBoolean("products.require-approval", true); }
 
     @GetMapping("/products") public String publicProducts(@RequestParam(required=false) String categoryId,@RequestParam(required=false) String subcategoryName,@RequestParam(required=false) String q,Model model){
         java.util.List<Product> visible=products.findByStatusOrderByCreatedAtDesc(ProductStatus.ACTIVE);
@@ -106,8 +107,8 @@ public class ProductController {
                 throw new IllegalArgumentException("Please configure at least one fulfilment option in Vendor Settings before adding products.");
             Map<String,Object> upload=images.uploadProductImage(image);
             Product p=new Product();p.setVendorUserId(vendor.getId());p.setVendorName(vendor.getFullName());p.setName(name.trim());p.setDescription(description==null?"":description.trim());p.setCategoryId(category.getId());p.setCategoryName(category.getName());p.setSubcategoryName(subcategoryName);
-            p.setHomeDelivery(profile.isHomeDelivery());p.setPickupFromShop(profile.isPickupFromShop());p.setPrice(price);p.setStockQuantity(stockQuantity);p.setImageUrl(String.valueOf(upload.get("secure_url")));p.setImagePublicId(String.valueOf(upload.get("public_id")));p.setStatus(requireApproval?ProductStatus.PENDING:ProductStatus.ACTIVE);products.save(p); audit.record(vendor.getEmail(),"VENDOR","PRODUCT_CREATED","PRODUCT",p.getId(),p.getName());
-            redirect.addFlashAttribute("successMessage",requireApproval?"Product submitted for admin approval.":"Product published successfully.");return "redirect:/vendor/products";
+            p.setHomeDelivery(profile.isHomeDelivery());p.setPickupFromShop(profile.isPickupFromShop());p.setPrice(price);p.setStockQuantity(stockQuantity);p.setImageUrl(String.valueOf(upload.get("secure_url")));p.setImagePublicId(String.valueOf(upload.get("public_id")));p.setStatus(requireApproval()?ProductStatus.PENDING:ProductStatus.ACTIVE);products.save(p); audit.record(vendor.getEmail(),"VENDOR","PRODUCT_CREATED","PRODUCT",p.getId(),p.getName());
+            redirect.addFlashAttribute("successMessage",requireApproval()?"Product submitted for admin approval.":"Product published successfully.");return "redirect:/vendor/products";
          } catch(IllegalArgumentException|IllegalStateException ex){
             model.addAttribute("errorMessage",ex.getMessage());model.addAttribute("product",new Product());
             model.addAttribute("categories",categories.findByActiveTrueOrderByNameAsc());
@@ -132,7 +133,7 @@ public class ProductController {
             if(subcategoryName==null||!category.getActiveSubcategories().contains(subcategoryName)) throw new IllegalArgumentException("Choose an active subcategory belonging to the selected category.");
             p.setName(name.trim());p.setDescription(description==null?"":description.trim());p.setPrice(price);p.setStockQuantity(stockQuantity);p.setCategoryId(category.getId());p.setCategoryName(category.getName());p.setSubcategoryName(subcategoryName);
             if(image!=null&&!image.isEmpty()){Map<String,Object> upload=images.uploadProductImage(image);p.setImageUrl(String.valueOf(upload.get("secure_url")));p.setImagePublicId(String.valueOf(upload.get("public_id")));}
-            if(requireApproval)p.setStatus(ProductStatus.PENDING);else if(p.getStatus()!=ProductStatus.ARCHIVED)p.setStatus(ProductStatus.ACTIVE); products.save(p); redirect.addFlashAttribute("successMessage",p.getStatus()==ProductStatus.PENDING?"Product updated and submitted for admin review.":"Product updated.");
+            if(requireApproval())p.setStatus(ProductStatus.PENDING);else if(p.getStatus()!=ProductStatus.ARCHIVED)p.setStatus(ProductStatus.ACTIVE); products.save(p); redirect.addFlashAttribute("successMessage",p.getStatus()==ProductStatus.PENDING?"Product updated and submitted for admin review.":"Product updated.");
         } catch(IllegalArgumentException|IllegalStateException ex){redirect.addFlashAttribute("errorMessage",ex.getMessage());return "redirect:/vendor/products/"+id+"/edit";} return "redirect:/vendor/products";
     }
     @PostMapping("/vendor/products/{id}/delete") public String deleteProduct(@PathVariable String id,Principal principal,RedirectAttributes redirect) {
