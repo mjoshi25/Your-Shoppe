@@ -21,11 +21,24 @@ public class AdminBootstrap {
             @Value("${app.bootstrap-admin.password:}") String password,
             @Value("${app.bootstrap-admin.name:Marketplace Admin}") String name) {
         return args -> {
+            // Admins have full administrative access and must never carry a pending vendor-profile state.
+            users.findByRoleOrderByCreatedAtDesc(Role.ROLE_ADMIN).forEach(existing -> {
+                boolean changed = false;
+                if (existing.getVendorStatus() != VendorStatus.NOT_APPLICABLE) { existing.setVendorStatus(VendorStatus.NOT_APPLICABLE); changed = true; }
+                if (changed) users.save(existing);
+            });
             if (!StringUtils.hasText(email) || !StringUtils.hasText(password)) {
                 System.out.println("Initial admin not created: set APP_ADMIN_EMAIL and APP_ADMIN_PASSWORD.");
                 return;
             }
-            if (users.existsByEmailIgnoreCase(email)) return;
+            if (users.existsByEmailIgnoreCase(email)) {
+                users.findByEmailIgnoreCase(email).ifPresent(existing -> {
+                    if (existing.getRole() == Role.ROLE_ADMIN && existing.getVendorStatus() != VendorStatus.NOT_APPLICABLE) {
+                        existing.setVendorStatus(VendorStatus.NOT_APPLICABLE); users.save(existing);
+                    }
+                });
+                return;
+            }
             UserAccount admin = new UserAccount();
             admin.setFullName(name);
             admin.setEmail(email.trim().toLowerCase());

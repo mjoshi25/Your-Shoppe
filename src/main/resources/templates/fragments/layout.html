@@ -33,7 +33,8 @@
         </summary>
         <div class="nav-dropdown account-dropdown">
           <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/customer/dashboard}">Customer dashboard</a>
-          <a th:href="@{/my-approval-requests}">Approval requests</a>
+          <a sec:authorize="!hasRole('ADMIN')" th:href="@{/my-approval-requests}">My approval submissions</a>
+          <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/approval-center}">Approval Centre</a>
           <a sec:authorize="hasRole('VENDOR')" th:href="@{/dashboard}">Vendor dashboard</a>
           <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}">Admin dashboard</a>
           <a th:href="@{/settings}">Profile &amp; settings</a>
