@@ -11,6 +11,7 @@
   <h1>Vendor application status</h1>
   <p class="muted">Current status: <strong th:text="${vendorStatus}">PENDING</strong></p>
   <p class="muted">You can sign in and contact marketplace administration, but product publishing and order acceptance are unavailable until your vendor account is approved and active.</p>
+  <p><a class="btn secondary" th:href="@{/my-approval-requests}">View approval requests and upload documents →</a></p>
   <section class="panel onboarding-chat-panel">
     <div class="onboarding-chat-heading"><div><span class="eyebrow">Vendor support</span><h2>Chat with marketplace admin</h2><p class="muted">You can ask questions, reply to document requests and send additional business documents here, even while your application is pending.</p></div><span class="status-pill pending">DIRECT SUPPORT</span></div>
     <div class="onboarding-chat-thread" th:if="${applicationChat != null and !#lists.isEmpty(applicationChat.messages)}">

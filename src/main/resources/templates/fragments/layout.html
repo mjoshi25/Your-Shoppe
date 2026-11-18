@@ -33,6 +33,7 @@
         </summary>
         <div class="nav-dropdown account-dropdown">
           <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/customer/dashboard}">Customer dashboard</a>
+          <a th:href="@{/my-approval-requests}">Approval requests</a>
           <a sec:authorize="hasRole('VENDOR')" th:href="@{/dashboard}">Vendor dashboard</a>
           <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}">Admin dashboard</a>
           <a th:href="@{/settings}">Profile &amp; settings</a>
@@ -86,7 +87,7 @@
       <details sec:authorize="hasRole('ADMIN')" class="nav-menu workspace-menu">
         <summary class="nav-menu-trigger workspace-trigger"><span class="workspace-trigger-icon" aria-hidden="true">▦</span><span>Admin</span><span class="nav-chevron" aria-hidden="true">⌄</span></summary>
         <div class="nav-dropdown workspace-dropdown">
-          <a th:href="@{/admin/dashboard}">Dashboard</a><a th:href="@{/admin/vendors}">Manage vendors</a><a th:href="@{/admin/products}">Product moderation</a><a th:href="@{/admin/categories}">Categories</a><a th:href="@{/admin/enquiries}">Product enquiries</a><a th:href="@{/admin/contact-queries}">Contact queries</a><a th:href="@{/admin/orders}">Orders</a><a th:href="@{/admin/reviews}">Review moderation</a><a th:href="@{/admin/commissions}">Commissions</a><a th:href="@{/admin/reports}">Reports &amp; exports</a><a th:href="@{/admin/seller-rewards}">Seller rewards</a><a th:href="@{/admin/audit}">Audit log</a><a th:href="@{/admin/coupons}">Coupons</a><a th:href="@{/admin/advertising}">Advertising</a><a th:href="@{/admin/rentals}">Rental approvals</a><a th:href="@{/admin/services}">Services &amp; appointments</a><a th:href="@{/admin/jobs}">Jobs administration</a><a th:href="@{/admin/community-listings}">Directory &amp; classifieds</a><a th:href="@{/admin/marketplace-extensions}">Events, courses, B2B &amp; delivery</a>
+          <a th:href="@{/admin/dashboard}">Dashboard</a><a th:href="@{/admin/approval-center}">Approval centre</a><a th:href="@{/admin/vendors}">Manage vendors</a><a th:href="@{/admin/products}">Product moderation</a><a th:href="@{/admin/categories}">Categories</a><a th:href="@{/admin/enquiries}">Product enquiries</a><a th:href="@{/admin/contact-queries}">Contact queries</a><a th:href="@{/admin/orders}">Orders</a><a th:href="@{/admin/reviews}">Review moderation</a><a th:href="@{/admin/commissions}">Commissions</a><a th:href="@{/admin/reports}">Reports &amp; exports</a><a th:href="@{/admin/seller-rewards}">Seller rewards</a><a th:href="@{/admin/audit}">Audit log</a><a th:href="@{/admin/coupons}">Coupons</a><a th:href="@{/admin/advertising}">Advertising</a><a th:href="@{/admin/rentals}">Rental approvals</a><a th:href="@{/admin/services}">Services &amp; appointments</a><a th:href="@{/admin/jobs}">Jobs administration</a><a th:href="@{/admin/community-listings}">Directory &amp; classifieds</a><a th:href="@{/admin/marketplace-extensions}">Events, courses, B2B &amp; delivery</a>
         </div>
       </details>
     </nav>
