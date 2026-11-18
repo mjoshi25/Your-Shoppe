@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 @ControllerAdvice
 public class CurrentUserAdvice {
-    private final UserAccountRepository users; private final AdvertisingService advertising;
-    public CurrentUserAdvice(UserAccountRepository users, AdvertisingService advertising) { this.users = users; this.advertising = advertising; }
+    private final UserAccountRepository users; private final AdvertisingService advertising; private final com.asmj.marketplace.notification.NotificationService notifications;
+    public CurrentUserAdvice(UserAccountRepository users, AdvertisingService advertising, com.asmj.marketplace.notification.NotificationService notifications) { this.users = users; this.advertising = advertising; this.notifications = notifications; }
 
     @ModelAttribute
     public void addSignedInUser(Principal principal, Model model, HttpServletRequest request) {
@@ -35,7 +35,7 @@ public class CurrentUserAdvice {
         model.addAttribute("adsByPlacement", slots);
         if (principal != null) {
             UserAccount user = users.findByEmailIgnoreCase(principal.getName()).orElse(null);
-            if (user != null) model.addAttribute("signedInUser", user);
+            if (user != null) { model.addAttribute("signedInUser", user); model.addAttribute("unreadNotificationCount", notifications.unread(user.getId())); }
         }
     }
 }

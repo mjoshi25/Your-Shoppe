@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Notifications | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body>
+<div th:replace="~{fragments/layout :: header}"></div>
+<main id="main-content" class="notification-page">
+ <div class="notification-page-head"><div><p class="eyebrow">YOUR ACTIVITY</p><h1>Notifications</h1><p class="muted" th:text="${unreadCount + ' unread notification(s)'}">0 unread notifications</p></div>
+ <form th:if="${unreadCount > 0}" method="post" th:action="@{/notifications/read-all}"><button class="btn btn-secondary" type="submit">Mark all as read</button></form></div>
+ <div class="notification-list" th:if="${!#lists.isEmpty(notifications)}">
+  <a class="notification-item" th:each="n : ${notifications}" th:classappend="${!n.read ? ' unread' : ''}" th:href="@{/notifications/{id}/open(id=${n.id})}">
+   <div><h3 th:text="${n.title}">Notification</h3><p th:text="${n.message}">Notification details</p><small th:text="${#temporals.format(n.createdAt,'dd MMM yyyy, hh:mm a')}">Date</small></div><span class="notification-open" th:text="${n.read ? 'Open' : 'View'}">View</span>
+  </a>
+ </div><div class="notification-empty" th:if="${#lists.isEmpty(notifications)}"><h2>You’re all caught up</h2><p>New order, booking, approval and message updates will appear here.</p></div>
+</main></body></html>
