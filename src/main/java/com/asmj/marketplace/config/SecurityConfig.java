@@ -102,11 +102,11 @@ public class SecurityConfig {
             .contentTypeOptions(Customizer.withDefaults())
             .frameOptions(frame -> frame.deny())
             .referrerPolicy(referrer -> referrer.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-            .permissionsPolicy(permissions -> permissions.policy("camera=(), microphone=(), geolocation=(self), payment=()"))
-            .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000)));
+            .permissionsPolicy(permissions -> permissions.policy("camera=(), microphone=(), geolocation=(self), payment=()")));
 
-        // Configure CSP separately: permissionsPolicy(...) returns its own configurer,
-        // so contentSecurityPolicy(...) cannot be chained from that method.
+        // Configure HSTS and CSP independently; each header configurer has its own return type.
+        http.headers(headers -> headers
+            .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000)));
         http.headers(headers -> headers
             .contentSecurityPolicy(csp -> csp
                 .policyDirectives("default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https:; upgrade-insecure-requests")
