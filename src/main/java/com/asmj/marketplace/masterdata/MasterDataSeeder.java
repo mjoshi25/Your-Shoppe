@@ -15,6 +15,9 @@ public class MasterDataSeeder implements CommandLineRunner {
   register("INDIA_STATE","Indian States and UTs","State and Union Territory choices used by location forms.");
   register("INDIA_CITY","Indian Cities","City choices linked to a State using Parent Code.");
   register("INDIA_PINCODE","Indian PIN Codes","PIN code choices linked to a City using Parent Code.");
+  setParent("INDIA_CITY","INDIA_STATE");
+  setParent("INDIA_PINCODE","INDIA_CITY");
+  setParent("EMERGENCY_SUBCATEGORY","EMERGENCY_CATEGORY");
   register("RENTAL_FUEL_TYPE","Rental fuel types","Fuel choices for rental vehicle listings.");
   register("RENTAL_TRANSMISSION","Rental transmission types","Transmission choices for rental vehicle listings.");
   register("EMERGENCY_CATEGORY","Emergency service categories","Top-level emergency provider/request categories.");
@@ -36,5 +39,6 @@ public class MasterDataSeeder implements CommandLineRunner {
   if(groups.findByGroupKey(key).isPresent()) return;
   MasterDataGroup g=new MasterDataGroup(); g.setGroupKey(key); g.setDisplayName(name); g.setDescription(description); g.setActive(true); groups.save(g);
  }
+ private void setParent(String key,String parentKey){groups.findByGroupKey(key).ifPresent(g->{if(!Objects.equals(g.getParentGroupKey(),parentKey)){g.setParentGroupKey(parentKey);groups.save(g);}});}
  private void seed(String group,String code,String label){if(repo.findByGroupKeyAndCode(group,code).isEmpty()){MasterDataOption o=new MasterDataOption();o.setGroupKey(group);o.setCode(code);o.setLabel(label);repo.save(o);}}
 }
