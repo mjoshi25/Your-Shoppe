@@ -8,7 +8,7 @@
 <link rel="manifest" href="/manifest.webmanifest?v=2">
 <meta name="theme-color" content="#421064">
 
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${product.id == null ? 'Add product' : 'Edit product'} + ' | ASMJ Shoppe'">Product | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${product.id == null ? 'Add product' : 'Edit product'} + ' | ASMJ Shoppe'">Product | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css(v=56)}"></head>
 <body th:attr="data-selected-subcategory=${product.subcategoryName}"><header th:replace="~{fragments/layout :: header}"></header>
 <main class="dashboard-wrap" id="main-content" tabindex="-1"><div class="eyebrow">VENDOR CENTRE</div><h1 th:text="${product.id == null ? 'Add a product' : 'Edit product'}">Add a product</h1>
 <p class="muted">Add clear product information and a good-quality photo. Choose the matching category and subcategory.</p>
