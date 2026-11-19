@@ -20,6 +20,10 @@ public class CommissionLedger {
  private LocalDate weekEnd;
  private BigDecimal eligibleAmount=BigDecimal.ZERO;
  private BigDecimal ratePercent=BigDecimal.ZERO;
+ private BigDecimal fixedAmount=BigDecimal.ZERO;
+ private BigDecimal percentageCommissionAmount=BigDecimal.ZERO;
+ private BigDecimal slabMinAmount=BigDecimal.ZERO;
+ private BigDecimal slabMaxAmount;
  private BigDecimal commissionAmount=BigDecimal.ZERO;
  private String status="UNPAID";
  private Instant createdAt=Instant.now();
@@ -43,6 +47,10 @@ public class CommissionLedger {
  public LocalDate getWeekEnd(){return weekEnd;} public void setWeekEnd(LocalDate v){weekEnd=v;}
  public BigDecimal getEligibleAmount(){return eligibleAmount;} public void setEligibleAmount(BigDecimal v){eligibleAmount=v;}
  public BigDecimal getRatePercent(){return ratePercent;} public void setRatePercent(BigDecimal v){ratePercent=v;}
+ public BigDecimal getFixedAmount(){return fixedAmount==null?BigDecimal.ZERO:fixedAmount;} public void setFixedAmount(BigDecimal v){fixedAmount=v;}
+ public BigDecimal getPercentageCommissionAmount(){return percentageCommissionAmount==null?BigDecimal.ZERO:percentageCommissionAmount;} public void setPercentageCommissionAmount(BigDecimal v){percentageCommissionAmount=v;}
+ public BigDecimal getSlabMinAmount(){return slabMinAmount;} public void setSlabMinAmount(BigDecimal v){slabMinAmount=v;}
+ public BigDecimal getSlabMaxAmount(){return slabMaxAmount;} public void setSlabMaxAmount(BigDecimal v){slabMaxAmount=v;}
  public BigDecimal getCommissionAmount(){return commissionAmount;} public void setCommissionAmount(BigDecimal v){commissionAmount=v;}
  public String getStatus(){return status;} public void setStatus(String v){status=v;}
  public Instant getCreatedAt(){return createdAt;} public void setCreatedAt(Instant v){createdAt=v;}

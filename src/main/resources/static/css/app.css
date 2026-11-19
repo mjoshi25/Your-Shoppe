@@ -586,3 +586,35 @@ a.superapp-card:hover{transform:translateY(-3px);box-shadow:0 13px 30px rgba(43,
 .notification-bell>span:first-child{font-size:20px;line-height:1}.notification-count{position:absolute;top:-7px;right:-7px;min-width:19px;height:19px;padding:0 5px;display:grid;place-items:center;border-radius:20px;background:#e45b35;color:#fff;border:2px solid #fff;font-size:10px;font-weight:900}
 .notification-page{max-width:1050px;margin:28px auto;padding:0 18px}.notification-page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.notification-list{display:grid;gap:10px;margin-top:18px}.notification-item{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 17px;border:1px solid #e9e0ef;border-radius:13px;background:#fff;text-decoration:none;color:#283044}.notification-item.unread{border-left:4px solid #6d2b91;background:#fcf9fe}.notification-item h3{margin:0 0 5px;font-size:15px;color:#3f1557}.notification-item p{margin:0;color:#647084;font-size:13px}.notification-item small{display:block;margin-top:7px;color:#8992a2;font-size:11px}.notification-open{flex:0 0 auto;padding:8px 12px;border-radius:9px;background:#541477;color:white;font-size:12px;font-weight:800}.notification-empty{padding:28px;text-align:center;border:1px dashed #d9c9e2;border-radius:14px;color:#687386;background:#fcfaff}
 @media(max-width:760px){.notification-bell{min-height:36px;padding:0 8px}.notification-bell-label{display:none}.notification-page{padding:0 12px}.notification-item{align-items:flex-start;padding:12px;gap:8px}.notification-open{font-size:11px;padding:7px 9px}}
+
+
+/* ASMJ Shoppe navigation and visual refinement — grouped discovery release */
+:root{--asmj-page:#fbf8fd;--asmj-card:#fff;--asmj-purple:#541477;--asmj-purple-dark:#351047;--asmj-orange:#f2a51a;--asmj-border:#eadff0;--asmj-shadow-soft:0 14px 36px rgba(53,16,79,.09)}
+body{background:linear-gradient(180deg,#fbf8fd 0,#fff 430px,#fbf9fc 100%);color:#2c1d35}
+.header-bottom{background:linear-gradient(90deg,#fff 0%,#fcf8ff 52%,#fff8e9 100%);border-top:1px solid #f1e8f4;padding:0 clamp(12px,3vw,42px);display:flex;align-items:center;justify-content:space-between;gap:14px}
+.header-links{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-width:0}
+.header-nav-link,.header-links>.nav-menu>.nav-menu-trigger{display:inline-flex;align-items:center;gap:7px;min-height:43px;padding:8px 12px;border:1px solid transparent;border-radius:11px;background:transparent;color:#493052;text-decoration:none;font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer}
+.header-nav-link:hover,.header-links>.nav-menu[open]>.nav-menu-trigger,.header-links>.nav-menu>.nav-menu-trigger:hover{background:#f3eafa;border-color:#e8d8f0;color:#541477}
+.header-links .nav-dropdown{min-width:225px;max-height:min(72vh,520px);overflow-y:auto;border-color:#eadff0;box-shadow:0 18px 42px rgba(53,16,79,.16)}
+.header-links .workspace-dropdown{min-width:250px}
+.header-promise{font-size:10px;font-weight:800;color:#79558b;white-space:nowrap}
+.grouped-discovery-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.grouped-discovery-grid>.superapp-card{display:flex;align-items:flex-start;gap:16px;min-height:190px;padding:23px;border:1px solid #eadff0;border-radius:20px;background:linear-gradient(145deg,#fff 0%,#fcf8ff 100%);box-shadow:0 9px 25px rgba(53,16,79,.055);text-decoration:none;color:#2c1d35;transition:transform .2s,box-shadow .2s,border-color .2s}
+.grouped-discovery-grid>.superapp-card:hover{transform:translateY(-4px);box-shadow:var(--asmj-shadow-soft);border-color:#d9c0e5}
+.grouped-discovery-grid .superapp-icon{display:grid;place-items:center;width:54px;height:54px;flex:0 0 54px;border-radius:17px;background:#f2e8f7;font-size:27px}
+.grouped-discovery-grid .superapp-card-copy{display:grid;gap:8px;min-width:0}
+.grouped-discovery-grid .superapp-card-copy>strong{font-size:19px;letter-spacing:-.025em;color:#42145b}
+.grouped-discovery-grid .superapp-card-copy>small{font-size:12px;line-height:1.55;color:#766a7d}
+.grouped-discovery-grid .superapp-card-copy nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+.grouped-discovery-grid .superapp-card-copy nav a{display:inline-flex;padding:6px 9px;border-radius:8px;background:#f5edf8;color:#5c2874;text-decoration:none;font-size:10px;font-weight:800}
+.grouped-discovery-grid .superapp-card-copy nav a:hover{background:#ead9f1;color:#351047}
+.grouped-discovery-grid .superapp-teal .superapp-icon{background:#e3f5f1}.grouped-discovery-grid .superapp-blue .superapp-icon{background:#e8efff}.grouped-discovery-grid .superapp-violet .superapp-icon{background:#eee8ff}.grouped-discovery-grid .superapp-orange .superapp-icon{background:#fff0df}.grouped-discovery-grid .superapp-gold .superapp-icon{background:#fff5d9}
+.home-services-section,.contact-query-section{position:relative}
+.home-services-section{padding:52px max(26px,calc((100% - 1240px)/2));background:linear-gradient(115deg,#fbf6fd,#fffaf0)}
+.home-how{padding-top:66px}.how-card{box-shadow:0 8px 26px rgba(53,16,79,.045);border-color:#eee4f2}
+.contact-query-section{background:linear-gradient(135deg,#f7effb,#fff9ec);border:1px solid #eee0f2;border-radius:24px;box-shadow:0 12px 32px rgba(53,16,79,.06)}
+.seller-banner{box-shadow:0 18px 42px rgba(53,16,79,.18)}
+.site-footer{background:#351047;color:#f5eaf9;border-top:0}.site-footer span:last-child{color:#d9c4e3}
+@media(max-width:900px){.header-bottom{align-items:flex-start;flex-direction:column;padding:8px 16px}.header-links{width:100%;gap:3px}.header-promise{display:none}.grouped-discovery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.header-bottom{padding:7px 12px}.header-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.header-nav-link,.header-links>.nav-menu>.nav-menu-trigger{justify-content:center;width:100%;min-height:40px;padding:7px 5px;font-size:11px;background:#fff;border-color:#eee4f2}.header-links>.nav-menu{min-width:0}.header-links .nav-dropdown{left:0;right:auto;min-width:min(88vw,280px)}.header-links>.nav-menu:nth-last-child(-n+2) .nav-dropdown{left:auto;right:0}.grouped-discovery-grid{grid-template-columns:1fr;gap:12px}.grouped-discovery-grid>.superapp-card{min-height:0;padding:18px}.home-services-section{padding:38px 16px}.contact-query-section{border-radius:18px}}
+@media(prefers-reduced-motion:reduce){.grouped-discovery-grid>.superapp-card,.header-nav-link{transition:none}.grouped-discovery-grid>.superapp-card:hover{transform:none}}

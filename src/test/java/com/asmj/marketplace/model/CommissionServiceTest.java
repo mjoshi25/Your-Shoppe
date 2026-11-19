@@ -34,6 +34,20 @@ class CommissionServiceTest {
   assertEquals(completionDate.with(java.time.DayOfWeek.MONDAY),saved.getWeekStart());
   assertEquals(saved.getWeekStart().plusDays(6),saved.getWeekEnd());
  }
+
+ @Test void recordsFixedPlusOrderAmountSlabCommissionAndSnapshotsConfiguration(){
+  CommissionLedgerRepository ledger=mock(CommissionLedgerRepository.class);CommissionSettingsRepository settings=mock(CommissionSettingsRepository.class);
+  when(settings.findById("commission")).thenReturn(Optional.empty());when(ledger.findByOrderId("hybrid-order")).thenReturn(Optional.empty());
+  CommissionService service=new CommissionService(ledger,settings);
+  service.saveConfiguration(new BigDecimal("10.00"),java.util.List.of(
+   new CommissionSettings.CommissionSlab(BigDecimal.ZERO,new BigDecimal("500.00"),new BigDecimal("5.00")),
+   new CommissionSettings.CommissionSlab(new BigDecimal("500.01"),null,new BigDecimal("3.00"))));
+  MarketplaceOrder order=new MarketplaceOrder();order.setId("hybrid-order");order.setOrderNumber("ASMJ-HYBRID");order.setVendorUserId("vendor-1");order.setSubtotal(new BigDecimal("1000.00"));
+  service.recordCompletedOrder(order);
+  ArgumentCaptor<CommissionLedger> captor=ArgumentCaptor.forClass(CommissionLedger.class);verify(ledger).save(captor.capture());
+  CommissionLedger saved=captor.getValue();assertEquals(new BigDecimal("10.00"),saved.getFixedAmount());assertEquals(new BigDecimal("3.00"),saved.getRatePercent());assertEquals(new BigDecimal("30.00"),saved.getPercentageCommissionAmount());assertEquals(new BigDecimal("40.00"),saved.getCommissionAmount());assertEquals(new BigDecimal("500.01"),saved.getSlabMinAmount());assertNull(saved.getSlabMaxAmount());
+ }
+
  @Test void doesNotCreateDuplicateLedgerForSameOrder(){
   CommissionLedgerRepository ledger=mock(CommissionLedgerRepository.class);CommissionSettingsRepository settings=mock(CommissionSettingsRepository.class);
   when(settings.findById("commission")).thenReturn(Optional.empty());when(ledger.findByOrderId("order-2")).thenReturn(Optional.of(new CommissionLedger()));
