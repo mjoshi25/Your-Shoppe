@@ -118,7 +118,7 @@ public class RentalController {
     public String newVehicle(Model model) { model.addAttribute("vehicleCategories",moduleCategories.findByTypeAndActiveTrueOrderByNameAsc("RENTAL")); return "vendor/rental/vehicle-form"; }
 
     @GetMapping("/api/rentals/categories") @ResponseBody
-    public List<Map<String,Object>> rentalCategories() { return moduleCategories.findByTypeAndActiveTrueOrderByNameAsc("RENTAL").stream().map(c -> Map.<String,Object>of("id",c.getId(),"name",c.getName(),"subcategories",c.getSubcategories())).toList(); }
+    public List<Map<String,Object>> rentalCategories() { return moduleCategories.findByTypeAndActiveTrueOrderByNameAsc("RENTAL").stream().map(c -> Map.<String,Object>of("id",c.getId(),"name",c.getName(),"subcategories",c.getActiveSubcategories())).toList(); }
 
     @PostMapping("/vendor/rentals")
     public String saveVehicle(Principal principal, @RequestParam String categoryId, @RequestParam String vehicleSubcategory, @RequestParam String makeModel,
