@@ -26,3 +26,7 @@ This phase is a targeted hardening pass, not a complete audit or penetration tes
 - Do not commit production secrets.
 - Test guest product chat, authenticated buyer/vendor chat, vendor pending/approved/suspended states, login/logout and all role dashboards before deployment.
 - This update is a separate source ZIP. No production deployment was performed.
+
+## Phase 58.1 build correction
+- Corrected the Spring Security header configuration so Permissions-Policy and Content-Security-Policy are configured in separate `http.headers(...)` customizers. This avoids calling `contentSecurityPolicy(...)` on the `PermissionsPolicyConfig` returned by `permissionsPolicy(...)`.
+- CSP remains Report-Only.
