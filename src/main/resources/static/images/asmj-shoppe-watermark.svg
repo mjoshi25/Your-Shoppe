@@ -1,0 +1,23 @@
+<svg opacity="0.11" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 170" role="img" aria-labelledby="title desc">
+<title id="title">ASMJ Shoppe</title>
+<desc id="desc">ASMJ Shoppe, a multi-service marketplace for shopping, rentals, services, jobs and business connections. One Platform. Many Possibilities.</desc>
+<defs>
+  <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7620a5"/><stop offset="1" stop-color="#351052"/></linearGradient>
+  <linearGradient id="orange" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffad16"/><stop offset="1" stop-color="#f36b12"/></linearGradient>
+</defs>
+<g transform="translate(10 7)">
+  <path d="M34 49V39C34 17 51 4 73 4s39 13 39 35v10" fill="none" stroke="url(#orange)" stroke-width="10" stroke-linecap="round"/>
+  <path d="M18 46Q18 37 29 37H117Q128 37 128 49V143Q128 154 117 154H29Q18 154 18 143Z" fill="url(#purple)"/>
+  <path d="M39 112L60 62L81 112M48 91H72" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="translate(83 62)">
+    <rect width="33" height="27" rx="5" fill="#ff7b12"/><path d="M7 8h19l-2 11H10zM12 23h.1M23 23h.1" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect y="33" width="33" height="27" rx="5" fill="#11a77a"/><path d="M6 50l3-8h15l3 8M10 42l3-5h8l3 5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+    <rect y="66" width="33" height="27" rx="5" fill="#3479e8"/><path d="M9 81l5-5 4 4 6-7M9 86h15" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <path d="M13 137Q70 166 137 137" fill="none" stroke="url(#orange)" stroke-width="7" stroke-linecap="round"/>
+</g>
+<text x="170" y="82" font-family="Arial,Helvetica,sans-serif" font-size="66" font-weight="800" letter-spacing="-2.8" fill="#421064">ASMJ</text>
+<text x="338" y="82" font-family="Arial,Helvetica,sans-serif" font-size="66" font-weight="800" letter-spacing="-2.8" fill="#f47a12">Shoppe</text>
+<text x="174" y="122" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="700" letter-spacing=".2" fill="#38234a">One Platform. Many Possibilities.</text>
+<path d="M174 137H475" stroke="url(#orange)" stroke-width="4" stroke-linecap="round"/>
+</svg>

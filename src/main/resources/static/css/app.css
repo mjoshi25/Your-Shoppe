@@ -694,3 +694,21 @@ input:focus,select:focus,textarea:focus{outline:0!important;border-color:#8b55a6
 @media(max-width:900px){.market-hero-inner{min-height:0;padding:62px 0}.home-discovery{padding-top:58px;padding-bottom:58px}.home-services-section{padding:56px 22px!important}.contact-query-section{margin-inline:16px!important}}
 @media(max-width:680px){.market-hero-inner{width:calc(100% - 34px);grid-template-columns:1fr;gap:18px;padding:48px 0 42px}.market-hero-copy h1{font-size:clamp(42px,12vw,60px)}.market-hero-visual{min-height:310px;transform:scale(.9);transform-origin:center top;margin-bottom:-20px}.home-discovery{width:calc(100% - 32px);padding:48px 0}.grouped-discovery-grid>.superapp-card{padding:19px!important;border-radius:18px!important}.grouped-discovery-grid .superapp-card-copy>strong{font-size:19px!important}.home-services-section{padding:46px 16px!important}.service-category-tiles{gap:11px!important}.service-category-tile{min-height:140px!important;padding:16px!important;border-radius:16px!important}.home-how{padding:54px 16px 62px!important}.how-grid{gap:12px}.how-card{padding:21px!important}.contact-query-section{margin:0 12px 44px!important;padding:20px!important;border-radius:20px!important}.contact-query-form{padding:15px!important}.site-footer{padding:25px 18px!important}.page-heading{gap:12px;padding-bottom:14px}.panel,.form-panel,.form-card{border-radius:15px!important}}
 @media(prefers-reduced-motion:reduce){.product-card,.service-category-tile,.btn{transition:none}.product-card:hover,.service-category-tile:hover,.btn:hover{transform:none}}
+
+
+/* Phase 57: consistent brand watermark and stronger inner-page visual identity. */
+html, body { min-height: 100%; }
+body { position:relative; isolation:isolate; background-color:#f7f1fa!important; background-image:radial-gradient(ellipse at 8% 8%,rgba(119,48,151,.10),transparent 34%),radial-gradient(ellipse at 94% 18%,rgba(255,177,48,.11),transparent 30%),linear-gradient(180deg,#f7f1fa 0%,#fcfafc 48%,#f5eff8 100%)!important; background-attachment:fixed; }
+body::before { content:""; position:fixed; z-index:-1; pointer-events:none; inset:0; background-image:url("/images/asmj-shoppe-watermark.svg"); background-repeat:no-repeat; background-position:center 54%; background-size:min(590px,72vw) auto; opacity:.42; }
+main.dashboard-wrap,main.page-shell,main.page-container,main.admin-page,main.vendor-page,main.customer-page,main.service-detail,main.services-page { background-color:transparent!important; }
+.dashboard-wrap,.page-shell,.page-container { width:min(1280px,calc(100% - 48px)); max-width:1280px; margin-left:auto!important; margin-right:auto!important; padding:clamp(28px,4vw,54px) 0!important; }
+.dashboard-wrap>h1,.page-heading h1,.page-shell h1 { color:#351047!important; letter-spacing:-.045em; }
+.page-heading { position:relative; padding:22px 26px 24px!important; margin:0 0 28px!important; border:1px solid #e5d7ec!important; border-radius:22px!important; background:linear-gradient(112deg,rgba(255,255,255,.96),rgba(247,237,251,.94) 68%,rgba(255,247,229,.94))!important; box-shadow:0 12px 32px rgba(53,16,79,.075)!important; }
+.page-heading .eyebrow { color:#8a5aa0!important; }
+.panel,.form-panel,.form-card,.booking-card,.service-card,.service-detail-card,.metric-card,.dashboard-link-card,.admin-service-panel,.moderation-card,.category-admin-card { box-shadow:0 13px 34px rgba(53,16,79,.075)!important; }
+.metric-card { background:linear-gradient(145deg,#fff 0%,#fbf6fd 100%)!important; border-color:#e5d8ec!important; }
+.metric-card strong { color:#4b1468!important; }
+.btn-primary,.primary,.market-primary { background:linear-gradient(125deg,#642487 0%,#42105d 100%)!important; color:#fff!important; border:0!important; }
+.btn-secondary,.secondary,.btn-outline { background:#fff!important; color:#4b1468!important; border:1px solid #d9c4e3!important; }
+.data-table th,.table-wrap th { background:linear-gradient(90deg,#eee2f4,#fff3df)!important; }
+@media(max-width:680px) { body::before { background-position:center 42%; background-size:min(420px,86vw) auto; opacity:.30; } .dashboard-wrap,.page-shell,.page-container { width:calc(100% - 28px); padding:24px 0!important; } .page-heading { padding:18px!important; border-radius:17px!important; } }
