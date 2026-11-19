@@ -32,3 +32,12 @@ This is the first implementation increment, not a claim that every form in the 8
 - Source archive and file inventory checked.
 - Maven compilation was not run because Maven is not installed in the execution environment.
 - MongoDB startup seeding, Thymeleaf rendering and browser flows require local testing before Render deployment.
+
+
+## Phase 59 – Dropdown group registry
+- Added MongoDB-backed `marketplace_master_data_groups` registry with friendly display name, internal Group Key, description and active status.
+- Registered the dropdown groups referenced by the current master-data implementation and emergency location forms: approval module/reason/document, employer organisation, job employment, India state/city/PIN, rental fuel/transmission, emergency category/subcategory.
+- Admin can select a registered group when adding options; raw free-text Group Key entry was removed from the option form.
+- Admin can register future groups. The Group Key is generated from the display name when omitted, or can be explicitly supplied.
+- Important: registering a group makes it configurable and exposes its API endpoint, but a developer must still wire the new key into the relevant application form/controller.
+- Groups and options are deactivated, not deleted.
