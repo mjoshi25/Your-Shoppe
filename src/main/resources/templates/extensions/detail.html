@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Submission details | ASMJ Shoppe</title>
+<link rel="stylesheet" th:href="@{/css/app.css(v=62)}">
+<style>
+.detail-wrap{max-width:1050px;margin:24px auto;padding:0 16px}.detail-card{background:#fff;border:1px solid #e8e1ed;border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 5px 20px rgba(40,15,60,.05)}.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.detail-field{padding:10px 12px;background:#faf8fc;border-radius:10px;min-width:0}.detail-field small{display:block;color:#716779;margin-bottom:5px}.detail-field strong{overflow-wrap:anywhere}.detail-description{white-space:pre-wrap;overflow-wrap:anywhere}.detail-image{max-width:100%;max-height:280px;object-fit:contain;border-radius:12px}.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.request-row{border-top:1px solid #eee6f1;padding:14px 0}.muted{color:#716779}
+</style></head>
+<body><header th:replace="~{fragments/layout :: header}"></header>
+<main class="detail-wrap">
+ <div class="detail-actions"><a class="btn" th:href="@{/my-marketplace-listings}">← Back to My Submissions</a></div>
+ <section class="detail-card">
+  <p class="muted" th:text="${moduleTitle}">Marketplace module</p>
+  <h1 th:text="${item.title}">Submission title</h1>
+  <p><strong>Current status:</strong> <span class="status-line" th:text="${item.status}">PENDING</span></p>
+  <img class="detail-image" th:if="${item.imageUrl != null and !item.imageUrl.isBlank()}" th:src="${item.imageUrl}" alt="Submission image">
+  <h2>Submitted information</h2>
+  <div class="detail-grid">
+   <div class="detail-field"><small>Type</small><strong th:text="${item.type}">EVENT</strong></div>
+   <div class="detail-field"><small>Category</small><strong th:text="${item.category}">Category</strong></div>
+   <div class="detail-field"><small>Subcategory</small><strong th:text="${#strings.isEmpty(item.subcategory) ? '—' : item.subcategory}">—</strong></div>
+   <div class="detail-field"><small>Organisation</small><strong th:text="${#strings.isEmpty(item.organisation) ? '—' : item.organisation}">—</strong></div>
+   <div class="detail-field"><small>Contact person</small><strong th:text="${#strings.isEmpty(item.contactName) ? '—' : item.contactName}">—</strong></div>
+   <div class="detail-field"><small>Contact mobile</small><strong th:text="${#strings.isEmpty(item.contactMobile) ? '—' : item.contactMobile}">—</strong></div>
+   <div class="detail-field"><small>Website</small><strong th:text="${#strings.isEmpty(item.website) ? '—' : item.website}">—</strong></div>
+   <div class="detail-field"><small>City / State</small><strong th:text="${(item.city == null ? '' : item.city) + (item.state == null ? '' : ', ' + item.state)}">—</strong></div>
+   <div class="detail-field"><small>PIN Code</small><strong th:text="${#strings.isEmpty(item.pinCode) ? '—' : item.pinCode}">—</strong></div>
+   <div class="detail-field"><small>Address</small><strong th:text="${#strings.isEmpty(item.address) ? '—' : item.address}">—</strong></div>
+   <div class="detail-field"><small>Mode</small><strong th:text="${#strings.isEmpty(item.mode) ? '—' : item.mode}">—</strong></div>
+   <div class="detail-field"><small>Duration</small><strong th:text="${#strings.isEmpty(item.duration) ? '—' : item.duration}">—</strong></div>
+   <div class="detail-field"><small>Schedule</small><strong th:text="${#strings.isEmpty(item.schedule) ? '—' : item.schedule}">—</strong></div>
+   <div class="detail-field"><small>Venue</small><strong th:text="${#strings.isEmpty(item.venue) ? '—' : item.venue}">—</strong></div>
+   <div class="detail-field"><small>Event date</small><strong th:text="${item.eventDate == null ? '—' : item.eventDate}">—</strong></div>
+   <div class="detail-field"><small>Start date</small><strong th:text="${item.startDate == null ? '—' : item.startDate}">—</strong></div>
+   <div class="detail-field"><small>End date</small><strong th:text="${item.endDate == null ? '—' : item.endDate}">—</strong></div>
+   <div class="detail-field"><small>Course level</small><strong th:text="${#strings.isEmpty(item.courseLevel) ? '—' : item.courseLevel}">—</strong></div>
+   <div class="detail-field"><small>Employment type</small><strong th:text="${#strings.isEmpty(item.employmentType) ? '—' : item.employmentType}">—</strong></div>
+   <div class="detail-field"><small>Price / Fee</small><strong th:text="${item.price == null ? '—' : '₹' + item.price}">—</strong></div>
+   <div class="detail-field"><small>Minimum order quantity</small><strong th:text="${item.minOrderQuantity == null ? '—' : item.minOrderQuantity}">—</strong></div>
+   <div class="detail-field"><small>Capacity</small><strong th:text="${item.capacity == null ? '—' : item.capacity}">—</strong></div>
+   <div class="detail-field"><small>Available quantity</small><strong th:text="${item.availableQuantity == null ? '—' : item.availableQuantity}">—</strong></div>
+   <div class="detail-field"><small>Delivery area</small><strong th:text="${#strings.isEmpty(item.deliveryArea) ? '—' : item.deliveryArea}">—</strong></div>
+   <div class="detail-field"><small>Skills</small><strong th:text="${#strings.isEmpty(item.skills) ? '—' : item.skills}">—</strong></div>
+   <div class="detail-field"><small>Portfolio URL</small><strong th:text="${#strings.isEmpty(item.portfolioUrl) ? '—' : item.portfolioUrl}">—</strong></div>
+   <div class="detail-field"><small>Created</small><strong th:text="${item.createdAt}">—</strong></div>
+   <div class="detail-field"><small>Last updated</small><strong th:text="${item.updatedAt}">—</strong></div>
+  </div>
+  <h3>Description</h3><p class="detail-description" th:text="${item.description}">Description</p>
+ </section>
+ <section class="detail-card">
+  <h2>Customer requests for this submission</h2>
+  <p class="muted">All request statuses are shown here, including submitted, confirmed, in progress, completed and cancelled.</p>
+  <div th:if="${#lists.isEmpty(requests)}" class="muted">No customer requests have been received for this submission yet.</div>
+  <div class="request-row" th:each="req : ${requests}">
+   <div class="detail-grid">
+    <div class="detail-field"><small>Requester</small><strong th:text="${req.requesterName}">Customer</strong></div>
+    <div class="detail-field"><small>Request status</small><strong th:text="${req.status}">SUBMITTED</strong></div>
+    <div class="detail-field"><small>Quantity</small><strong th:text="${#strings.isEmpty(req.quantity) ? '—' : req.quantity}">—</strong></div>
+    <div class="detail-field"><small>Submitted</small><strong th:text="${req.createdAt}">—</strong></div>
+   </div>
+   <p th:if="${req.message != null and !req.message.isBlank()}" th:text="${req.message}"></p>
+   <a class="btn" th:href="@{/vendor/marketplace-requests/{id}(id=${req.id})}">View request details</a>
+  </div>
+ </section>
+</main></body></html>

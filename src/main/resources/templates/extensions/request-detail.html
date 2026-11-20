@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Customer request details | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css(v=62)}">
+<style>.detail-wrap{max-width:900px;margin:24px auto;padding:0 16px}.detail-card{background:#fff;border:1px solid #e8e1ed;border-radius:16px;padding:20px;margin:16px 0}.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.detail-field{padding:12px;background:#faf8fc;border-radius:10px;overflow-wrap:anywhere}.detail-field small{display:block;color:#716779;margin-bottom:5px}.detail-message{white-space:pre-wrap;overflow-wrap:anywhere}</style></head>
+<body><header th:replace="~{fragments/layout :: header}"></header><main class="detail-wrap">
+<a class="btn" th:href="@{/my-marketplace-listings/{id}(id=${item.id})}">← Back to submission</a>
+<section class="detail-card"><h1>Customer request details</h1><p><strong>Request status:</strong> <span th:text="${request.status}">SUBMITTED</span></p><div class="detail-grid">
+<div class="detail-field"><small>Related submission</small><strong th:text="${item.title}">Listing</strong></div>
+<div class="detail-field"><small>Request type</small><strong th:text="${request.type}">EVENT</strong></div>
+<div class="detail-field"><small>Requester name</small><strong th:text="${request.requesterName}">Customer</strong></div>
+<div class="detail-field"><small>Requester email</small><strong th:text="${request.requesterEmail}">email</strong></div>
+<div class="detail-field"><small>Quantity / tickets</small><strong th:text="${#strings.isEmpty(request.quantity) ? '—' : request.quantity}">—</strong></div>
+<div class="detail-field"><small>Ticket reference</small><strong th:text="${#strings.isEmpty(request.ticketReference) ? '—' : request.ticketReference}">—</strong></div>
+<div class="detail-field"><small>Pickup address</small><strong th:text="${#strings.isEmpty(request.pickupAddress) ? '—' : request.pickupAddress}">—</strong></div>
+<div class="detail-field"><small>Drop address</small><strong th:text="${#strings.isEmpty(request.dropAddress) ? '—' : request.dropAddress}">—</strong></div>
+<div class="detail-field"><small>Submitted</small><strong th:text="${request.createdAt}">—</strong></div>
+<div class="detail-field"><small>Last updated</small><strong th:text="${request.updatedAt}">—</strong></div>
+</div><h2>Customer message</h2><p class="detail-message" th:text="${#strings.isEmpty(request.message) ? 'No additional message provided.' : request.message}">Message</p></section>
+</main></body></html>
