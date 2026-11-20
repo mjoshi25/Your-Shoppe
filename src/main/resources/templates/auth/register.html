@@ -27,6 +27,7 @@
       <label class="field">Mobile number<input type="tel" th:field="*{mobile}" maxlength="20" autocomplete="tel"></label>
       <label class="field full-field">Email address<input type="email" th:field="*{email}" required maxlength="160" autocomplete="email"><small class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small></label>
       <label class="field full-field">Password<input type="password" th:field="*{password}" required minlength="8" maxlength="72" autocomplete="new-password"><small class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small></label>
+      <label class="field">Customer referral code (optional)<input th:field="*{referralCode}" maxlength="24" autocomplete="off"></label>
     </div>
     <div class="vendor-fields">
       <h2 class="form-section-title">Shop / business details <span class="optional-tag">Vendor applicants</span></h2>

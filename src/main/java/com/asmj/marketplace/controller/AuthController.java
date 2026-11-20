@@ -33,12 +33,14 @@ public class AuthController {
     }
 
     @GetMapping("/register")
-    public String register(Model model, Authentication authentication) {
+    public String register(@RequestParam(required = false) String ref, Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()
                 && !(authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
             return "redirect:/dashboard";
         }
-        model.addAttribute("form", new RegistrationForm());
+        RegistrationForm form = new RegistrationForm();
+        if (ref != null && ref.matches("[A-Za-z0-9]{4,24}")) form.setReferralCode(ref);
+        model.addAttribute("form", form);
         return "auth/register";
     }
 

@@ -31,6 +31,8 @@ public class UserAccount {
     private boolean termsAccepted;
     private String acceptedTermsVersion;
     private Instant termsAcceptedAt;
+    @Indexed private String referralCode;
+    @Indexed private String referredByUserId;
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -72,4 +74,8 @@ public class UserAccount {
     public void setAcceptedTermsVersion(String acceptedTermsVersion) { this.acceptedTermsVersion = acceptedTermsVersion; }
     public Instant getTermsAcceptedAt() { return termsAcceptedAt; }
     public void setTermsAcceptedAt(Instant termsAcceptedAt) { this.termsAcceptedAt = termsAcceptedAt; }
+    public String getReferralCode() { return referralCode; }
+    public void setReferralCode(String referralCode) { this.referralCode = referralCode; }
+    public String getReferredByUserId() { return referredByUserId; }
+    public void setReferredByUserId(String referredByUserId) { this.referredByUserId = referredByUserId; }
 }

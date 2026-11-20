@@ -9,6 +9,8 @@ import com.asmj.marketplace.model.VendorStatus;
 
 public interface UserAccountRepository extends MongoRepository<UserAccount, String> {
     Optional<UserAccount> findByEmailIgnoreCase(String email);
+    Optional<UserAccount> findByReferralCodeIgnoreCase(String referralCode);
+    List<UserAccount> findByReferredByUserId(String referredByUserId);
     boolean existsByEmailIgnoreCase(String email);
     List<UserAccount> findByRoleOrderByCreatedAtDesc(Role role);
     long countByRoleAndVendorStatus(Role role, VendorStatus status);

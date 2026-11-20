@@ -16,7 +16,10 @@ public class RegistrationForm {
     private String mobile;
 
     private boolean termsAccepted;
+    @Size(max = 24) private String referralCode;
 
+    public String getReferralCode() { return referralCode; }
+    public void setReferralCode(String referralCode) { this.referralCode = referralCode; }
     @AssertTrue(message = "You must agree to the Terms & Conditions before registering.")
     public boolean isTermsAccepted() { return termsAccepted; }
     public void setTermsAccepted(boolean termsAccepted) { this.termsAccepted = termsAccepted; }

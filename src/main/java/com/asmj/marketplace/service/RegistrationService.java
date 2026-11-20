@@ -82,6 +82,13 @@ public class RegistrationService {
         account.setPassword(encoder.encode(form.getPassword()));
         account.setRole(role);
         account.setVendorStatus(status);
+        if (role == Role.ROLE_CUSTOMER && StringUtils.hasText(form.getReferralCode())) {
+            UserAccount referrer = users.findByReferralCodeIgnoreCase(form.getReferralCode().trim()).orElse(null);
+            if (referrer == null || referrer.getRole() != Role.ROLE_CUSTOMER || !referrer.isEnabled()) {
+                throw new IllegalArgumentException("The referral code is invalid or inactive.");
+            }
+            account.setReferredByUserId(referrer.getId());
+        }
         account.setTermsAccepted(true);
         account.setAcceptedTermsVersion("1.0");
         account.setTermsAcceptedAt(Instant.now());

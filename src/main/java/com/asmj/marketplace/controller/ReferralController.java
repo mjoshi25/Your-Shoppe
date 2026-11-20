@@ -1,0 +1,7 @@
+package com.asmj.marketplace.controller;
+import com.asmj.marketplace.model.*; import com.asmj.marketplace.repository.UserAccountRepository;
+import java.security.Principal; import java.util.List; import org.springframework.stereotype.Controller; import org.springframework.ui.Model; import org.springframework.web.bind.annotation.GetMapping; import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+@Controller public class ReferralController {
+ private final UserAccountRepository users; public ReferralController(UserAccountRepository users){this.users=users;}
+ @GetMapping("/customer/referrals") public String referrals(Principal p,Model m){UserAccount user=users.findByEmailIgnoreCase(p.getName()).orElseThrow();if(user.getRole()!=Role.ROLE_CUSTOMER)return "auth/access-denied";if(user.getReferralCode()==null||user.getReferralCode().isBlank()){String raw=user.getId().replaceAll("[^A-Za-z0-9]","").toUpperCase();String code="ASMJ"+raw.substring(Math.max(0,raw.length()-12));user.setReferralCode(code);users.save(user);}List<UserAccount> invited=users.findByReferredByUserId(user.getId());m.addAttribute("referralCode",user.getReferralCode());m.addAttribute("referralLink",ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()+"/register?ref="+user.getReferralCode());m.addAttribute("referralCount",invited.size());m.addAttribute("invitedCustomers",invited);return "customer/referrals";}
+}
