@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .requestMatchers("/emergency").permitAll()
                 .requestMatchers("/my-approval-requests", "/my-approval-requests/**").authenticated()
                 .requestMatchers("/community-listings/save", "/businesses/**", "/classifieds/**", "/my-community-listings").authenticated()
-                .requestMatchers("/marketplace/new/**", "/marketplace/save", "/marketplace/*/request", "/my-marketplace-listings", "/marketplace-extension-requests").authenticated()
+                .requestMatchers("/marketplace/new/**", "/marketplace/save", "/marketplace/*/request", "/marketplace/*/edit", "/marketplace/*/delete", "/my-marketplace-listings", "/my-marketplace-listings/**", "/marketplace-extension-requests").authenticated()
                 .requestMatchers("/jobs/*/apply", "/candidate/job-applications").hasRole("CUSTOMER")
                 .requestMatchers("/employer/**").authenticated()
                 .requestMatchers("/services/*/book", "/customer/service-bookings/**").hasRole("CUSTOMER")
