@@ -16,4 +16,4 @@
 <div class="detail-field"><small>Submitted</small><strong th:text="${request.createdAt}">—</strong></div>
 <div class="detail-field"><small>Last updated</small><strong th:text="${request.updatedAt}">—</strong></div>
 </div><h2>Customer message</h2><p class="detail-message" th:text="${#strings.isEmpty(request.message) ? 'No additional message provided.' : request.message}">Message</p></section>
-</main></body></html>
+</main><p><a th:href="@{'/marketplace-requests/'+${request.id}+'/invoice'}">View booking statement / invoice</a></p></body></html>
