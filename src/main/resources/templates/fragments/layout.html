@@ -4,6 +4,9 @@
 <header class="site-header" th:fragment="header">
   <a class="skip-link" href="#main-content">Skip to content</a>
   <div class="header-main">
+    <button class="mobile-menu-toggle" type="button" aria-label="Open navigation menu" aria-controls="mobileNavigationDrawer" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
     <a class="brand" th:href="@{/}" aria-label="ASMJ Shoppe home">
       <img class="brand-logo" th:src="@{/images/asmj-shoppe-logo.svg?v=2}" alt="ASMJ Shoppe — One Platform. Many Possibilities.">
     </a>
@@ -71,6 +74,66 @@
     </nav>
     <div class="header-promise"><span aria-hidden="true">✦</span> One Platform. Many Possibilities.</div>
   </div>
+
+  <div class="mobile-menu-backdrop" data-mobile-menu-close></div>
+  <aside class="mobile-navigation-drawer" id="mobileNavigationDrawer" aria-label="Mobile navigation" aria-hidden="true" inert>
+    <div class="mobile-drawer-head">
+      <div class="mobile-drawer-brand">ASMJ<span>Shoppe</span><small>One Platform. Many Possibilities.</small></div>
+      <button type="button" class="mobile-drawer-close" aria-label="Close navigation menu" data-mobile-menu-close>×</button>
+    </div>
+    <div class="mobile-drawer-auth">
+      <a sec:authorize="isAnonymous()" th:href="@{/login}">Sign in</a>
+      <a sec:authorize="isAnonymous()" th:href="@{/register}">Join ASMJ Shoppe</a>
+      <a sec:authorize="isAuthenticated()" th:href="@{/settings}">My account &amp; settings</a>
+    </div>
+    <div class="mobile-drawer-links"></div>
+    <div class="mobile-drawer-foot">✦ One Platform. Many Possibilities.</div>
+  </aside>
+  <script>
+    (function () {
+      const header = document.querySelector('.site-header');
+      if (!header) return;
+      const toggle = header.querySelector('.mobile-menu-toggle');
+      const drawer = header.querySelector('.mobile-navigation-drawer');
+      const target = drawer && drawer.querySelector('.mobile-drawer-links');
+      const source = header.querySelector('.header-links');
+      if (!toggle || !drawer || !target || !source) return;
+      target.appendChild(source.cloneNode(true));
+      const close = () => {
+        header.classList.remove('mobile-menu-open');
+        document.body.classList.remove('mobile-navigation-locked');
+        toggle.setAttribute('aria-expanded', 'false');
+        drawer.setAttribute('aria-hidden', 'true');
+        drawer.setAttribute('inert', '');
+        toggle.setAttribute('aria-label', 'Open navigation menu');
+      };
+      const open = () => {
+        header.classList.add('mobile-menu-open');
+        document.body.classList.add('mobile-navigation-locked');
+        toggle.setAttribute('aria-expanded', 'true');
+        drawer.setAttribute('aria-hidden', 'false');
+        drawer.removeAttribute('inert');
+        toggle.setAttribute('aria-label', 'Close navigation menu');
+        const first = drawer.querySelector('.mobile-drawer-auth a, .mobile-drawer-links a, .mobile-drawer-links summary');
+        if (first) first.focus();
+      };
+      toggle.addEventListener('click', () => header.classList.contains('mobile-menu-open') ? close() : open());
+      header.querySelectorAll('[data-mobile-menu-close]').forEach(el => el.addEventListener('click', close));
+      drawer.addEventListener('click', event => {
+        const link = event.target.closest('a');
+        if (link) close();
+      });
+      drawer.addEventListener('toggle', event => {
+        if (event.target.matches('details[open]')) {
+          drawer.querySelectorAll('details[open]').forEach(other => { if (other !== event.target) other.removeAttribute('open'); });
+        }
+      }, true);
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && header.classList.contains('mobile-menu-open')) { close(); toggle.focus(); }
+      });
+      window.addEventListener('resize', () => { if (window.innerWidth > 760) close(); });
+    })();
+  </script>
 </header>
 </body>
 </html>
