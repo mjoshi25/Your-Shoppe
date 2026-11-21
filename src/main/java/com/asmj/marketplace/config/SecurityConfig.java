@@ -44,7 +44,7 @@ public class SecurityConfig {
         http.authenticationProvider(authenticationProvider)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/register", "/register/**", "/terms",
-                        "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/api/products/**", "/api/master-data/**", "/api/rentals/categories", "/guest-enquiries", "/contact-queries", "/cart", "/cart/**", "/ads/**", "/jobs", "/jobs/*", "/businesses", "/classifieds", "/error").permitAll()
+                        "/css/**", "/js/**", "/images/**", "/products/**", "/api/categories/**", "/api/products/**", "/api/master-data/**", "/api/rentals/categories", "/guest-enquiries", "/contact-queries", "/shops", "/shops/**", "/cart", "/cart/**", "/ads/**", "/jobs", "/jobs/*", "/businesses", "/classifieds", "/error").permitAll()
                 .requestMatchers(org.springframework.http.HttpMethod.GET, "/events", "/courses", "/wholesale", "/delivery", "/freelancers").permitAll()
                 // Guest product enquiries are supported, but conversation access is additionally
                 // restricted by ProductChatController to the guest session key or authenticated participant.

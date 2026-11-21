@@ -1,0 +1,3 @@
+package com.asmj.marketplace.shopadvertising;
+import java.util.List; import org.springframework.boot.CommandLineRunner; import org.springframework.stereotype.Component;
+@Component public class ShopAdCategorySeeder implements CommandLineRunner { private final ShopAdCategoryRepository repo; public ShopAdCategorySeeder(ShopAdCategoryRepository r){repo=r;} public void run(String... args){for(String n:List.of("Vegetable Store","General Store / Kirana","Pharmaceutical Store","Electronics Store","Clothing Store","Bakery","Stationery Store","Fruit Store","Hardware Store","Other")){if(repo.findByNameIgnoreCase(n).isEmpty()){ShopAdCategory c=new ShopAdCategory();c.setName(n);repo.save(c);}}} }
