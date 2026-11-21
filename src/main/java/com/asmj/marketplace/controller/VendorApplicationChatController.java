@@ -6,6 +6,7 @@ import com.asmj.marketplace.chat.VendorApplicationConversation;
 import com.asmj.marketplace.chat.VendorApplicationConversationRepository;
 import com.asmj.marketplace.model.Role;
 import com.asmj.marketplace.model.UserAccount;
+import com.asmj.marketplace.notification.NotificationService;
 import com.asmj.marketplace.repository.UserAccountRepository;
 import com.asmj.marketplace.service.CloudinaryImageService;
 import java.security.Principal;
@@ -23,10 +24,12 @@ public class VendorApplicationChatController {
     private final UserAccountRepository users;
     private final VendorApplicationConversationRepository conversations;
     private final CloudinaryImageService uploads;
+    private final NotificationService notifications;
 
     public VendorApplicationChatController(UserAccountRepository users,
-            VendorApplicationConversationRepository conversations, CloudinaryImageService uploads) {
-        this.users = users; this.conversations = conversations; this.uploads = uploads;
+            VendorApplicationConversationRepository conversations, CloudinaryImageService uploads,
+            NotificationService notifications) {
+        this.users = users; this.conversations = conversations; this.uploads = uploads; this.notifications = notifications;
     }
 
     @PostMapping("/admin/vendors/{vendorId}/application-chat")
@@ -78,6 +81,15 @@ public class VendorApplicationChatController {
         if ("ADMIN".equals(senderType)) conversation.setAdminLastReadAt(Instant.now());
         else conversation.setVendorLastReadAt(Instant.now());
         conversations.save(conversation);
+        if ("VENDOR".equals(senderType)) {
+            notifications.notifyAdmins("New vendor message",
+                    vendor.getFullName() + " (" + vendor.getEmail() + ") sent a message regarding their vendor application.",
+                    "VENDOR_APPLICATION_CHAT", vendor.getId());
+        } else {
+            notifications.notifyUser(vendor.getId(), "New message from ASMJ Shoppe Admin",
+                    "The Admin team replied to your vendor application conversation.",
+                    "VENDOR_APPLICATION_CHAT", vendor.getId());
+        }
         redirect.addFlashAttribute("successMessage", "Your message has been sent.");
         return "redirect:" + redirectTo;
     }
