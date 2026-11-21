@@ -38,7 +38,7 @@
       <label class="ad-edit-full">Target PIN codes<input name="targetPinCodes" th:value="${campaign.targetPinCodesText}" placeholder="751001, 766001"><small>Leave blank to target all PIN codes.</small></label>
       <div class="ad-edit-upload">
         <div><strong>Current desktop banner</strong><img class="ad-edit-preview" th:src="${campaign.bannerUrl}" alt="Current desktop advertisement banner"></div>
-        <label>Replace desktop banner (optional)<input type="file" name="banner" accept="image/jpeg,image/png,image/webp"><small>Leave empty to retain the current banner.</small></label>
+        <label>Replace desktop banner (optional)<input type="file" name="banner" accept="image/jpeg,image/png,image/webp"><small>Leave empty to retain the current banner. Replacing this image does not change the promoted product or Internal destination URL.</small></label>
       </div>
       <div class="ad-edit-upload">
         <div><strong>Current mobile banner</strong><img class="ad-edit-preview" th:if="${campaign.mobileBannerUrl != null}" th:src="${campaign.mobileBannerUrl}" alt="Current mobile advertisement banner"><span th:if="${campaign.mobileBannerUrl == null}" class="muted">No separate mobile banner uploaded.</span></div>
