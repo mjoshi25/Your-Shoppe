@@ -1,1 +1,78 @@
-<!DOCTYPE html><html lang="en" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Order complaints | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css(v=58)}"></head><body><header th:replace="~{fragments/layout :: header}"></header><main class="dashboard-wrap" id="main-content"><h1>Order complaints</h1><p class="muted">Review customer complaints and record the resolution. Verify facts and payment responsibility before deciding refunds.</p><section class="panel" th:each="c : ${complaints}"><h2 th:text="${c.subject+' · '+c.orderNumber}">Complaint</h2><p><b>Customer:</b> <span th:text="${c.customerName}"></span></p><p th:text="${c.description}"></p><p><b>Status:</b> <span th:text="${c.status}"></span></p><form method="post" th:action="@{/admin/complaints/{id}/update(id=${c.id})}" class="form-grid"><label>Status<select name="status"><option th:each="s : ${T(com.asmj.marketplace.complaints.OrderComplaint$Status).values()}" th:value="${s}" th:selected="${s == c.status}" th:text="${s}"></option></select></label><label>Admin note<textarea name="adminNote" maxlength="2000" th:text="${c.adminNote}"></textarea></label><button class="btn primary" type="submit">Save update</button></form></section><p th:if="${#lists.isEmpty(complaints)}">No complaints received.</p></main></body></html>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#421064">
+  <title>Order complaints | ASMJ Shoppe Admin</title>
+  <link rel="stylesheet" th:href="@{/css/app.css(v=71)}">
+</head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<main class="ad-page dashboard-wrap" id="main-content" tabindex="-1">
+  <div class="page-heading">
+    <div>
+      <div class="eyebrow">ADMINISTRATION · CUSTOMER TRUST</div>
+      <h1>Order complaints</h1>
+      <p>Review customer concerns, record evidence and document the resolution. Confirm payment responsibility before deciding any refund.</p>
+    </div>
+    <a class="btn market-secondary" th:href="@{/admin/dashboard}">Back to dashboard</a>
+  </div>
+
+  <div class="ad-info-panel">
+    <strong th:text="${#lists.size(complaints)} + ' complaint(s)'">0 complaints</strong>
+    <p>Handle each complaint carefully. Updating a complaint does not automatically initiate a refund or change vendor/customer payment records.</p>
+  </div>
+
+  <div class="ad-admin-section" th:if="${#lists.isEmpty(complaints)}">
+    <h2>No order complaints yet</h2>
+    <p>Customer complaints submitted against orders will appear here.</p>
+  </div>
+
+  <section class="ad-admin-section complaint-list" th:unless="${#lists.isEmpty(complaints)}">
+    <article class="panel complaint-card" th:each="c : ${complaints}">
+      <div class="order-head complaint-heading">
+        <div>
+          <span class="eyebrow">ORDER <span th:text="${c.orderNumber}">ORDER-NUMBER</span></span>
+          <h2 th:text="${c.subject}">Complaint subject</h2>
+          <small th:text="${'Submitted by ' + c.customerName}">Customer</small>
+        </div>
+        <span class="status-pill" th:text="${c.status}">OPEN</span>
+      </div>
+      <div class="complaint-description">
+        <h3>Customer description</h3>
+        <p th:text="${c.description}">Complaint details</p>
+      </div>
+      <form method="post" th:action="@{/admin/complaints/{id}/update(id=${c.id})}" class="complaint-update-form">
+        <div class="form-grid">
+          <label>Status
+            <select name="status" required>
+              <option th:each="s : ${T(com.asmj.marketplace.complaints.OrderComplaint$Status).values()}" th:value="${s}" th:selected="${s == c.status}" th:text="${s}"></option>
+            </select>
+          </label>
+          <label class="complaint-note">Admin resolution note
+            <textarea name="adminNote" rows="3" maxlength="2000" placeholder="Record findings, action taken and next steps" th:text="${c.adminNote}"></textarea>
+          </label>
+        </div>
+        <div class="actions"><button class="btn primary" type="submit">Save complaint update</button></div>
+      </form>
+    </article>
+  </section>
+</main>
+<style>
+  .complaint-list{display:grid;gap:16px;padding:0;background:transparent;border:0;box-shadow:none}
+  .complaint-card{margin:0;min-width:0}
+  .complaint-heading{align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .complaint-heading h2{margin:7px 0 5px;color:#321047;font-size:clamp(17px,2vw,21px)}
+  .complaint-heading small{color:#817487}
+  .complaint-description{margin:18px 0;padding:15px;border:1px solid #eee5f1;border-radius:13px;background:#fcfafd}
+  .complaint-description h3{margin:0 0 7px;color:#5b3470;font-size:12px}
+  .complaint-description p{margin:0;color:#55485c;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+  .complaint-update-form{padding-top:15px;border-top:1px solid #f0eaf2}
+  .complaint-update-form .form-grid{grid-template-columns:minmax(180px,.65fr) minmax(0,2fr);align-items:start}
+  .complaint-note textarea{min-height:88px}
+  .complaint-update-form .actions{display:flex;justify-content:flex-end;margin-top:12px}
+  @media(max-width:680px){.complaint-update-form .form-grid{grid-template-columns:1fr}.complaint-update-form .actions .btn{width:100%}.complaint-heading{align-items:flex-start}}
+</style>
+</body>
+</html>
