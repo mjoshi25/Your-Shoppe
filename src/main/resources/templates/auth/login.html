@@ -1,40 +1,53 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=2">
-<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
-<link rel="manifest" href="/manifest.webmanifest?v=2">
-<meta name="theme-color" content="#421064">
-
-<meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=2">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
+  <link rel="manifest" href="/manifest.webmanifest?v=2">
+  <meta name="theme-color" content="#541477">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sign in to your ASMJ Shoppe account.">
   <title>Sign in | ASMJ Shoppe</title>
-  <link rel="stylesheet" th:href="@{/css/app.css(v=57)}">
+  <link rel="stylesheet" th:href="@{/css/app.css(v=74)}">
 </head>
-<body class="auth-page">
-  <a class="brand auth-brand" th:href="@{/}" aria-label="ASMJ Shoppe home"><img class="auth-logo" th:src="@{/images/asmj-shoppe-logo.svg?v=2}" alt="ASMJ Shoppe — One Platform. Many Possibilities."></a>
-  <main class="auth-card" id="main-content" tabindex="-1">
-    <div class="eyebrow">Welcome back</div>
-    <h1>Sign in</h1>
-    <p class="muted">Enter your registered email address and password.</p>
-
-    <div class="notice success" role="status" th:if="${param.registered}">Your customer account has been created. You can sign in now.</div>
-    <div class="notice success" role="status" th:if="${param.vendorPending}">Your vendor application has been submitted and is awaiting admin approval.</div>
-    <div class="notice error" role="alert" th:if="${param.error}">Sign-in failed. Check your email and password, or confirm that your account is enabled.</div>
-    <div class="notice" role="status" th:if="${param.logout}">You have been signed out.</div>
-
-    <form th:action="@{/login}" method="post">
-      <label class="field">Email address
-        <input type="email" name="email" required autocomplete="username" placeholder="you@example.com">
-      </label>
-      <label class="field">Password
-        <input type="password" name="password" required autocomplete="current-password" placeholder="Your password">
-      </label>
-      <button class="btn primary full" type="submit">Sign in</button>
-    </form>
-    <p class="form-foot">New to ASMJ Shoppe? <a th:href="@{/register}">Create an account</a></p>
+<body class="auth-page auth-login-page">
+  <main class="auth-login-shell" id="main-content" tabindex="-1">
+    <section class="auth-showcase auth-login-showcase" aria-label="About ASMJ Shoppe">
+      <a class="auth-showcase-brand" th:href="@{/}" aria-label="ASMJ Shoppe home"><img th:src="@{/images/asmj-shoppe-logo.svg?v=2}" alt="ASMJ Shoppe"></a>
+      <div class="auth-showcase-copy">
+        <span class="auth-kicker"><span class="auth-kicker-dot"></span> ONE PLATFORM. MANY POSSIBILITIES.</span>
+        <h1>Your next great find<br><span>is just around the corner.</span></h1>
+        <p>Discover products, connect with independent sellers and enjoy a marketplace built to bring businesses closer.</p>
+      </div>
+      <div class="auth-showcase-art" aria-hidden="true">
+        <div class="auth-orbit auth-orbit-one"></div><div class="auth-orbit auth-orbit-two"></div>
+        <div class="auth-shopping-bag">🛍️</div>
+        <div class="auth-float-card auth-float-top"><span>✦</span><div><b>Discover more</b><small>Find something special</small></div></div>
+        <div class="auth-float-card auth-float-bottom"><span>♡</span><div><b>Shop with confidence</b><small>Connect directly with sellers</small></div></div>
+      </div>
+      <div class="auth-showcase-footer">Made for shoppers. Built for local businesses.</div>
+    </section>
+    <section class="auth-form-side">
+      <div class="auth-form-card auth-login-card">
+        <a class="auth-mobile-brand" th:href="@{/}" aria-label="ASMJ Shoppe home"><img th:src="@{/images/asmj-shoppe-logo.svg?v=2}" alt="ASMJ Shoppe"></a>
+        <div class="auth-form-heading"><span class="auth-eyebrow">WELCOME BACK</span><h2>Sign in to your account</h2><span class="auth-heading-rule"></span><p>Good to see you again. Enter your details to continue.</p></div>
+        <div class="notice success" role="status" th:if="${param.registered}">Your customer account has been created. You can sign in now.</div>
+        <div class="notice success" role="status" th:if="${param.vendorPending}">Your vendor application has been submitted and is awaiting admin approval.</div>
+        <div class="notice error" role="alert" th:if="${param.error}">Sign-in failed. Check your email and password, or confirm that your account is enabled.</div>
+        <div class="notice" role="status" th:if="${param.logout}">You have been signed out.</div>
+        <form class="auth-modern-form" th:action="@{/login}" method="post">
+          <label class="auth-input-field"><span>Email address</span><span class="auth-input-wrap"><span class="auth-input-icon" aria-hidden="true">✉</span><input type="email" name="email" required autocomplete="username" placeholder="you@example.com"></span></label>
+          <label class="auth-input-field"><span>Password</span><span class="auth-input-wrap"><span class="auth-input-icon" aria-hidden="true">⌑</span><input id="loginPassword" type="password" name="password" required autocomplete="current-password" placeholder="Enter your password"><button class="auth-password-toggle" type="button" data-password-toggle="loginPassword" aria-label="Show password" aria-pressed="false">Show</button></span></label>
+          <button class="auth-submit-btn" type="submit">Sign in <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="auth-switch-text">New to ASMJ Shoppe? <a th:href="@{/register}">Create an account</a></p>
+        <a class="auth-home-link" th:href="@{/}">← Back to homepage</a>
+      </div>
+    </section>
   </main>
-</body>
-</html>
+<script>
+document.querySelectorAll('[data-password-toggle]').forEach(function(button){button.addEventListener('click',function(){var field=document.getElementById(button.getAttribute('data-password-toggle'));var show=field.type==='password';field.type=show?'text':'password';button.textContent=show?'Hide':'Show';button.setAttribute('aria-pressed',String(show));button.setAttribute('aria-label',show?'Hide password':'Show password');});});
+</script>
+</body></html>

@@ -1,54 +1,49 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=2">
-<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2">
-<link rel="manifest" href="/manifest.webmanifest?v=2">
-<meta name="theme-color" content="#421064">
-
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Create account | ASMJ Shoppe</title>
-  <link rel="stylesheet" th:href="@{/css/app.css(v=57)}">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=2"><link rel="icon" type="image/x-icon" href="/favicon.ico?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2"><link rel="manifest" href="/manifest.webmanifest?v=2">
+  <meta name="theme-color" content="#541477"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Create your ASMJ Shoppe customer account or apply to become a vendor.">
+  <title>Create account | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css(v=74)}">
 </head>
-<body class="auth-page">
-<a class="brand auth-brand" th:href="@{/}" aria-label="ASMJ Shoppe home"><img class="auth-logo" th:src="@{/images/asmj-shoppe-logo.svg?v=2}" alt="ASMJ Shoppe — One Platform. Many Possibilities."></a>
-<main class="auth-card wide" id="main-content" tabindex="-1">
-  <div class="eyebrow">Join the marketplace</div><h1>Create your account</h1>
-  <p class="muted">Enter your personal details. If applying as a vendor, also complete the shop details below.</p>
-  <div class="notice error" role="alert" th:if="${registrationError}" th:text="${registrationError}"></div>
-  <form id="registrationForm" th:object="${form}" method="post">
-    <!-- Explicit CSRF token is required because the submit buttons use separate formaction URLs. -->
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-    <h2 class="form-section-title">Account details</h2>
-    <div class="form-grid">
-      <label class="field">Full name<input th:field="*{fullName}" required maxlength="100" autocomplete="name"><small class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></small></label>
-      <label class="field">Mobile number<input type="tel" th:field="*{mobile}" maxlength="20" autocomplete="tel"></label>
-      <label class="field full-field">Email address<input type="email" th:field="*{email}" required maxlength="160" autocomplete="email"><small class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small></label>
-      <label class="field full-field">Password<input type="password" th:field="*{password}" required minlength="8" maxlength="72" autocomplete="new-password"><small class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small></label>
-      <label class="field">Customer referral code (optional)<input th:field="*{referralCode}" maxlength="24" autocomplete="off"></label>
-    </div>
-    <div class="vendor-fields">
-      <h2 class="form-section-title">Shop / business details <span class="optional-tag">Vendor applicants</span></h2>
-      <div class="form-grid">
-        <label class="field full-field">Shop / business name<input th:field="*{businessName}" maxlength="120"></label>
-        <label class="field full-field">Business description<textarea th:field="*{businessDescription}" rows="3" maxlength="500"></textarea></label>
-        <label class="field full-field">Address<input th:field="*{addressLine}" maxlength="200"></label>
-        <label class="field">City<input th:field="*{city}" maxlength="80"></label>
-        <label class="field">State<input th:field="*{state}" maxlength="80"></label>
-        <label class="field">PIN code<input th:field="*{pinCode}" maxlength="10" inputmode="numeric"></label>
-      </div>
-      <p class="muted tiny">These business details are required only when you select Apply as vendor.</p>
-    </div>
-    <label class="field full-field terms-consent" style="display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:18px 0;cursor:pointer;line-height:1.5"><input type="checkbox" th:field="*{termsAccepted}" required style="width:20px;height:20px;min-width:20px;flex:0 0 20px;margin:0;accent-color:#541477"><span style="display:inline;line-height:1.5">I have read and agree to the <a th:href="@{/terms}" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span></label>
-    <small class="field-error" th:if="${#fields.hasErrors('termsAccepted')}" th:errors="*{termsAccepted}"></small>
-    <div class="registration-actions">
-      <button class="btn primary" type="submit" th:formaction="@{/register/customer}">Register as customer</button>
-      <button class="btn secondary" type="submit" th:formaction="@{/register/vendor}">Apply as vendor</button>
-    </div>
-    <p class="muted tiny">Vendor applications start in Pending status. Admin approval is required before products can be listed or orders accepted.</p>
-  </form>
-  <p class="form-foot">Already registered? <a th:href="@{/login}">Sign in</a></p>
-</main>
+<body class="auth-page auth-register-page">
+  <main class="auth-register-shell" id="main-content" tabindex="-1">
+    <header class="auth-register-header"><a th:href="@{/}" class="auth-register-brand"><img th:src="@{/images/asmj-shoppe-logo.svg?v=2}" alt="ASMJ Shoppe"></a><a class="auth-back-home" th:href="@{/}">← Back to homepage</a></header>
+    <section class="auth-register-card">
+      <div class="auth-register-heading"><span class="auth-eyebrow">JOIN THE COMMUNITY</span><h1>Create your account</h1><p>One account opens the door to shopping and growing your business with ASMJ Shoppe.</p><span class="auth-heading-rule"></span></div>
+      <div class="notice error" role="alert" th:if="${registrationError}" th:text="${registrationError}"></div>
+      <form id="registrationForm" class="auth-register-form" th:object="${form}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <h2 class="auth-section-heading"><span>01</span> Your account details</h2>
+        <div class="form-grid auth-register-grid">
+          <label class="field">Full name<input th:field="*{fullName}" required maxlength="100" autocomplete="name" placeholder="Enter your full name"><small class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></small></label>
+          <label class="field">Mobile number<input type="tel" th:field="*{mobile}" maxlength="20" autocomplete="tel" placeholder="Your mobile number"></label>
+          <label class="field full-field">Email address<input type="email" th:field="*{email}" required maxlength="160" autocomplete="email" placeholder="you@example.com"><small class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small></label>
+          <label class="field full-field">Password<span class="auth-register-password"><input id="registerPassword" type="password" th:field="*{password}" required minlength="8" maxlength="72" autocomplete="new-password" placeholder="Create a password"><button class="auth-password-toggle" type="button" data-password-toggle="registerPassword" aria-label="Show password" aria-pressed="false">Show</button></span><small class="auth-field-hint">Use at least 8 characters.</small><small class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small></label>
+          <label class="field full-field">Customer referral code <span class="auth-optional-label">Optional</span><input th:field="*{referralCode}" maxlength="24" autocomplete="off" placeholder="Enter a referral code, if you have one"></label>
+        </div>
+        <div class="vendor-fields auth-vendor-section">
+          <h2 class="auth-section-heading"><span>02</span> Shop / business details <em>Vendor applicants</em></h2>
+          <p class="auth-section-description">Complete these details only if you are applying to sell on ASMJ Shoppe.</p>
+          <div class="form-grid auth-register-grid">
+            <label class="field full-field">Shop / business name<input th:field="*{businessName}" maxlength="120" placeholder="Your shop or business name"></label>
+            <label class="field full-field">Business description<textarea th:field="*{businessDescription}" rows="3" maxlength="500" placeholder="Tell customers a little about your business"></textarea></label>
+            <label class="field full-field">Address<input th:field="*{addressLine}" maxlength="200" placeholder="Business address"></label>
+            <label class="field">City<input th:field="*{city}" maxlength="80" placeholder="City"></label>
+            <label class="field">State<input th:field="*{state}" maxlength="80" placeholder="State"></label>
+            <label class="field">PIN code<input th:field="*{pinCode}" maxlength="10" inputmode="numeric" placeholder="PIN code"></label>
+          </div>
+        </div>
+        <label class="auth-terms-consent"><input type="checkbox" th:field="*{termsAccepted}" required><span>I have read and agree to the <a th:href="@{/terms}" target="_blank" rel="noopener">Terms &amp; Conditions</a>.</span></label>
+        <small class="field-error" th:if="${#fields.hasErrors('termsAccepted')}" th:errors="*{termsAccepted}"></small>
+        <div class="registration-actions auth-register-actions"><button class="btn primary" type="submit" th:formaction="@{/register/customer}">Create customer account <span aria-hidden="true">→</span></button><button class="btn secondary" type="submit" th:formaction="@{/register/vendor}">Apply as vendor <span aria-hidden="true">→</span></button></div>
+        <p class="auth-vendor-note">Vendor applications start in Pending status. Admin approval is required before products can be listed or orders accepted.</p>
+      </form>
+      <p class="auth-switch-text">Already have an account? <a th:href="@{/login}">Sign in</a></p>
+    </section>
+    <footer class="auth-register-footer">ASMJ Shoppe <span>·</span> One Platform. Many Possibilities.</footer>
+  </main>
+<script>
+document.querySelectorAll('[data-password-toggle]').forEach(function(button){button.addEventListener('click',function(){var field=document.getElementById(button.getAttribute('data-password-toggle'));var show=field.type==='password';field.type=show?'text':'password';button.textContent=show?'Hide':'Show';button.setAttribute('aria-pressed',String(show));button.setAttribute('aria-label',show?'Hide password':'Show password');});});
+</script>
 </body></html>
