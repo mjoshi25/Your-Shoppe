@@ -43,6 +43,10 @@
         <h3>Customer description</h3>
         <p th:text="${c.description}">Complaint details</p>
       </div>
+      <div class="complaint-description" th:if="${c.vendorResponse != null and !#strings.isEmpty(c.vendorResponse)}">
+        <h3>Vendor response to customer</h3>
+        <p th:text="${c.vendorResponse}">Vendor response</p>
+      </div>
       <form method="post" th:action="@{/admin/complaints/{id}/update(id=${c.id})}" class="complaint-update-form">
         <div class="form-grid">
           <label>Status

@@ -1,1 +1,31 @@
-<!DOCTYPE html><html lang="en" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Customer complaints | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css(v=58)}"></head><body><header th:replace="~{fragments/layout :: header}"></header><main class="dashboard-wrap" id="main-content"><h1>Customer complaints</h1><p class="muted">View complaints associated with your orders. ASMJ Shoppe support manages the resolution.</p><section class="panel" th:each="c : ${complaints}"><h2 th:text="${c.subject+' · '+c.orderNumber}"></h2><p th:text="${c.description}"></p><p><b>Status:</b> <span th:text="${c.status}"></span></p><p th:if="${c.adminNote != null and !#strings.isEmpty(c.adminNote)}"><b>Support update:</b> <span th:text="${c.adminNote}"></span></p></section><p th:if="${#lists.isEmpty(complaints)}">No complaints have been associated with your orders.</p></main></body></html>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Customer complaints | ASMJ Shoppe</title><link rel="stylesheet" th:href="@{/css/app.css(v=79)}"></head>
+<body><header th:replace="~{fragments/layout :: header}"></header>
+<main class="dashboard-wrap" id="main-content">
+ <h1>Customer complaints</h1><p class="muted">Review complaints raised against your orders, update progress and reply to customers.</p>
+ <p class="success" th:if="${successMessage}" th:text="${successMessage}"></p><p class="error" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+ <section class="panel complaint-card" th:each="c : ${complaints}">
+  <h2 th:text="${c.subject+' · '+c.orderNumber}"></h2>
+  <p><b>Customer:</b> <span th:text="${c.customerName}"></span></p>
+  <p><b>Complaint:</b></p><p class="preserve" th:text="${c.description}"></p>
+  <p><b>Status:</b> <span class="status-pill" th:text="${c.status == T(com.asmj.marketplace.complaints.OrderComplaint.Status).UNDER_REVIEW ? 'IN PROGRESS' : c.status}"></span></p>
+  <p th:if="${c.vendorResponse != null and !#strings.isEmpty(c.vendorResponse)}"><b>Your previous reply:</b></p>
+  <p class="preserve" th:if="${c.vendorResponse != null and !#strings.isEmpty(c.vendorResponse)}" th:text="${c.vendorResponse}"></p>
+  <p th:if="${c.adminNote != null and !#strings.isEmpty(c.adminNote)}"><b>ASMJ Support response:</b> <span class="preserve" th:text="${c.adminNote}"></span></p>
+  <form method="post" th:action="@{/vendor/complaints/{id}/update(id=${c.id})}" class="complaint-form">
+   <label>Action
+    <select name="status" required>
+     <option value="UNDER_REVIEW" th:selected="${c.status == T(com.asmj.marketplace.complaints.OrderComplaint.Status).UNDER_REVIEW}">In progress</option>
+     <option value="WAITING_FOR_CUSTOMER" th:selected="${c.status == T(com.asmj.marketplace.complaints.OrderComplaint.Status).WAITING_FOR_CUSTOMER}">Waiting for customer</option>
+     <option value="RESOLVED" th:selected="${c.status == T(com.asmj.marketplace.complaints.OrderComplaint.Status).RESOLVED}">Resolved</option>
+    </select>
+   </label>
+   <label>Reply to customer <textarea name="vendorResponse" rows="3" maxlength="2000" placeholder="Explain what you checked or how you are resolving the issue"></textarea></label>
+   <button class="btn primary" type="submit">Send update</button>
+  </form>
+ </section>
+ <p th:if="${#lists.isEmpty(complaints)}">No complaints have been associated with your orders.</p>
+</main>
+<style>.complaint-card{margin:16px 0;padding:20px}.complaint-card h2{font-size:20px}.preserve{white-space:pre-wrap;overflow-wrap:anywhere}.complaint-form{display:grid;grid-template-columns:1fr 2fr;gap:12px;border-top:1px solid #eee;padding-top:16px;margin-top:16px}.complaint-form label{display:grid;gap:7px}.complaint-form textarea{min-height:85px}.complaint-form button{justify-self:start}@media(max-width:650px){.complaint-form{grid-template-columns:1fr}.complaint-form button{width:100%}}</style>
+</body></html>
