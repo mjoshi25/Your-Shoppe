@@ -32,9 +32,9 @@
       <label>Advertisement title<input name="title" minlength="4" maxlength="90" required th:value="${campaign.title}"></label>
       <label>Description<textarea name="description" maxlength="240" rows="3" th:text="${campaign.description}"></textarea></label>
       <label>Call-to-action label<input name="callToAction" maxlength="24" th:value="${campaign.callToAction}"></label>
-      <label>Promoted vendor product<select name="productId"><option value="">No specific product</option><option th:each="p : ${products}" th:value="${p.id}" th:selected="${p.id == campaign.productId}" th:text="${p.name}"></option></select><small>Only active products are listed. A selected product sets the destination automatically.</small></label>
+      <label>Promoted vendor product<select name="productId"><option value="">No specific product</option><option th:each="p : ${products}" th:value="${p.id}" th:selected="${p.id == campaign.productId}" th:text="${p.name}"></option></select><small>Only active products are listed. Selecting a product fills its product URL. Editing the URL manually clears the product association.</small></label>
       <label>Target category<select name="categoryId"><option value="">All categories</option><option th:each="c : ${categories}" th:value="${c.id}" th:selected="${c.id == campaign.categoryId}" th:text="${c.name}"></option></select></label>
-      <label class="ad-edit-full">Internal destination URL<input name="destinationUrl" th:value="${campaign.destinationUrl}" placeholder="/products"><small>Use an internal ASMJ Shoppe path only. Selecting a product or category can determine this automatically.</small></label>
+      <label class="ad-edit-full">Internal destination URL<input name="destinationUrl" th:value="${campaign.destinationUrl}" placeholder="/products"><small>Use an internal ASMJ Shoppe path only. Selecting a product fills its product URL; manually changing this URL makes it the saved destination.</small></label>
       <label class="ad-edit-full">Target PIN codes<input name="targetPinCodes" th:value="${campaign.targetPinCodesText}" placeholder="751001, 766001"><small>Leave blank to target all PIN codes.</small></label>
       <div class="ad-edit-upload">
         <div><strong>Current desktop banner</strong><img class="ad-edit-preview" th:src="${campaign.bannerUrl}" alt="Current desktop advertisement banner"></div>
@@ -49,4 +49,32 @@
   </section>
 </main>
 <footer class="site-footer"><span>© ASMJ Shoppe</span><span>One Platform. Many Possibilities.</span></footer>
+<script>
+(function(){
+  const form=document.querySelector('.ad-edit-form'); if(!form) return;
+  const product=form.querySelector('[name="productId"]');
+  const category=form.querySelector('[name="categoryId"]');
+  const destination=form.querySelector('[name="destinationUrl"]');
+  const productPaths={};
+  if(product && destination){
+    product.addEventListener('change',function(){
+      if(!this.value) return;
+      destination.value='/products/'+this.value;
+    });
+    destination.addEventListener('input',function(){
+      if(product.value && this.value.trim()!=='/products/'+product.value) product.value='';
+    });
+  }
+  if(category && destination){
+    category.addEventListener('change',function(){
+      if(product && product.value) return;
+      if(!destination.value.trim() || destination.dataset.autofilled==='true'){
+        destination.value=this.value?'/products?categoryId='+encodeURIComponent(this.value):'/products';
+        destination.dataset.autofilled='true';
+      }
+    });
+    destination.addEventListener('input',function(){this.dataset.autofilled='false';});
+  }
+})();
+</script>
 </body></html>
