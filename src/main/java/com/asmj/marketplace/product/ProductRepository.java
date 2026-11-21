@@ -4,6 +4,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface ProductRepository extends MongoRepository<Product,String> {
     List<Product> findByVendorUserIdOrderByCreatedAtDesc(String vendorUserId);
     List<Product> findByStatusOrderByCreatedAtDesc(ProductStatus status);
+    List<Product> findByCategoryIdInAndStatusOrderByCreatedAtDesc(List<String> categoryIds, ProductStatus status);
     List<Product> findAllByOrderByCreatedAtDesc();
     boolean existsBySeedKey(String seedKey);
     List<Product> findBySeedBatchIdAndVendorUserId(String seedBatchId, String vendorUserId);

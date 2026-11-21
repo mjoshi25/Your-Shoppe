@@ -32,6 +32,9 @@
       <label>Advertisement title<input name="title" minlength="4" maxlength="90" required th:value="${campaign.title}"></label>
       <label>Description<textarea name="description" maxlength="240" rows="3" th:text="${campaign.description}"></textarea></label>
       <label>Call-to-action label<input name="callToAction" maxlength="24" th:value="${campaign.callToAction}"></label>
+      <label>Campaign type<select name="campaignType" id="campaignType"><option value="SINGLE_PRODUCT" th:selected="${campaign.campaignType == 'SINGLE_PRODUCT'}">Single product</option><option value="MULTI_PRODUCT" th:selected="${campaign.campaignType == 'MULTI_PRODUCT'}">Multiple products</option><option value="CATEGORY" th:selected="${campaign.campaignType == 'CATEGORY'}">Category campaign</option></select></label>
+      <fieldset class="ad-edit-full" id="multiProductsField"><legend>Multi-product selection (at least 2)</legend><label th:each="p : ${products}"><input type="checkbox" name="productIds" th:value="${p.id}" th:checked="${campaign.productIds.contains(p.id)}"> <span th:text="${p.name}">Product</span></label></fieldset>
+      <fieldset class="ad-edit-full" id="multiCategoriesField"><legend>Category selection</legend><label th:each="c : ${categories}"><input type="checkbox" name="categoryIds" th:value="${c.id}" th:checked="${campaign.categoryIds.contains(c.id)}"> <span th:text="${c.name}">Category</span></label></fieldset>
       <label>Promoted vendor product<select name="productId"><option value="">No specific product</option><option th:each="p : ${products}" th:value="${p.id}" th:selected="${p.id == campaign.productId}" th:attr="data-image=${p.imageUrl}" th:text="${p.name}"></option></select><small>Only your active products are listed. Selecting a product fills its product URL. Editing the URL manually clears the product association.</small></label>
       <label>Target category<select name="categoryId"><option value="">All categories</option><option th:each="c : ${categories}" th:value="${c.id}" th:selected="${c.id == campaign.categoryId}" th:text="${c.name}"></option></select></label>
       <label class="ad-edit-full">Internal destination URL<input name="destinationUrl" th:value="${campaign.destinationUrl}" placeholder="/products"><small>Use an internal ASMJ Shoppe path only. Selecting a product fills its product URL; manually changing this URL makes it the saved destination.</small></label>
@@ -66,7 +69,8 @@
       if(product.value && this.value.trim()!=='/products/'+product.value) product.value='';
     });
   }
-  const bannerMode=form.querySelector('[name=\"bannerMode\"]');
+  const campaignType=form.querySelector('[name=\"campaignType\"]');const multiProducts=form.querySelector('#multiProductsField');const multiCategories=form.querySelector('#multiCategoriesField');function syncCampaignType(){if(multiProducts)multiProducts.hidden=campaignType.value!=='MULTI_PRODUCT';if(multiCategories)multiCategories.hidden=campaignType.value!=='CATEGORY';}if(campaignType){campaignType.addEventListener('change',syncCampaignType);syncCampaignType();}
+  const bannerMode=form.querySelector('[name=\"bannerMode\"]');if(campaignType&&bannerMode){function syncBannerCampaign(){const productImage=bannerMode.querySelector('[value=\"PRODUCT_IMAGE\"]');if(productImage)productImage.disabled=campaignType.value!=='SINGLE_PRODUCT';if(campaignType.value!=='SINGLE_PRODUCT'&&bannerMode.value==='PRODUCT_IMAGE')bannerMode.value='CUSTOM';}campaignType.addEventListener('change',syncBannerCampaign);syncBannerCampaign();}
   if(bannerMode){const upload=form.querySelector('input[name=\"banner\"]');const uploadLabel=upload?upload.closest('label'):null;function syncBannerMode(){if(uploadLabel)uploadLabel.hidden=bannerMode.value==='PRODUCT_IMAGE';if(upload)upload.required=bannerMode.value==='CUSTOM';}bannerMode.addEventListener('change',syncBannerMode);syncBannerMode();}
   if(category && destination){
     category.addEventListener('change',function(){
