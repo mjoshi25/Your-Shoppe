@@ -34,26 +34,60 @@ public class ServiceMarketplaceController {
  private boolean approved(ServiceProvider p){return p!=null && "APPROVED".equals(p.getStatus());}
  private ServiceBooking ownedBooking(String id, Authentication a){ServiceBooking b=bookings.findById(id).orElse(null); if(b==null) return null; ServiceProvider p=ownProvider(a); return b.getCustomerEmail().equalsIgnoreCase(email(a)) || (p!=null && p.getId().equals(b.getProviderId())) ? b : null;}
 
- @GetMapping("/services") public String browse(@RequestParam(required=false) String q,@RequestParam(required=false) String category,
-   @RequestParam(required=false) String categoryName,@RequestParam(required=false) String pin, Model model){
+ @GetMapping("/services") public String browse(@RequestParam(required=false) String q,
+   @RequestParam(required=false) String category,
+   @RequestParam(required=false) String categoryName,
+   @RequestParam(required=false) String pin, Model model){
   List<ServiceListing> all;
-  String selectedCategory=category;
-  if(categoryName!=null&&!categoryName.isBlank()){
-   ServiceCategory parent=categories.findByNameIgnoreCaseAndParentIdIsNullAndActiveTrue(categoryName.trim()).orElse(null);
-   if(parent==null){all=new ArrayList<>();}
-   else {
-    List<String> categoryIds=new ArrayList<>();categoryIds.add(parent.getId());
-    categories.findByParentIdAndActiveTrueOrderByNameAsc(parent.getId()).forEach(child->categoryIds.add(child.getId()));
-    all=listings.findByStatusAndActiveTrueAndCategoryIdInOrderByCreatedAtDesc("APPROVED",categoryIds);
-    selectedCategory=parent.getId();
+  String selectedCategory = (category == null || category.isBlank()) ? null : category.trim();
+  String resolvedCategoryName = null;
+
+  // Resolve categoryName against every active service category, not only parent categories.
+  // This supports links such as /services?categoryName=Events as well as child categories.
+  if (categoryName != null && !categoryName.isBlank()) {
+   String requestedName = categoryName.trim();
+   ServiceCategory matched = categories.findByActiveTrueOrderByNameAsc().stream()
+     .filter(c -> c.getName() != null && c.getName().trim().equalsIgnoreCase(requestedName))
+     .findFirst().orElse(null);
+   if (matched == null) {
+    all = new ArrayList<>();
+   } else {
+    resolvedCategoryName = matched.getName();
+    selectedCategory = matched.getId();
+    List<String> categoryIds = new ArrayList<>();
+    categoryIds.add(matched.getId());
+    // A parent category includes its active children; a child category stays specific.
+    if (matched.getParentId() == null || matched.getParentId().isBlank()) {
+     categories.findByParentIdAndActiveTrueOrderByNameAsc(matched.getId())
+       .forEach(child -> categoryIds.add(child.getId()));
+    }
+    all = listings.findByStatusAndActiveTrueAndCategoryIdInOrderByCreatedAtDesc("APPROVED", categoryIds);
    }
-  } else if(category!=null&&!category.isBlank()) all=listings.findByStatusAndActiveTrueAndCategoryIdOrderByCreatedAtDesc("APPROVED",category);
-  else if(q!=null&&!q.isBlank()) all=listings.findByStatusAndActiveTrueAndTitleContainingIgnoreCaseOrderByCreatedAtDesc("APPROVED",q.trim());
-  else all=listings.findByStatusAndActiveTrueOrderByCreatedAtDesc("APPROVED");
-  all.removeIf(x -> !approved(providers.findById(x.getProviderId()).orElse(null)));
-  if(pin!=null&&!pin.isBlank()) all.removeIf(x->x.getServicePinCodes()==null||!Arrays.stream(x.getServicePinCodes().split("[,\\s]+" )).anyMatch(pin.trim()::equals));
-  model.addAttribute("services",all); model.addAttribute("categories",categories.findByActiveTrueOrderByNameAsc()); model.addAttribute("q",q); model.addAttribute("selectedCategory",selectedCategory); model.addAttribute("pin",pin);
-  model.addAttribute("selectedCategoryName",categoryName);
+  } else if (selectedCategory != null) {
+   all = listings.findByStatusAndActiveTrueAndCategoryIdOrderByCreatedAtDesc("APPROVED", selectedCategory);
+   ServiceCategory matched = categories.findById(selectedCategory).orElse(null);
+   resolvedCategoryName = matched == null ? null : matched.getName();
+  } else {
+   all = listings.findByStatusAndActiveTrueOrderByCreatedAtDesc("APPROVED");
+  }
+
+  if (q != null && !q.isBlank()) {
+   String term = q.trim().toLowerCase(Locale.ROOT);
+   all.removeIf(x -> x.getTitle() == null || !x.getTitle().toLowerCase(Locale.ROOT).contains(term));
+  }
+  all.removeIf(x -> x.getProviderId() == null ||
+    !approved(providers.findById(x.getProviderId()).orElse(null)));
+  if (pin != null && !pin.isBlank()) {
+   String requestedPin = pin.trim();
+   all.removeIf(x -> x.getServicePinCodes() == null ||
+     !Arrays.stream(x.getServicePinCodes().split("[,\\\\s]+")).anyMatch(requestedPin::equals));
+  }
+  model.addAttribute("services", all);
+  model.addAttribute("categories", categories.findByActiveTrueOrderByNameAsc());
+  model.addAttribute("q", q);
+  model.addAttribute("selectedCategory", selectedCategory);
+  model.addAttribute("selectedCategoryName", resolvedCategoryName);
+  model.addAttribute("pin", pin);
   return "services/catalog";
  }
  @GetMapping("/services/{id}") public String detail(@PathVariable String id,Model model){
