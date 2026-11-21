@@ -1,7 +1,363 @@
-<!DOCTYPE html><html lang="en" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Advertised Shops | ASMJ Shoppe"><link rel="stylesheet" th:href="@{/css/app.css(v=79)}"></head><body><header th:replace="~{fragments/layout :: header}"></header><main class="dashboard-wrap shop-directory">
-<section class="shop-hero"><span class="eyebrow">DISCOVER LOCAL BUSINESSES</span><h1>Find shops near you</h1><p>Explore shops advertising on ASMJ Shoppe. Browse their available products and shop as usual.</p></section>
-<section class="shop-feature" th:if="${!#lists.isEmpty(shops)}"><div class="feature-track" id="shopAdTrack"><a class="shop-feature-slide" th:each="shop,stat : ${shops}" th:href="@{/shops/{id}(id=${shop.id})}" th:classappend="${stat.index == 0} ? ' active' : ''"><img th:src="${shop.bannerUrl}" th:alt="${shop.shopName+' advertisement'}"><div class="feature-copy"><span th:text="${shop.categoryName}"></span><h2 th:text="${shop.shopName}"></h2><p th:text="${shop.description}"></p><b>Explore shop →</b></div></a></div><div class="feature-controls"><button type="button" id="shopPrev" aria-label="Previous advertisement">‹</button><span id="shopSlideCount">1 / <span th:text="${#lists.size(shops)}"></span></span><button type="button" id="shopNext" aria-label="Next advertisement">›</button></div></section>
-<section class="shop-search"><form method="get" th:action="@{/shops}"><input type="search" name="q" th:value="${q}" placeholder="Search shop name"><select name="category"><option value="">All shop categories</option><option th:each="c : ${categories}" th:value="${c.id}" th:selected="${selectedCategory == c.id}" th:text="${c.name}"></option></select><button class="btn primary" type="submit">Search shops</button><a th:href="@{/shops}">Clear</a></form></section>
-<h2 class="section-title">All advertised shops <small th:text="${#lists.size(shops)+' shops'}"></small></h2><section class="shop-grid"><a class="shop-card" th:each="shop : ${shops}" th:href="@{/shops/{id}(id=${shop.id})}"><img class="shop-card-banner" th:src="${shop.bannerUrl}" th:alt="${shop.shopName}"><div class="shop-card-body"><img class="shop-logo" th:if="${shop.logoUrl != null}" th:src="${shop.logoUrl}" alt=""><span class="shop-category" th:text="${shop.categoryName}"></span><h3 th:text="${shop.shopName}"></h3><p th:text="${shop.description}"></p><b>Visit shop →</b></div></a></section><p class="empty-state" th:if="${#lists.isEmpty(shops)}">No active shop advertisements found. Try another shop name or category.</p>
-</main><style>.shop-directory{max-width:1180px;margin:34px auto;padding:0 18px 50px}.shop-hero{padding:34px;border-radius:22px;background:linear-gradient(120deg,#f4eafa,#fff5e8);border:1px solid #ead8f0;margin-bottom:22px}.shop-hero h1{font-size:clamp(28px,4vw,42px);margin:10px 0;color:#351047}.eyebrow,.shop-category{font-size:12px;letter-spacing:.08em;color:#7c3c91;font-weight:800}.shop-feature{position:relative;overflow:hidden;border-radius:20px;margin-bottom:22px;background:#2c1738}.feature-track{position:relative;min-height:300px}.shop-feature-slide{display:none;position:relative;min-height:300px;color:white}.shop-feature-slide.active{display:block}.shop-feature-slide>img{width:100%;height:340px;object-fit:cover;opacity:.7}.feature-copy{position:absolute;left:5%;bottom:28px;max-width:55%;text-shadow:0 1px 4px #222}.feature-copy h2{font-size:clamp(24px,4vw,38px);margin:8px 0}.feature-controls{position:absolute;right:20px;bottom:18px;display:flex;align-items:center;gap:14px;color:white}.feature-controls button{border:0;border-radius:50%;width:34px;height:34px;font-size:22px}.shop-search{padding:16px;border:1px solid #eadcf0;border-radius:16px;margin:20px 0}.shop-search form{display:flex;gap:10px;flex-wrap:wrap}.shop-search input,.shop-search select{flex:1;min-width:190px;padding:13px;border:1px solid #dfcfe8;border-radius:10px}.section-title{margin:24px 0 14px}.section-title small{font-size:13px;color:#777;font-weight:400}.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}.shop-card{border:1px solid #eadcf0;border-radius:16px;overflow:hidden;background:#fff;color:inherit;text-decoration:none;box-shadow:0 6px 22px #3110440b}.shop-card-banner{width:100%;height:150px;object-fit:cover}.shop-card-body{padding:16px}.shop-card-body h3{margin:8px 0}.shop-card-body p{color:#6c6472;min-height:38px}.shop-logo{width:42px;height:42px;object-fit:contain;border-radius:9px;float:right}.empty-state{padding:36px;border:1px dashed #d9c7e2;border-radius:14px;text-align:center}@media(max-width:650px){.shop-hero{padding:22px}.feature-copy{max-width:85%;bottom:24px}.shop-feature-slide>img{height:300px}.shop-search form>*{width:100%}}</style>
-<script th:inline="javascript">(()=>{const slides=[...document.querySelectorAll('.shop-feature-slide')];if(!slides.length)return;let i=0;const show=n=>{slides[i].classList.remove('active');i=(n+slides.length)%slides.length;slides[i].classList.add('active');document.getElementById('shopSlideCount').innerHTML=(i+1)+' / '+slides.length;const id=slides[i].getAttribute('href').split('/').pop();fetch('/shops/impression/'+encodeURIComponent(id),{credentials:'same-origin'}).catch(()=>{});};show(0);let timer=setInterval(()=>show(i+1),5000);document.getElementById('shopPrev').addEventListener('click',()=>show(i-1));document.getElementById('shopNext').addEventListener('click',()=>show(i+1));document.querySelector('.shop-feature').addEventListener('mouseenter',()=>clearInterval(timer));document.querySelector('.shop-feature').addEventListener('mouseleave',()=>timer=setInterval(()=>show(i+1),5000));})();</script></body></html>
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Advertised Shops | ASMJ Shoppe</title>
+    <link rel="stylesheet" th:href="@{/css/app.css(v=79)}">
+</head>
+<body>
+
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="dashboard-wrap shop-directory">
+
+    <section class="shop-hero">
+        <span class="eyebrow">DISCOVER LOCAL BUSINESSES</span>
+        <h1>Find shops near you</h1>
+        <p>Explore shops advertising on ASMJ Shoppe. Browse their available products and shop as usual.</p>
+    </section>
+
+    <section class="shop-feature" th:if="${!#lists.isEmpty(shops)}">
+        <div class="feature-track" id="shopAdTrack">
+
+            <a class="shop-feature-slide"
+               th:each="shop,stat : ${shops}"
+               th:href="@{/shops/{id}(id=${shop.id})}"
+               th:classappend="${stat.index == 0} ? ' active' : ''">
+
+                <img th:src="${shop.bannerUrl}"
+                     th:alt="${shop.shopName+' advertisement'}">
+
+                <div class="feature-copy">
+                    <span th:text="${shop.categoryName}"></span>
+                    <h2 th:text="${shop.shopName}"></h2>
+                    <p th:text="${shop.description}"></p>
+                    <b>Explore shop →</b>
+                </div>
+            </a>
+
+        </div>
+
+        <div class="feature-controls">
+            <button type="button" id="shopPrev" aria-label="Previous advertisement">‹</button>
+            <span id="shopSlideCount">1 / <span th:text="${#lists.size(shops)}"></span></span>
+            <button type="button" id="shopNext" aria-label="Next advertisement">›</button>
+        </div>
+    </section>
+
+    <section class="shop-search">
+        <form method="get" th:action="@{/shops}">
+
+            <input type="search"
+                   name="q"
+                   th:value="${q}"
+                   placeholder="Search shop name">
+
+            <select name="category">
+                <option value="">All shop categories</option>
+                <option th:each="c : ${categories}"
+                        th:value="${c.id}"
+                        th:selected="${selectedCategory == c.id}"
+                        th:text="${c.name}">
+                </option>
+            </select>
+
+            <button class="btn primary" type="submit">Search shops</button>
+            <a th:href="@{/shops}">Clear</a>
+
+        </form>
+    </section>
+
+    <h2 class="section-title">
+        All advertised shops
+        <small th:text="${#lists.size(shops)+' shops'}"></small>
+    </h2>
+
+    <section class="shop-grid">
+
+        <a class="shop-card"
+           th:each="shop : ${shops}"
+           th:href="@{/shops/{id}(id=${shop.id})}">
+
+            <img class="shop-card-banner"
+                 th:src="${shop.bannerUrl}"
+                 th:alt="${shop.shopName}">
+
+            <div class="shop-card-body">
+
+                <img class="shop-logo"
+                     th:if="${shop.logoUrl != null}"
+                     th:src="${shop.logoUrl}"
+                     alt="">
+
+                <span class="shop-category"
+                      th:text="${shop.categoryName}">
+                </span>
+
+                <h3 th:text="${shop.shopName}"></h3>
+                <p th:text="${shop.description}"></p>
+
+                <b>Visit shop →</b>
+
+            </div>
+        </a>
+
+    </section>
+
+    <p class="empty-state"
+       th:if="${#lists.isEmpty(shops)}">
+        No active shop advertisements found. Try another shop name or category.
+    </p>
+
+</main>
+
+<style>
+.shop-directory {
+    max-width: 1180px;
+    margin: 34px auto;
+    padding: 0 18px 50px;
+}
+
+.shop-hero {
+    padding: 34px;
+    border-radius: 22px;
+    background: linear-gradient(120deg, #f4eafa, #fff5e8);
+    border: 1px solid #ead8f0;
+    margin-bottom: 22px;
+}
+
+.shop-hero h1 {
+    font-size: clamp(28px, 4vw, 42px);
+    margin: 10px 0;
+    color: #351047;
+}
+
+.eyebrow,
+.shop-category {
+    font-size: 12px;
+    letter-spacing: .08em;
+    color: #7c3c91;
+    font-weight: 800;
+}
+
+.shop-feature {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    margin-bottom: 22px;
+    background: #2c1738;
+}
+
+.feature-track {
+    position: relative;
+    min-height: 300px;
+}
+
+.shop-feature-slide {
+    display: none;
+    position: relative;
+    min-height: 300px;
+    color: white;
+}
+
+.shop-feature-slide.active {
+    display: block;
+}
+
+.shop-feature-slide > img {
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+    opacity: .7;
+}
+
+.feature-copy {
+    position: absolute;
+    left: 5%;
+    bottom: 28px;
+    max-width: 55%;
+    text-shadow: 0 1px 4px #222;
+}
+
+.feature-copy h2 {
+    font-size: clamp(24px, 4vw, 38px);
+    margin: 8px 0;
+}
+
+.feature-controls {
+    position: absolute;
+    right: 20px;
+    bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: white;
+}
+
+.feature-controls button {
+    border: 0;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    font-size: 22px;
+}
+
+.shop-search {
+    padding: 16px;
+    border: 1px solid #eadcf0;
+    border-radius: 16px;
+    margin: 20px 0;
+}
+
+.shop-search form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.shop-search input,
+.shop-search select {
+    flex: 1;
+    min-width: 190px;
+    padding: 13px;
+    border: 1px solid #dfcfe8;
+    border-radius: 10px;
+}
+
+.section-title {
+    margin: 24px 0 14px;
+}
+
+.section-title small {
+    font-size: 13px;
+    color: #777;
+    font-weight: 400;
+}
+
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+.shop-card {
+    border: 1px solid #eadcf0;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 6px 22px #3110440b;
+}
+
+.shop-card-banner {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.shop-card-body {
+    padding: 16px;
+}
+
+.shop-card-body h3 {
+    margin: 8px 0;
+}
+
+.shop-card-body p {
+    color: #6c6472;
+    min-height: 38px;
+}
+
+.shop-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    border-radius: 9px;
+    float: right;
+}
+
+.empty-state {
+    padding: 36px;
+    border: 1px dashed #d9c7e2;
+    border-radius: 14px;
+    text-align: center;
+}
+
+@media (max-width: 650px) {
+    .shop-hero {
+        padding: 22px;
+    }
+
+    .feature-copy {
+        max-width: 85%;
+        bottom: 24px;
+    }
+
+    .shop-feature-slide > img {
+        height: 300px;
+    }
+
+    .shop-search form > * {
+        width: 100%;
+    }
+}
+</style>
+
+<script th:inline="javascript">
+(() => {
+
+    const slides = [
+        ...document.querySelectorAll('.shop-feature-slide')
+    ];
+
+    if (!slides.length) return;
+
+    let i = 0;
+
+    const show = n => {
+
+        slides[i].classList.remove('active');
+
+        i = (n + slides.length) % slides.length;
+
+        slides[i].classList.add('active');
+
+        document.getElementById('shopSlideCount').innerHTML =
+            (i + 1) + ' / ' + slides.length;
+
+        const id = slides[i]
+            .getAttribute('href')
+            .split('/')
+            .pop();
+
+        fetch('/shops/impression/' + encodeURIComponent(id), {
+            credentials: 'same-origin'
+        }).catch(() => {});
+    };
+
+    show(0);
+
+    let timer = setInterval(() => show(i + 1), 5000);
+
+    document.getElementById('shopPrev')
+        .addEventListener('click', () => show(i - 1));
+
+    document.getElementById('shopNext')
+        .addEventListener('click', () => show(i + 1));
+
+    document.querySelector('.shop-feature')
+        .addEventListener('mouseenter', () => clearInterval(timer));
+
+    document.querySelector('.shop-feature')
+        .addEventListener('mouseleave', () => {
+            timer = setInterval(() => show(i + 1), 5000);
+        });
+
+})();
+</script>
+
+</body>
+</html>
