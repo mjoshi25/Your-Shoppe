@@ -1,6 +1,9 @@
 package com.asmj.marketplace.commission;
 
 import com.asmj.marketplace.order.MarketplaceOrder;
+import com.asmj.marketplace.order.OrderStatus;
+import com.asmj.marketplace.order.PaymentStatus;
+import org.springframework.dao.DuplicateKeyException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
@@ -40,15 +43,27 @@ public class CommissionService {
  private CommissionSettings.CommissionSlab slabFor(BigDecimal amount){return current.getSlabs().stream().filter(s->amount.compareTo(s.getMinAmount())>=0&&(s.getMaxAmount()==null||amount.compareTo(s.getMaxAmount())<=0)).findFirst().orElseThrow(()->new IllegalStateException("No commission slab matches this order amount."));}
  public void recordCompletedOrder(MarketplaceOrder order){
   if(order==null||order.getId()==null||order.getVendorUserId()==null||order.getSubtotal()==null)return;
+  if(order.getStatus()!=OrderStatus.COMPLETED||order.getPaymentStatus()!=PaymentStatus.VERIFIED||order.getTotal()==null||order.getTotalPayments().compareTo(order.getTotal())<0)return;
   if(ledger.findByOrderId(order.getId()).isPresent())return;
   java.time.Instant completion=order.getCompletedAt()!=null?order.getCompletedAt():order.getUpdatedAt();
   LocalDate date=completion==null?LocalDate.now(ZoneId.of("Asia/Kolkata")):completion.atZone(ZoneId.of("Asia/Kolkata")).toLocalDate();
   LocalDate start=date.with(DayOfWeek.MONDAY);
-  BigDecimal eligible=order.getSubtotal().max(BigDecimal.ZERO);
+  BigDecimal eligible=order.getSubtotal().subtract(order.getMerchandiseRefunds()).max(BigDecimal.ZERO);
   CommissionSettings.CommissionSlab slab=slabFor(eligible);
   BigDecimal fixed=current.getFixedAmount();
   BigDecimal percentage=eligible.multiply(slab.getRatePercent()).divide(HUNDRED,2,RoundingMode.HALF_UP);
-  CommissionLedger entry=new CommissionLedger();entry.setOrderId(order.getId());entry.setOrderNumber(order.getOrderNumber());entry.setVendorUserId(order.getVendorUserId());entry.setVendorName(order.getVendorName());entry.setWeekStart(start);entry.setWeekEnd(start.plusDays(6));entry.setEligibleAmount(eligible);entry.setFixedAmount(fixed);entry.setSlabMinAmount(slab.getMinAmount());entry.setSlabMaxAmount(slab.getMaxAmount());entry.setRatePercent(slab.getRatePercent());entry.setPercentageCommissionAmount(percentage);entry.setCommissionAmount(fixed.add(percentage).setScale(2,RoundingMode.HALF_UP));ledger.save(entry);
+  CommissionLedger entry=new CommissionLedger();entry.setOrderId(order.getId());entry.setOrderNumber(order.getOrderNumber());entry.setVendorUserId(order.getVendorUserId());entry.setVendorName(order.getVendorName());entry.setWeekStart(start);entry.setWeekEnd(start.plusDays(6));entry.setEligibleAmount(eligible);entry.setFixedAmount(fixed);entry.setSlabMinAmount(slab.getMinAmount());entry.setSlabMaxAmount(slab.getMaxAmount());entry.setRatePercent(slab.getRatePercent());entry.setPercentageCommissionAmount(percentage);entry.setCommissionAmount(fixed.add(percentage).setScale(2,RoundingMode.HALF_UP));try{ledger.save(entry);}catch(DuplicateKeyException concurrentInsert){/* Another request already created this order commission. */}
+ }
+ public void adjustForMerchandiseRefund(MarketplaceOrder order){
+  if(order==null||order.getId()==null)return;
+  CommissionLedger entry=ledger.findByOrderId(order.getId()).orElse(null);
+  if(entry==null||!"UNPAID".equals(entry.getStatus()))return;
+  BigDecimal refunded=order.getMerchandiseRefunds()==null?BigDecimal.ZERO:order.getMerchandiseRefunds();
+  BigDecimal eligible=order.getSubtotal().subtract(refunded).max(BigDecimal.ZERO).setScale(2,RoundingMode.HALF_UP);
+  BigDecimal percentage=eligible.multiply(entry.getRatePercent()).divide(HUNDRED,2,RoundingMode.HALF_UP);
+  entry.setEligibleAmount(eligible);entry.setPercentageCommissionAmount(percentage);
+  entry.setCommissionAmount(entry.getFixedAmount().add(percentage).setScale(2,RoundingMode.HALF_UP));
+  entry.setVerificationNote("Commission recalculated after merchandise refund.");ledger.save(entry);
  }
  public boolean hasOverdueCommission(String vendorId){LocalDate thisWeek=LocalDate.now(ZoneId.of("Asia/Kolkata")).with(DayOfWeek.MONDAY);return !ledger.findByVendorUserIdAndStatusAndWeekEndBefore(vendorId,"UNPAID",thisWeek).isEmpty();}
  public List<CommissionLedger> forVendor(String vendorId){return ledger.findByVendorUserIdOrderByWeekStartDesc(vendorId);}
