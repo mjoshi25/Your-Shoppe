@@ -778,3 +778,26 @@ main.dashboard-wrap,main.page-shell,main.page-container,main.admin-page,main.ven
 @media(max-width:850px){.auth-login-shell{width:min(100% - 30px,620px);min-height:0;grid-template-columns:1fr;margin:15px 0}.auth-showcase{min-height:270px;padding:25px 28px}.auth-showcase-brand img{width:150px}.auth-showcase-copy{margin:30px 0 10px}.auth-showcase-copy h1{font-size:32px;margin:14px 0 10px}.auth-showcase-copy p{font-size:13px;max-width:500px}.auth-showcase-art{display:none}.auth-showcase-footer{display:none}.auth-form-side{padding:35px 28px 40px}.auth-form-heading{margin-bottom:24px}}
 @media(max-width:560px){.auth-login-page{display:block;padding:0;background:#f8f4fa}.auth-login-shell{width:100%;min-height:100vh;margin:0;border:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column}.auth-showcase{min-height:0;padding:20px 22px 24px;border-radius:0 0 24px 24px}.auth-showcase-brand img{width:136px}.auth-showcase-copy{margin:22px 0 0}.auth-showcase-copy h1{font-size:28px;letter-spacing:-.8px}.auth-showcase-copy p{font-size:12px;line-height:1.6}.auth-kicker{font-size:9px}.auth-form-side{padding:29px 22px 35px;flex:1;align-items:start}.auth-form-card{width:100%;max-width:430px;margin:0 auto}.auth-form-heading h2{font-size:27px}.auth-modern-form{margin-top:24px}.auth-login-page .auth-input-wrap input{font-size:16px}.auth-register-page{padding:14px 10px 20px}.auth-register-header{margin:0 5px 14px}.auth-register-brand img{width:145px}.auth-register-card{padding:24px 18px;border-radius:18px}.auth-register-heading{margin-bottom:20px}.auth-register-heading h1{font-size:29px}.auth-register-grid{grid-template-columns:1fr}.auth-register-page .full-field{grid-column:1}.auth-register-actions{grid-template-columns:1fr}.auth-register-actions .btn{min-height:49px}.auth-section-heading{font-size:14px;flex-wrap:wrap}.auth-section-heading em{margin-left:auto}.auth-back-home{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.auth-submit-btn,.auth-input-wrap{transition:none}}
+
+/* Phase 80: desktop navigation dropdown alignment correction.
+   Keep each dropdown anchored to its own navigation trigger. */
+@media (min-width: 761px) {
+  .header-links > .nav-menu:not(.nav-menu-end) > .nav-dropdown {
+    left: 0;
+    right: auto;
+  }
+
+  .header-links > .nav-menu.nav-menu-end > .nav-dropdown {
+    left: auto;
+    right: 0;
+  }
+
+  .header-bottom {
+    position: relative;
+    z-index: 140;
+  }
+
+  .header-links > .nav-menu {
+    position: relative;
+  }
+}
